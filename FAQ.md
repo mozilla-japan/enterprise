@@ -1,6 +1,6 @@
 # 設定の管理
 
-## 設定を管理者が管理したい
+## 設定を管理者が管理したい {#control-configurations-by-administrator}
 
 キーワード：機能制限、導入時初期設定、集中管理
 
@@ -12,7 +12,7 @@ FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自�
 [CCK Wizard][]を使用すると、MCD相当の設定を行うアドオンを作成することができます。
 
 
-### MCD用設定ファイルでの実現
+### MCD用設定ファイルでの実現 {#mcd}
 
 以下では、Firefoxの自動アップデートを禁止するという場合を例にとって設定の手順を説明します。
 
@@ -131,7 +131,7 @@ Firefoxを起動してオプション（設定画面）を開き、「詳細」�
 
 ### 詳細情報
 
-autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.cfgと同一です。詳細は[設定を管理者が管理したい]()を参照して下さい。
+autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.cfgと同一です。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
 
 
 
@@ -141,7 +141,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-[MCD（AutoConfig）]()機能を使うと、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
+[MCD（AutoConfig）](#mcd)機能を使うと、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
 
 ### ウィザードでの実現
 
@@ -149,7 +149,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 ### MCD用設定ファイルでの実現
 
-[MCD（AutoConfig）]()機能が提供する `lockPref()` ディレクティブを使用すると、ユーザによる設定の変更を禁止できます。詳細は[設定を管理者が管理したい]()を参照して下さい。
+[MCD（AutoConfig）](#mcd)機能が提供する `lockPref()` ディレクティブを使用すると、ユーザによる設定の変更を禁止できます。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
 
 `lockPref()` によって値が固定された設定は、Firefox・Thunderbirdの設定画面上ではグレイアウトして表示されます。
 
@@ -177,7 +177,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
  6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
+ 8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 なお、設定画面上部の「全般」「タブ」などのパネル切り替えボタン自体や、「詳細」における「更新」などのタブを非表示にする場合には注意が必要です。
 これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
@@ -192,7 +192,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-[MCD（AutoConfig）]()などの方法でアカウント設定を管理者が管理する際に、ユーザがアカウント設定の画面にアクセスできないようにすることができます。
+[MCD（AutoConfig）](#mcd)などの方法でアカウント設定を管理者が管理する際に、ユーザがアカウント設定の画面にアクセスできないようにすることができます。
 
 ### 設定方法
 
@@ -229,7 +229,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
  2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
+ 4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
 
@@ -245,7 +245,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 ### 設定方法
 
 about:configの利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってDisable about:configを導入すると、about:configへのアクセスが完全に禁止されます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、about:configへのアクセスが完全に禁止されます。
 
 また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
@@ -265,7 +265,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 ### 設定方法
 
 アドオンの利用を禁止する最も簡単な方法は、アドオン [Disable Addons][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってDisable Addonsを導入すると、以下の操作が完全に禁止されます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Addonsを導入すると、以下の操作が完全に禁止されます。
 
  * ユーザがWebページからアドオンをダウンロードしてきてインストールする。
  * ユーザがアドオンのインストーラパッケージをFirefoxのウィンドウにドラッグ＆ドロップしてインストールする。
@@ -275,7 +275,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 ### 注意事項
 
 アドオン「Disable Addons」は、既にインストール済みの他のアドオンの状態を変更しません。
-既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンやプラグイン（Javaなど）を常に無効化したい]()を参照して下さい。
+既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンやプラグイン（Javaなど）を常に無効化したい](#disable-addons-by-administrator)を参照して下さい。
 
 また、このアドオンはアドオンマネージャへのアクセスを禁止する機能を含むため、必然的に、アドオンマネージャを必要とする以下の操作が行えなくなります。
 
@@ -289,7 +289,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 
 
 
-## 特定のアドオンやプラグイン（Javaなど）を常に無効化したい
+## 特定のアドオンやプラグイン（Javaなど）を常に無効化したい {#disable-addons-by-administrator}
 
 キーワード：機能制限、導入時初期設定、集中管理、アドオン、プラグイン
 
@@ -298,7 +298,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 ### 設定方法
 
 アドオンやプラグインの有効・無効の状態をシステム管理者が制御する最も簡単な方法は、アドオン [Force Addon Status][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）]()を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）](#mcd)を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
 
     // Test Pilotアドオンを強制的に無効化する例
     pref("extensions.force-addon-status@clear-code.com.addons.tbtestpilot@labs.mozilla.com",
@@ -321,7 +321,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 
 
 
-## 管理者によるアドオンのインストール手順
+## 管理者によるアドオンのインストール手順 {#install-addons-by-administrator}
 
 キーワード：導入時初期設定、アドオン
 
@@ -375,7 +375,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
     * C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\install.rdf
     * C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\chrome.manifest
     * ...
- 4. [MCD（AutoConfig）]()などを使い、以下の設定を反映します。
+ 4. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
     
         pref("extensions.autoDisableScopes", 0);
     
@@ -504,7 +504,7 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
 
     // アプリケーション自体の自動更新のURL
@@ -732,7 +732,7 @@ Firefoxには、利用時におけるメモリの使用状況などの性能に�
 
 ### 設定方法
 
-以下は、統計情報を送信しない設定で固定する場合の、[MCD（AutoConfig）]()での設定例です。
+以下は、統計情報を送信しない設定で固定する場合の、[MCD（AutoConfig）](#mcd)での設定例です。
 
     if (typeof getPref("toolkit.telemetry.prompted") == "boolean")
       clearPref("toolkit.telemetry.prompted");
@@ -751,7 +751,7 @@ Firefoxのオートコンプリート機能（テキストボックスに入力�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     // Webページ上のフォーム要素、およびWeb検索バーのオートコンプリート機能の無効化
     lockPref("browser.formfill.enable", false);
@@ -769,7 +769,7 @@ Firefoxのスマートロケーションバー機能（ロケーションバー�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     // スマートロケーションバーのオートコンプリート機能の無効化
     lockPref("browser.urlbar.autocomplete.enabled", false);
@@ -789,12 +789,12 @@ FirefoxおよびThunderbirdのパスワードマネージャ機能は無効化�
 ### 設定方法
 
 パスワードマネージャの利用を禁止する最も簡単な方法は、アドオン [Do Not Save Password][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってDo Not Save Passwordを導入すると、以下の効果を得ることができます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDo Not Save Passwordを導入すると、以下の効果を得ることができます。
 
  * パスワードマネージャ機能を無効化し、パスワードの保存を禁止する。
  * 既にパスワードマネージャに保存されてしまっているパスワードをすべて消去する。
 
-また、既に保存されてしまっているパスワードについては特に削除しなくてもよい（それ以後のパスワードの保存を禁止するのみでよい）のであれば、[MCD（AutoConfig）]()などを使って以下の設定を反映することによってパスワードマネージャを無効化できます。
+また、既に保存されてしまっているパスワードについては特に削除しなくてもよい（それ以後のパスワードの保存を禁止するのみでよい）のであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによってパスワードマネージャを無効化できます。
 
     lockPref("signon.rememberSignons", false);
 
@@ -811,7 +811,7 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     // Firefox起動時の表示ページの設定。
     // 3にすると前回セッションの復元となるので、それ以外を選択する。
@@ -853,7 +853,7 @@ about:homeでの「以前のセッションを復元」機能のために、前�
  2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをFirefoxのインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
+ 4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 ただしこの場合においても、単にユーザーが手動操作でセッションを復元できなくなるだけであり、ディスク上にはセッション情報が依然として保存される状態であることにはご注意下さい。
 
@@ -868,7 +868,7 @@ FirefoxのWeb検索バーはGoogleなどの検索における検索語句の候�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("browser.search.suggest.enabled", false);
 
@@ -884,7 +884,7 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("geo.enabled", false);
 
@@ -895,7 +895,7 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 
 
-## 一部のキーボードショートカットを無効化したい
+## 一部のキーボードショートカットを無効化したい {#disable-keyboard-shortcuts}
 
 キーワード：機能制限、導入時初期設定、集中管理
 
@@ -912,8 +912,8 @@ Firefoxはキーボードショートカットを管理する機能を含んで�
  3. File→Inspect Chrome Documentを選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
  3. `<window>` 直下の`<keyset id="devtoolsKeyset">` や `<keyset id="mainKeyset">` を選択し、サブツリーを展開します。
  4. `<keyset>` 直下に多数ある `<key>` から目的のショートカットを定義している物を見つけ出します。
- 5. [MCD（AutoConfig）]()を使用し、UI Text Overriderで当該ショートカットを無効化するための設定を行います。
- 6. [管理者によるアドオンのインストール手順]()に従ってUI Text Overriderを導入します。
+ 5. [MCD（AutoConfig）](#mcd)を使用し、UI Text Overriderで当該ショートカットを無効化するための設定を行います。
+ 6. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってUI Text Overriderを導入します。
 
 Ctrl-T（新しいタブを開く）に対応する `<key>` を例として、4および5の詳細な手順を説明します。以下はCtrl-Tのショートカットを定義している `<key>` です。
 
@@ -926,7 +926,7 @@ Ctrl-T（新しいタブを開く）に対応する `<key>` を例として、4�
 
 また、Ctrlキーなどの修飾キーを伴うショートカットでは、 `modifiers` 属性に修飾キーが指定されています。`modifiers` 属性の値は修飾キー名のカンマ区切りのリストで、 `alt`, `control`, `meta`（MacのCommandキーに対応）, `shift`, および `accel`（Macでは `meta` と見なされ、それ以外の環境では `control` と見なされる）のうちの1つ以上の組み合わせとなります。
 
-上記の情報を手がかりにして、挙動を変えたいキーボードショートカットに対応する `<key>` を探します。見つかったら、それを無効化するための設定を[MCD（AutoConfig）]()の設定ファイルに記述します。凡例は以下の通りです。
+上記の情報を手がかりにして、挙動を変えたいキーボードショートカットに対応する `<key>` を探します。見つかったら、それを無効化するための設定を[MCD（AutoConfig）](#mcd)の設定ファイルに記述します。凡例は以下の通りです。
 
     lockPref("extensions.uitextoverrider@clear-code.com.<定義名>",
       "要素を特定するためのCSSセレクタ");
@@ -964,7 +964,7 @@ UI Text Overriderを使った方法では、挙動を変更できるのはFirefo
 
 
 
-## 一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい
+## 一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい {#hide-ui-elements}
 
 キーワード：機能制限、導入時初期設定、集中管理
 
@@ -997,7 +997,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
  6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
+ 8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
 
@@ -1015,11 +1015,11 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
 ### MCD用設定ファイルでの実現
 
-[MCD（AutoConfig）]()を使い、プライベートブラウジングモードで起動する機能を無効化します。設定は以下の通りです。
+[MCD（AutoConfig）](#mcd)を使い、プライベートブラウジングモードで起動する機能を無効化します。設定は以下の通りです。
 
     lockPref("browser.privatebrowsing.autostart", false);
 
-[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい]()の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css][]を使う場合の設定は以下の通りです。
+[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい](#hide-ui-elements)の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css][]を使う場合の設定は以下の通りです。
 
     @-moz-document url-prefix(chrome://browser/content/browser.xul) {
       #menu_newPrivateWindow,
@@ -1029,7 +1029,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
       }
     }
 
-[一部のキーボードショートカットを無効化したい]()の手順に則り、プライベートブラウジングを開始するためのキーボードショートカットを無効化します。[UI Text Overrider][]と[MCD（AutoConfig）]()を併用する場合の設定は以下の通りです。
+[一部のキーボードショートカットを無効化したい](#disable-keyboard-shortcuts)の手順に則り、プライベートブラウジングを開始するためのキーボードショートカットを無効化します。[UI Text Overrider][]と[MCD（AutoConfig）](#mcd)を併用する場合の設定は以下の通りです。
 
     lockPref("extensions.uitextoverrider@clear-code.com.privateBrowsing",
       "#key_privatebrowsing");
@@ -1057,7 +1057,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 ### MCD用設定ファイルでの実現
 
 CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync][]を使う方法があります。
-[管理者によるアドオンのインストール手順]()に従ってDisable Syncを導入すると、以下の操作が完全に禁止されます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Syncを導入すると、以下の操作が完全に禁止されます。
 
  * ユーザがFirefox Syncの初期設定を行う。
  * ユーザがFirefox Syncのツールバーボタンを追加する。
@@ -1066,7 +1066,7 @@ CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、ア�
 
 [CCK Wizard][]でも同様のカスタマイズが可能です。
 
-また、単に通信を無効化するだけであれば、[MCD（AutoConfig）]()などを使って以下の設定を反映することによっても実現可能です。
+また、単に通信を無効化するだけであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによっても実現可能です。
 
     lockPref("services.sync.serverURL", "");
     lockPref("services.sync.jpake.serverURL", "");
@@ -1100,13 +1100,13 @@ Disable Syncは、既に同期済みの設定を消去しません。
 ### 設定方法
 
 FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Update][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってDisable Updateを導入すると、以下の機能が完全に無効化されます。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Updateを導入すると、以下の機能が完全に無効化されます。
 
  * FirefoxおよびThunderbirdが定期的に自身のアップデート情報を取得する。
  * Firefoxが検索エンジンの自動アップデート情報を取得する。
  * 「オプション」から自動アップデートの設定を変更する。
 
-また、単に自動アップデート情報の取得処理を無効化するだけであれば、[MCD（AutoConfig）]()などを使って以下の設定を反映することによっても実現可能です。
+また、単に自動アップデート情報の取得処理を無効化するだけであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによっても実現可能です。
 
     lockPref("app.update.auto", false);
     lockPref("app.update.enabled", false);
@@ -1126,7 +1126,7 @@ FirefoxやThunderbirdのESR版は通常、あるメジャーバージョンの�
 ### 設定方法
 
 FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡単な方法は、アドオン [Only Minor Update][]を使うことです。
-[管理者によるアドオンのインストール手順]()に従ってOnly Minor Updateを導入すると、メジャーバージョンが異なるアップデートは適用されないようになります。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってOnly Minor Updateを導入すると、メジャーバージョンが異なるアップデートは適用されないようになります。
 
 ### 注意事項
 
@@ -1203,7 +1203,7 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
         </updates>
     
  4. 3で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 5. [MCD（AutoConfig）]()などを使って、文字列型の設定「app.update.url.override」の*ユーザ設定値*に4で設置したファイルのURL文字列を指定します。
+ 5. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定「app.update.url.override」の*ユーザ設定値*に4で設置したファイルのURL文字列を指定します。
     * ローカルファイルやファイル共有サーバ上のファイルである場合は、「file:///」から始まるファイルURLを指定します。
     * MCDを使う場合、ディレクティブとしては `lockPref()` や `defaultPref()` ではなく `pref()` を使用します。
 
@@ -1293,7 +1293,7 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
         </RDF:RDF>
     
  2. 1で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 3. [MCD（AutoConfig）]()などを使って、文字列型の設定「extensions.update.url」の値に、2で設置したファイルのURL文字列を指定します。
+ 3. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定「extensions.update.url」の値に、2で設置したファイルのURL文字列を指定します。
 
 以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置したupdate.rdfならびに各アドオンのXPIファイルを適宜更新するようにして下さい。
 
@@ -1345,7 +1345,7 @@ Firefoxを更新した後の初回起動時に表示される「お使いのFire
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("browser.startup.homepage_override.mstone", "ignore");
 
@@ -1361,7 +1361,7 @@ Thunderbirdを更新した後の初回起動時に表示される「Thunderbird�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     clearPref("app.update.postupdate");
 
@@ -1378,7 +1378,7 @@ FirefoxやThunderbirdの初回起動時などに表示される「あなたの�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。FirefoxとThunderbirdで設定名が異なることに注意して下さい。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。FirefoxとThunderbirdで設定名が異なることに注意して下さい。
 
     // Firefoxの場合
     lockPref("browser.rights.override", true);
@@ -1407,7 +1407,7 @@ FirefoxでFlashやJavaなどのプラグインを使用したページを閲覧�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("plugins.hide_infobar_for_missing_plugin", true);
 
@@ -1429,7 +1429,7 @@ Firefoxでウィンドウや複数のタブを一度に閉じようとした時�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     // 複数のタブを開いた状態でウィンドウを閉じようとした時の確認を表示しない
     lockPref("browser.tabs.warnOnClose", false);
@@ -1455,7 +1455,7 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     // 例として、Mozilla Japanのページをホームの初期設定とする。
     defaultPref("browser.startup.homepage", "http://mozilla.jp/");
@@ -1559,7 +1559,7 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
 
 ### 設定ファイルでプロキシの設定を指定する
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
 特定のHTTPプロキシの使用を強制する場合は以下のように設定します。
 
@@ -1585,7 +1585,7 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("places.history.enabled", false);
 
@@ -1615,8 +1615,8 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 サイト別設定を管理者が詳細に管理する方法として、アドオン [Auto Permission][]の利用が挙げられます。
 例えば、Auto Permissionsを使って「www.example.com」に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順]()に従ってAuto Permissionsを導入します。
- 2. [MCD（AutoConfig）]()を使い、以下の通り設定します。
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
+ 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
     
         lockPref("extensions.autopermission.sites.www.example.com", "password=2, geo=2, cookie=2, popup=2, indexedDB=2, fullscreen=2, image=2, install=2, offline-app=2");
 
@@ -1653,7 +1653,7 @@ Firefoxのロケーションバーでは通常、URL文字列の先頭の「http
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）]()での設定例です。
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     lockPref("browser.urlbar.trimURLs", false);
 
@@ -1676,7 +1676,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
 例えば、Cert Importerを使ってルート証明書「myCA.crt」を登録する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順]()に従ってAuto Permissionsを導入します。
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
  2. Firefoxの実行ファイルと同じ位置にある「defaults」フォルダにmyCA.crtを置きます。
     Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、最終的なファイルのパスは「C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt」となります。
 
@@ -1686,7 +1686,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
 #### 証明書の種類を正しく認識しない場合
 
-Cert Importerが証明書自身に設定されたフラグを正しく認識できなかった場合、ルート証明書がSSLのサイト証明書として登録されるといった結果になることがあります。このような場合は、設定を用いて強制的に証明書の種類を上書き指定することができます。以下は、[MCD（AutoConfig）]()での設定例です。
+Cert Importerが証明書自身に設定されたフラグを正しく認識できなかった場合、ルート証明書がSSLのサイト証明書として登録されるといった結果になることがあります。このような場合は、設定を用いて強制的に証明書の種類を上書き指定することができます。以下は、[MCD（AutoConfig）](#mcd)での設定例です。
 
     defaultPref("extensions.certimporter.certs.myCA.crt", 1);
 
@@ -1850,7 +1850,7 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
  * ホームページの変更
  * Firefox Syncの無効化
  * アドオンマネージャからのアドオンのインストールの禁止
- * その他、[MCD（AutoConfig）]()相当の設定変更
+ * その他、[MCD（AutoConfig）](#mcd)相当の設定変更
  * Firefoxを既定のブラウザに自動設定する
  * ヘルプメニューの変更
  * ドメインごとの機能の利用許可の初期設定
