@@ -1130,7 +1130,7 @@ FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡�
 
 ### 注意事項
 
-このアドオンは、内部的に「app.update.url.override」を上書きします。そのため、この設定を用いて自動アップデート情報の提供元を変更するカスタマイズとの併用はできません。
+このアドオンは、内部的に `app.update.url.override` を上書きします。そのため、この設定を用いて自動アップデート情報の提供元を変更するカスタマイズとの併用はできません。
 自動アップデート情報の提供元を変更する場合は、提供する自動アップデート情報の側で、マイナーアップデートの情報のみを提供する形で運用して下さい。
 
 
@@ -1165,10 +1165,10 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
  1. アップデート用のアーカイブファイルをMozillaのFTPサーバから入手します。
     * FTPサーバ上には各バージョンのアップデート用差分ファイル、完全アップデート用アーカイブファイルが保存されており、以下のようなURLでダウンロードすることができます。
       [ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/24.2.0esr/update/win32/ja/](ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/24.2.0esr/update/win32/ja/)
-    * ファイル名に「partial」と付いている物は差分アップデート用ファイル、「completet」と付いている物は完全アップデート用ファイルです。差分アップデート用ファイルはファイル名で示されている更新前バージョンに対してのみ適用できます。
+    * ファイル名に `partial` と付いている物は差分アップデート用ファイル、`completet` と付いている物は完全アップデート用ファイルです。差分アップデート用ファイルはファイル名で示されている更新前バージョンに対してのみ適用できます。
  2. 1でダウンロードしたファイルを、自組織内からアクセスできるHTTPサーバ上に設置します。
     Sambaサーバ上のファイルにファイルとしてアクセスする形態や、ローカルのファイルシステムにマウントしてファイルとしてアクセスする形態では利用できず、あくまでHTTP経由でダウンロードできる状態にしておく必要があります。
- 3. 以下のような内容で、自動アップデート情報提供用のXMLファイル「update.xml」を用意します。
+ 3. 以下のような内容で、自動アップデート情報提供用のXMLファイル `update.xml` を用意します。
     
         <?xml version="1.0"?>
         <updates>
@@ -1203,11 +1203,11 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
         </updates>
     
  4. 3で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 5. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定「app.update.url.override」の*ユーザ設定値*に4で設置したファイルのURL文字列を指定します。
-    * ローカルファイルやファイル共有サーバ上のファイルである場合は、「file:///」から始まるファイルURLを指定します。
+ 5. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定 `app.update.url.override` の*ユーザ設定値*に4で設置したファイルのURL文字列を指定します。
+    * ローカルファイルやファイル共有サーバ上のファイルである場合は、`file:///` から始まるファイルURLを指定します。
     * MCDを使う場合、ディレクティブとしては `lockPref()` や `defaultPref()` ではなく `pref()` を使用します。
 
-以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置したupdate.xmlならびにアップデート用のアーカイブファイルを適宜更新するようにして下さい。
+以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置した `update.xml` ならびにアップデート用のアーカイブファイルを適宜更新するようにして下さい。
 
 詳細な情報は[更新サーバの設定 - Mozilla | MDN](https://developer.mozilla.org/ja/docs/Mozilla/Setting_up_an_update_server)を参照して下さい。
 
@@ -1215,11 +1215,11 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
 
 以下の通り設定を変更すると、自動アップデートの処理が10秒ごとに行われるようになります。この状態で「エラーコンソール」もしくは「ブラウザコンソール」を表示すると、自動アップデート処理の詳細なログが表示されます。更新情報の取得に成功しているかどうか、取得した更新情報の読み込みに成功しているかどうかなどを確認するのに利用できます。
 
- * app.update.timerMinimumDelay（整数）：10
- * app.update.promptWaitTime（整数）：1
- * app.update.interval（整数：10）
- * app.update.log（真偽）：true
- * app.update.log.all（真偽）：true
+ * `app.update.timerMinimumDelay`（整数）：`10`
+ * `app.update.promptWaitTime`（整数）：`1`
+ * `app.update.interval`（整数）：`10`
+ * `app.update.log`（真偽）：`true`
+ * `app.update.log.all`（真偽）：`true`
 
 ### 注意事項
 
@@ -1238,7 +1238,7 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
 
 ### 設定方法
 
- 1. 以下のような内容で、自動アップデート情報提供用のXMLファイル「update.rdf」を用意します。
+ 1. 以下のような内容で、自動アップデート情報提供用のXMLファイル `update.rdf` を用意します。
     
         <?xml version="1.0" encoding="UTF-8"?>
         <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -1293,9 +1293,9 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
         </RDF:RDF>
     
  2. 1で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 3. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定「extensions.update.url」の値に、2で設置したファイルのURL文字列を指定します。
+ 3. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定 `extensions.update.url` の値に、2で設置したファイルのURL文字列を指定します。
 
-以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置したupdate.rdfならびに各アドオンのXPIファイルを適宜更新するようにして下さい。
+以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置した `update.rdf` ならびに各アドオンのXPIファイルを適宜更新するようにして下さい。
 
 詳細な情報は[Extension Versioning, Update and Compatibility | MDN](https://developer.mozilla.org/ja/docs/Extension_Versioning,_Update_and_Compatibility#.E3.82.A2.E3.83.83.E3.83.97.E3.83.87.E3.83.BC.E3.83.88_RDF_.E3.81.AE.E5.BD.A2.E5.BC.8F)を参照して下さい。
 
@@ -1303,9 +1303,9 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
 
 以下の通り設定を変更すると、アドオンの自動アップデートの処理が10秒ごとに行われるようになります。この状態で「エラーコンソール」もしくは「ブラウザコンソール」を表示すると、自動アップデート処理の詳細なログが表示されます。更新情報の取得に成功しているかどうか、取得した更新情報の読み込みに成功しているかどうかなどを確認するのに利用できます。
 
- * app.update.timerMinimumDelay（整数）：10
- * extensions.update.interval（整数：10）
- * extensions.logging.enabled（真偽）：true
+ * `app.update.timerMinimumDelay`（整数）：`10`
+ * `extensions.update.interval`（整数）：`10`
+ * `extensions.logging.enabled`（真偽）：`true`
 
 ### 注意事項
 
@@ -1329,7 +1329,7 @@ FirefoxやThundebirdの初回起動時に表示される「設定移行ウィザ
 
 ### 設定方法
 
-「override.ini」という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内のbrowserディレクトリ内（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\browser\override.ini」など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、「C:\Program Files (x86)\Mozilla Thunderbird\override.ini」など）に置きます。
+「override.ini」という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files (x86)\Mozilla Thunderbird\override.ini` など）に置きます。
 
     [XRE]
     EnableProfileMigrator=false
@@ -1451,7 +1451,7 @@ Firefoxでウィンドウや複数のタブを一度に閉じようとした時�
 
 キーワード：導入時初期設定
 
-Firefoxを起動した時に表示される最初のページはユーザが自由に変更できますが、変更するまでの間は初期設定が使われ、また、「初期設定に戻す」で最初の状態に戻すことができます。この時の初期設定として使われるページは変更することができます。
+Firefoxを起動した時に表示される最初のページはユーザが自由に変更できますが、変更するまでの間は初期設定が使われ、また、`初期設定に戻す` で最初の状態に戻すことができます。この時の初期設定として使われるページは変更することができます。
 
 ### 設定方法
 
@@ -1478,13 +1478,13 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 
 設定ファイルを使用して任意のブックマーク項目を初期状態に追加する手順は以下の通りです。
 
- 1. 後述する内容で、テキストファイル「distribution.ini」を作成します。
- 2. Firefoxの実行ファイルと同じ位置に「distribution」という名前でフォルダを作成します。
-    Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、作成するフォルダのパスは「C:\Program Files (x86)\Mozilla Firefox\distribution」となります。
- 3. 1.で作成したフォルダの中にdistribution.iniを設置します。
-    最終的なファイルのパスは「C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini」となります。
+ 1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
+ 2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+ 3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
+    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
 
-distribution.iniの内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
+`distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
 
     [Global]
     ; 初期化が完了したことを保持する設定の名前。
@@ -1525,7 +1525,7 @@ distribution.iniの内容は以下の要領で記述します。なお、日本�
 
 ### 注意事項
 
-distribution.iniを使った設定手順では項目を追加することはできますが、削除する事はできません。ブックマークの初期状態を完全に空にしたり、ブックマークの任意の初期項目を削除したりするには、そのためのアドオンを開発するか、userChrome.jsスクリプトなどを使う必要があります。
+`distribution.ini` を使った設定手順では項目を追加することはできますが、削除する事はできません。ブックマークの初期状態を完全に空にしたり、ブックマークの任意の初期項目を削除したりするには、そのためのアドオンを開発するか、userChrome.jsスクリプトなどを使う必要があります。
 
 <!--
 %AppDir%\browser\defaults\profile\bookmarks.html を設置すると、アドオンを使わなくてもできる。
@@ -1602,7 +1602,7 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 
 キーワード：導入時初期設定
 
-Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、about:permissions（サイト別設定マネージャ）で設定の変更や消去が可能です。
+Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、`about:permissions`（サイト別設定マネージャ）で設定の変更や消去が可能です。
 
 アドオンを使うことによって、これらのサイト別設定を管理者が任意の状態に設定することができます。
 
@@ -1613,7 +1613,7 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 ### より詳細な設定を伴う実現方法
 
 サイト別設定を管理者が詳細に管理する方法として、アドオン [Auto Permission][]の利用が挙げられます。
-例えば、Auto Permissionsを使って「www.example.com」に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
+例えば、Auto Permissionsを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
 
  1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
  2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
@@ -1674,13 +1674,13 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 ### より詳細な設定を伴う実現方法
 
 証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
-例えば、Cert Importerを使ってルート証明書「myCA.crt」を登録する場合の手順は以下の通りです。
+例えば、Cert Importerを使ってルート証明書 `myCA.crt` を登録する場合の手順は以下の通りです。
 
  1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
- 2. Firefoxの実行ファイルと同じ位置にある「defaults」フォルダにmyCA.crtを置きます。
-    Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、最終的なファイルのパスは「C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt」となります。
+ 2. Firefoxの実行ファイルと同じ位置にある `defaults` フォルダに `myCA.crt` を置きます。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt` となります。
 
-以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で 詳細→証明書→証明書を表示 と辿り、証明書が正しく登録されているかどうかを確認して下さい。
+以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で `詳細`→`証明書`→`証明書を表示`と辿り、証明書が正しく登録されているかどうかを確認して下さい。
 
 また、[CCK Wizard][]でも昨日の利用を許可するドメインの指定が可能です。
 
@@ -1731,12 +1731,12 @@ ThunderbirdはIMAPサーバを使用するメールアカウントについて�
 
 キーワード：アプリケーション連携
 
-Outlookから送信したメールには、winmail.datというファイルが添付されている場合があります。
+Outlookから送信したメールには、`winmail.dat` というファイルが添付されている場合があります。
 このファイルにはリッチテキスト形式の本文が保存されていますが、Thunderbirdでは内容を閲覧することができません。
 そのため、添付されたwinmail.datをダブルクリック等で開こうとした場合には、ファイルが開かれるのではなくファイルのダウンロード（ファイルとして保存する処理）が開始されます。
 
-winmail.datの内容は、[WinmailOpener][]という別のソフトウェアで閲覧することができます。
-アドオン [Winmail Opener Bridge][]を導入すると、添付されたwinmail.datを開こうとした時に自動的にWinmailOpenerでファイルが開かれるようになります。
+`winmail.datの内容` は、[WinmailOpener][]という別のソフトウェアで閲覧することができます。
+アドオン [Winmail Opener Bridge][]を導入すると、添付された `winmail.dat` を開こうとした時に自動的にWinmailOpenerでファイルが開かれるようになります。
 
 ### 注意事項
 
