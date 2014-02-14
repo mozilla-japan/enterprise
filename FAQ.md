@@ -18,48 +18,48 @@ FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自�
 
 #### 設定方法
 
-以下の内容のプレーンテキストファイル「autoconfig.js」を用意します。
+以下の内容のプレーンテキストファイル `autoconfig.js` を用意します。
 
     pref("general.config.filename", "autoconfig.cfg");
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成したautoconfig.jsを、Firefoxのインストール先の「defaults/prefs/」ディレクトリに置きます（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js」など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/prefs/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js` など）。
 
-以下の内容のプレーンテキストファイル「autoconfig.cfg」を用意します。
+以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("app.update.enabled", false);
 
-作成したautoconfig.cfgを、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg」など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
 
 以上で設定は完了です。
 
 #### 確認方法
 
-Firefoxを起動してオプション（設定画面）を開き、「詳細」→「更新」と辿って、自動更新に関する設定が「更新の確認は行わない」で固定されグレイアウトされていることを確認して下さい。
+Firefoxを起動してオプション（設定画面）を開き、`詳細`→`更新`と辿って、自動更新に関する設定が`更新の確認は行わない`で固定されグレイアウトされていることを確認して下さい。
 
 #### 詳細情報
 
-autoconfig.cfgでは以下の3つのディレクティブでFirefox・Thunderbirdの設定を管理することができます。
+`autoconfig.cfg` では以下の3つのディレクティブでFirefox・Thunderbirdの設定を管理することができます。
 
  * `defaultPref("設定名", 値)`
    ：設定を指定した値に変更します。ユーザは設定を自由に変更でき、変更後の値はFirefox・Thunderbirdの終了後も保存されます。
  * `pref("設定名", 値)`
-   ：設定を指定した値に変更します。ユーザは設定を一時的に変更できますが、変更後の値はFirefox・Thunderbirdを終了すると失われます。（次回起動時には、autoconfig.cfgで指定した値に戻ります。）
+   ：設定を指定した値に変更します。ユーザは設定を一時的に変更できますが、変更後の値はFirefox・Thunderbirdを終了すると失われます。（次回起動時には、`autoconfig.cfg` で指定した値に戻ります。）
  * `lockPref("設定名", 値)`
    ：設定を指定した値に固定します。ユーザは設定を変更することはできません。
 
-また、autoconfig.cfgではJavaScriptの制御構文や環境変数の参照、LDAPサーバからの情報の取得（※Tunderbirdのみ）も利用できます。
+また、`autoconfig.cfg` ではJavaScriptの制御構文や環境変数の参照、LDAPサーバからの情報の取得（※Tunderbirdのみ）も利用できます。
 詳しくは以下の情報を参照して下さい。
 
  * [Mozilla 製品の集中管理 - 基本編 - MCD | MDN](https://developer.mozilla.org/ja/docs/MCD/Getting_Started)
  * [MCD, Mission Control Desktop AKA AutoConfig | MDN](https://developer.mozilla.org/ja/docs/MCD,_Mission_Control_Desktop_AKA_AutoConfig)
 
-設定を変更する場合は、新しいautoconfig.cfgで古いautoconfig.cfgを上書きして下さい。
+設定を変更する場合は、新しい `autoconfig.cfg` で古い `autoconfig.cfg` を上書きして下さい。
 
-autoconfig.cfgで管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
-アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、autoconfig.cfgでは管理できません。
+`autoconfig.cfg` で管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
+アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、`autoconfig.cfg` では管理できません。
 
 なお、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Preferences Modifier][]が利用できます。
 
@@ -94,26 +94,26 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 FirefoxやThunderbirdには、管理者による設定管理機能「MCD（AutoConfig）」が備わっています。
 この機能は各クライアントのローカルディスク上に設置した設定ファイルだけでなく、サーバ上に設置した設定ファイルを読み込ませることもできます。
 
-以下では、設定ファイルを「http://internalserver/autoconfig.jsc」として提供してFirefoxの自動アップデートを禁止するという場合を例にとって設定の手順を説明します。
+以下では、設定ファイルを `http://internalserver/autoconfig.jsc` として提供してFirefoxの自動アップデートを禁止するという場合を例にとって設定の手順を説明します。
 
 ### 設定方法
 
-以下の内容のプレーンテキストファイル「autoconfig.js」を用意します。
+以下の内容のプレーンテキストファイル `autoconfig.js` を用意します。
 
     pref("general.config.filename", "autoconfig.cfg");
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成したautoconfig.jsを、Firefoxのインストール先の「defaults/prefs/」ディレクトリに置きます（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js」など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/prefs/` ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js` など）。
 
-以下の内容のプレーンテキストファイル「autoconfig.cfg」を用意します。
+以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("autoadmin.global_config_url", "http://internalserver/autoconfig.jsc");
 
-作成したautoconfig.cfgを、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg」など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
 
-以下の内容のプレーンテキストファイル「autoconfig.jsc」を用意します。
+以下の内容のプレーンテキストファイル `autoconfig.jsc` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("app.update.enabled", false);
@@ -127,11 +127,11 @@ FirefoxやThunderbirdには、管理者による設定管理機能「MCD（AutoC
 
 ### 確認方法
 
-Firefoxを起動してオプション（設定画面）を開き、「詳細」→「更新」と辿って、自動更新に関する設定が「更新の確認は行わない」で固定されグレイアウトされていることを確認して下さい。
+Firefoxを起動してオプション（設定画面）を開き、`詳細`→`更新`と辿って、自動更新に関する設定が`更新の確認は行わない`で固定されグレイアウトされていることを確認して下さい。
 
 ### 詳細情報
 
-autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.cfgと同一です。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
+`autoconfig.jsc` の書式と設定可能な設定項目の種類は、autoconfig.cfgと同一です。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
 
 
 
@@ -156,9 +156,9 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. [DOM Inspector][] をインストールします。
- 2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動し、その状態で設定画面を開く。
+ 2. `ツール`→`Web開発`→`DOM Inspector` でDOM Inspectorを起動し、その状態で設定画面を開く。
  3. 設定ダイアログを操作し、非表示にしたい設定項目が表示された状態にします。
- 3. File→Inspect Chrome Documentを選択し、設定画面のタイトルと同じ項目を選択します。
+ 3. `File`→`Inspect Chrome Document`を選択し、設定画面のタイトルと同じ項目を選択します。
  4. 非表示にしたい項目のIDを調べる。
  5. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
     
@@ -174,12 +174,12 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
         }
     
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
- 7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
+ 6. 5で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
+ 7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
  8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
-なお、設定画面上部の「全般」「タブ」などのパネル切り替えボタン自体や、「詳細」における「更新」などのタブを非表示にする場合には注意が必要です。
+なお、設定画面上部の`全般` `タブ`などのパネル切り替えボタン自体や、`詳細`における`更新`などのタブを非表示にする場合には注意が必要です。
 これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
 
 
@@ -226,9 +226,9 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
         }
     
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
- 3. 2で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
+ 2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
+ 3. 2で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
  4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
@@ -240,12 +240,12 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-無用なトラブルを避けるため、ユーザがabout:config（設定エディタ）の画面にアクセスできないようにすることができます。
+無用なトラブルを避けるため、ユーザが `about:config`（設定エディタ）の画面にアクセスできないようにすることができます。
 
 ### 設定方法
 
-about:configの利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、about:configへのアクセスが完全に禁止されます。
+`about:config` の利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、`about:config` へのアクセスが完全に禁止されます。
 
 また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
@@ -281,7 +281,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 
  * アドオンの有効・無効の状態を変更する。
  * アドオンをアンインストールする。
- * アドオンの設定を変更する。（Tab Mix Plusなどのように、「ツール」メニュー等からアドオンの設定を変更できるようになっている場合を除く）
+ * アドオンの設定を変更する。（Tab Mix Plusなどのように、`ツール`メニュー等からアドオンの設定を変更できるようになっている場合を除く）
 
 このアドオン自体をアンインストールするには、システム管理者がクライアント上からアドオンの実体となるファイルを削除する必要があります。
 
@@ -335,18 +335,18 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 この場合のインストール手順は以下の通りです。
 
- 1. Firefoxの実行ファイルと同じ位置に「distribution」という名前でフォルダを作成します。
-    Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、作成するフォルダのパスは「C:\Program Files (x86)\Mozilla Firefox\distribution」となります。
- 2. 1.で作成したフォルダの中に「bundles」という名前でフォルダを作成します。
+ 1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+ 2. 1.で作成したフォルダの中に `bundles` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-    DOM Inspectorであれば、フォルダ名は「inspector@mozilla.org」となります。
+    DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
  4. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを3.で作成したフォルダの中に置きます。
     DOM Inspectorであれば、以下のようなファイル配置になります。
-    * C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf
-    * C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest
+    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf`
+    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest`
     * ...
 
-ただし、そのアドオンが検索プラグイン（検索プロバイダ）を含んでいる場合、検索プラグインのファイルは「distribution\bundles」以下ではなく、「distribution\searchplugins\common」以下に設置する必要があります。
+ただし、そのアドオンが検索プラグイン（検索プロバイダ）を含んでいる場合、検索プラグインのファイルは `distribution\bundles` 以下ではなく、`distribution\searchplugins\common` 以下に設置する必要があります。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
 
@@ -366,14 +366,14 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 この場合のインストール手順は以下の通りです。
 
- 1. Firefoxの実行ファイルと同じ位置に「extensions」という名前でフォルダを作成します。
-    Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、作成するフォルダのパスは「C:\Program Files (x86)\Mozilla Firefox\extensions」となります。
+ 1. Firefoxの実行ファイルと同じ位置に `extensions` という名前でフォルダを作成します。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\extensions` となります。
  2. 1.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-    DOM Inspectorであれば、フォルダ名は「inspector@mozilla.org」となります。
+    DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
  3. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを2.で作成したフォルダの中に置きます。
     DOM Inspectorであれば、以下のようなファイル配置になります。
-    * C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\install.rdf
-    * C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\chrome.manifest
+    * `C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\install.rdf`
+    * `C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\chrome.manifest`
     * ...
  4. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
     
@@ -398,12 +398,12 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 この場合のインストール手順は以下の通りです。
 
- 1. Firefoxの実行ファイルと同じ位置に「distribution」という名前でフォルダを作成します。
-    Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、作成するフォルダのパスは「C:\Program Files (x86)\Mozilla Firefox\distribution」となります。
- 2. 1.で作成したフォルダの中に「extensions」という名前でフォルダを作成します。
+ 1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+ 2. 1.で作成したフォルダの中に `extensions` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンのインストールパッケージ（xpiファイル）を設置します。ファイル名はアドオンの内部的なIDに合わせて変更します。
-    DOM Inspectorであれば、ファイル名は「inspector@mozilla.org.xpi」で、最終的なファイルのパスは「C:\Program Files (x86)\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi」となります。
- 4. ユーザ権限でFirefoxを起動します。それが初夏生き胴であれば、アドオンが自動的にインストールされます。
+    DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` で、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi` となります。
+ 4. ユーザ権限でFirefoxを起動します。それが初回起動であれば、アドオンが自動的にインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
 
@@ -444,11 +444,11 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
 例として、（設定の検証などに使用する）新規プロファイル環境のFirefoxを同時に起動できるようにする手順を示します。
 
  1. プロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、「%AppData%\Mozilla\Firefox\Profiles\another」に作成することにします。
+    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\another` に作成することにします。
  2. Firefoxを起動するためのショートカットをデスクトップ上にコピーし、任意の名前に変更します。
-    ここでは例として、「Firefox Another」とします。
- 3. 2.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、「 -no-remote -profile "（1.で作成したフォルダのパス）"」というオプションの指定を加えます。
-     Firefoxが「C:\Program Files (x86)\Mozilla Firefox」にインストールされている場合、最終的なリンク先は以下のようになります。
+    ここでは例として、`Firefox Another` とします。
+ 3. 2.で作成した新しいショートカットのプロパティを開き、`リンク先` に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（1.で作成したフォルダのパス）"` というオプションの指定を加えます。
+     Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なリンク先は以下のようになります。
      
          "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\another"
 
@@ -472,14 +472,14 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
  1. 起動中のFirefoxのウィンドウをすべて閉じ、終了します。
  2. 新たにインストールしたいバージョンのFirefoxのインストーラを起動します。
  3. 「カスタムインストール」を選択し、インストール先を今まで使用していたバージョンのFirefoxとは異なる位置に指定します。
-    ここでは例として、「C:\Program Files (x86)\Mozilla Firefox ESR」にインストールすることにします。
+    ここでは例として、`C:\Program Files (x86)\Mozilla Firefox ESR` にインストールすることにします。
     また、この時デスクトップおよびスタートメニューのショートカットは作成しないようにします。
     （既存のショートカットを上書きしないため）
  4. ESR版Firefox起動専用のプロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、「%AppData%\Mozilla\Firefox\Profiles\esr」に作成することにします。
+    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\esr` に作成することにします。
  5. 3.でインストールしたFirefoxの実行ファイルへのショートカットをデスクトップ上に作成し、任意の名前を付けます。
     ここでは例として、「Firefox ESR」とします。
- 6. 5.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、「 -no-remote -profile "（5.で作成したフォルダのパス）"」というオプションの指定を加えます。
+ 6. 5.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（5.で作成したフォルダのパス）"` というオプションの指定を加えます。
     ここまでの手順の例に則ると、最終的なリンク先は以下のようになります。
      
          "C:\Program Files (x86)\Mozilla Firefox ESR\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\esr"
@@ -712,7 +712,7 @@ FirefoxやThundebirdがクラッシュすると、通常はクラッシュレポ
 
 ### 設定方法
 
-クラッシュレポーターを無効化するためには、「override.ini」という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内のbrowserディレクトリ内（Windowsであれば、「C:\Program Files (x86)\Mozilla Firefox\browser\override.ini」など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、「C:\Program Files (x86)\Mozilla Thunderbird\override.ini」など）に置きます。
+クラッシュレポーターを無効化するためには、`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files (x86)\Mozilla Thunderbird\override.ini` など）に置きます。
 
     [Crash Reporter]
     Enabled＝0
@@ -834,7 +834,7 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 ### 注意事項
 
 現在のバージョンのFirefoxでは、セッション管理機構自体を無効化することはできません。
-about:homeでの「以前のセッションを復元」機能のために、前回のセッション情報は常にディスク上に保存されます。
+`about:home` での「以前のセッションを復元」機能のために、前回のセッション情報は常にディスク上に保存されます。
 
 セッションを一切保存しないようにすることはできませんが、[globalChrome.css][]を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
 
@@ -850,9 +850,9 @@ about:homeでの「以前のセッションを復元」機能のために、前�
         }
     
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
- 3. 2で作成したファイルをFirefoxのインストール先の「chrome」フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
+ 2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
+ 3. 2で作成したファイルをFirefoxのインストール先の `chrome` フォルダに設置します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
  4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 ただしこの場合においても、単にユーザーが手動操作でセッションを復元できなくなるだけであり、ディスク上にはセッション情報が依然として保存される状態であることにはご注意下さい。
@@ -908,8 +908,8 @@ Firefoxはキーボードショートカットを管理する機能を含んで�
 大まかな手順は以下の通りです。
 
  1. [DOM Inspector][] をインストールします。
- 2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動します。
- 3. File→Inspect Chrome Documentを選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
+ 2. `ツール`→`Web開発`→`DOM Inspector`でDOM Inspectorを起動します。
+ 3. `File`→`Inspect Chrome Document`を選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
  3. `<window>` 直下の`<keyset id="devtoolsKeyset">` や `<keyset id="mainKeyset">` を選択し、サブツリーを展開します。
  4. `<keyset>` 直下に多数ある `<key>` から目的のショートカットを定義している物を見つけ出します。
  5. [MCD（AutoConfig）](#mcd)を使用し、UI Text Overriderで当該ショートカットを無効化するための設定を行います。
@@ -975,8 +975,8 @@ UI Text Overriderを使った方法では、挙動を変更できるのはFirefo
 UI要素を隠すためには、[globalChrome.css][]などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. [DOM Inspector][] をインストールします。
- 2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動します。
- 3. File→Inspect Chrome Documentを選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
+ 2. `ツール`→`Web開発`→`DOM Inspector`でDOM Inspectorを起動します。
+ 3. `File`→`Inspect Chrome Document`を選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
  3. ツリーを展開していくか、もしくはツールバーの左端にある「Find a node to inspect by clickinc on it」ボタンをクリックした後にブラウザウィンドウの非表示にしたいUI要素をクリックするかして、非表示にしたいUI要素の詳細を表示します。
  4. UI要素のIDもしくは他の要素と類似していない特徴を調べる。
  5. 「メモ帳」などのテキストエディタを開き、4で調べた情報を使って項目を非表示にするスタイル指定を記述します。
@@ -994,9 +994,9 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
         }
     
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
- 7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
+ 6. 5で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
+ 7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
  8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
