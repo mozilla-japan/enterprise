@@ -9,7 +9,7 @@ FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自�
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、MCD相当の設定を行うアドオンを作成することができます。
+[CCK Wizard][]を使用すると、MCD相当の設定を行うアドオンを作成することができます。
 
 
 ### MCD用設定ファイルでの実現
@@ -61,7 +61,7 @@ autoconfig.cfgでは以下の3つのディレクティブでFirefox・Thunderbir
 autoconfig.cfgで管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
 アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、autoconfig.cfgでは管理できません。
 
-なお、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Preferences Modifier](https://github.com/clear-code/historyprefsmodifier)が利用できます。
+なお、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Preferences Modifier][]が利用できます。
 
 <!--
 defaultPref()だけを使うのであれば、distribution/distribution.iniで以下のようにするという手もある。
@@ -145,7 +145,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
+[CCK Wizard][]を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
 
 ### MCD用設定ファイルでの実現
 
@@ -153,9 +153,9 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 `lockPref()` によって値が固定された設定は、Firefox・Thunderbirdの設定画面上ではグレイアウトして表示されます。
 
-変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css](https://github.com/clear-code/globalchromecss)を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
- 1. [DOM Inspector](https://addons.mozilla.org/firefox/addon/dom-inspector-6622/) をインストールします。
+ 1. [DOM Inspector][] をインストールします。
  2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動し、その状態で設定画面を開く。
  3. 設定ダイアログを操作し、非表示にしたい設定項目が表示された状態にします。
  3. File→Inspect Chrome Documentを選択し、設定画面のタイトルと同じ項目を選択します。
@@ -173,14 +173,14 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
           }
         }
     
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考](http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document)を参照して下さい。）
+    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css](https://github.com/clear-code/globalchromecss)を導入します。
+ 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
 
 なお、設定画面上部の「全般」「タブ」などのパネル切り替えボタン自体や、「詳細」における「更新」などのタブを非表示にする場合には注意が必要です。
-これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane](https://github.com/clear-code/hide-option-pane)の利用が挙げられます。
+これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
 
 
 
@@ -196,7 +196,7 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 ### 設定方法
 
-アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、アドオン [globalChrome.css](https://github.com/clear-code/globalchromecss)を使うなどしてメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
     
@@ -225,11 +225,11 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
           }
         }
     
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考](http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document)を参照して下さい。）
+    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css](https://github.com/clear-code/globalchromecss)を導入します。
+ 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
 
 
 
@@ -244,10 +244,10 @@ autoconfig.jscの書式と設定可能な設定項目の種類は、autoconfig.c
 
 ### 設定方法
 
-about:configの利用を禁止する最も簡単な方法は、アドオン [Disable about:config](https://github.com/clear-code/disableaboutconfig)を使うことです。
+about:configの利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってDisable about:configを導入すると、about:configへのアクセスが完全に禁止されます。
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -264,7 +264,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 
 ### 設定方法
 
-アドオンの利用を禁止する最も簡単な方法は、アドオン [Disable Addons](https://github.com/clear-code/disableaddons)を使うことです。
+アドオンの利用を禁止する最も簡単な方法は、アドオン [Disable Addons][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってDisable Addonsを導入すると、以下の操作が完全に禁止されます。
 
  * ユーザがWebページからアドオンをダウンロードしてきてインストールする。
@@ -297,7 +297,7 @@ about:configの利用を禁止する最も簡単な方法は、アドオン [Dis
 
 ### 設定方法
 
-アドオンやプラグインの有効・無効の状態をシステム管理者が制御する最も簡単な方法は、アドオン [Force Addon Status](https://github.com/clear-code/force-addon-status)を使うことです。
+アドオンやプラグインの有効・無効の状態をシステム管理者が制御する最も簡単な方法は、アドオン [Force Addon Status][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）]()を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
 
     // Test Pilotアドオンを強制的に無効化する例
@@ -329,7 +329,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 以下の手順に則ると、管理者が、そのクライアント上のすべてのユーザを対象としてアドオンをインストールすることができます。
 
 管理者の手動操作によるアドオンのインストール方法にはいくつかのパターンがあり、それぞれメリットとデメリットがあります。
-[DOM Inspector](https://addons.mozilla.org/firefox/addon/dom-inspector-6622/)をインストールする場合を例にとって、代表的な3つのパターンを解説します。
+[DOM Inspector][]をインストールする場合を例にとって、代表的な3つのパターンを解説します。
 
 #### パターン1：組み込みモジュールとしてインストールする
 
@@ -788,7 +788,7 @@ FirefoxおよびThunderbirdのパスワードマネージャ機能は無効化�
 
 ### 設定方法
 
-パスワードマネージャの利用を禁止する最も簡単な方法は、アドオン [Do Not Save Password](https://github.com/clear-code/donotsavepassword)を使うことです。
+パスワードマネージャの利用を禁止する最も簡単な方法は、アドオン [Do Not Save Password][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってDo Not Save Passwordを導入すると、以下の効果を得ることができます。
 
  * パスワードマネージャ機能を無効化し、パスワードの保存を禁止する。
@@ -836,7 +836,7 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 現在のバージョンのFirefoxでは、セッション管理機構自体を無効化することはできません。
 about:homeでの「以前のセッションを復元」機能のために、前回のセッション情報は常にディスク上に保存されます。
 
-セッションを一切保存しないようにすることはできませんが、[globalChrome.css](https://github.com/clear-code/globalchromecss)を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
+セッションを一切保存しないようにすることはできませんが、[globalChrome.css][]を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. 「メモ帳」などのテキストエディタを開き、以下のスタイル指定を記述します。
     
@@ -849,11 +849,11 @@ about:homeでの「以前のセッションを復元」機能のために、前�
           }
         }
     
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考](http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document)を参照して下さい。）
+    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをFirefoxのインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css](https://github.com/clear-code/globalchromecss)を導入します。
+ 4. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
 
 ただしこの場合においても、単にユーザーが手動操作でセッションを復元できなくなるだけであり、ディスク上にはセッション情報が依然として保存される状態であることにはご注意下さい。
 
@@ -901,13 +901,13 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 Firefoxはキーボードショートカットを管理する機能を含んでいませんが、アドオンを使うことによって、キーボードショートカットの割り当てを変更したりショートカットを無効化したりできます。
 
-個人での利用の場合は[Customizable Shortcuts](https://addons.mozilla.org/firefox/addon/customizable-shortcuts/)が有用ですが、本項執筆時点のバージョンでは、管理者が行った設定を全体に展開するという用途には残念ながら向いていません。そこで本項では代わりに[UI Text Overrider](https://github.com/clear-code/ui-text-overrider)を使った設定の手順を解説します。
+個人での利用の場合は[Customizable Shortcuts][]が有用ですが、本項執筆時点のバージョンでは、管理者が行った設定を全体に展開するという用途には残念ながら向いていません。そこで本項では代わりに[UI Text Overrider][]を使った設定の手順を解説します。
 
 ### 設定方法
 
 大まかな手順は以下の通りです。
 
- 1. [DOM Inspector](https://addons.mozilla.org/firefox/addon/dom-inspector-6622/) をインストールします。
+ 1. [DOM Inspector][] をインストールします。
  2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動します。
  3. File→Inspect Chrome Documentを選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
  3. `<window>` 直下の`<keyset id="devtoolsKeyset">` や `<keyset id="mainKeyset">` を選択し、サブツリーを展開します。
@@ -972,9 +972,9 @@ UI Text Overriderを使った方法では、挙動を変更できるのはFirefo
 
 ### 設定方法
 
-UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code/globalchromecss)などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+UI要素を隠すためには、[globalChrome.css][]などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
- 1. [DOM Inspector](https://addons.mozilla.org/firefox/addon/dom-inspector-6622/) をインストールします。
+ 1. [DOM Inspector][] をインストールします。
  2. ツール→Web開発→DOM InspectorでDOM Inspectorを起動します。
  3. File→Inspect Chrome Documentを選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
  3. ツリーを展開していくか、もしくはツールバーの左端にある「Find a node to inspect by clickinc on it」ボタンをクリックした後にブラウザウィンドウの非表示にしたいUI要素をクリックするかして、非表示にしたいUI要素の詳細を表示します。
@@ -993,11 +993,11 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
           }
         }
     
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考](http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document)を参照して下さい。）
+    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  6. 5で作成した内容を「globalChrome.css」という名前のプレーンテキストファイルに保存します。
  7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の「chrome」フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は「C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css」となる。）
- 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css](https://github.com/clear-code/globalchromecss)を導入します。
+ 8. [管理者によるアドオンのインストール手順]()に従って[globalChrome.css][]を導入します。
 
 
 
@@ -1011,7 +1011,7 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、プライベートブラウジング機能の利用を禁止する機能を含むアドオンを作成することができます。
+[CCK Wizard][]を使用すると、プライベートブラウジング機能の利用を禁止する機能を含むアドオンを作成することができます。
 
 ### MCD用設定ファイルでの実現
 
@@ -1019,7 +1019,7 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
 
     lockPref("browser.privatebrowsing.autostart", false);
 
-[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい]()の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css](https://github.com/clear-code/globalchromecss)を使う場合の設定は以下の通りです。
+[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい]()の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css][]を使う場合の設定は以下の通りです。
 
     @-moz-document url-prefix(chrome://browser/content/browser.xul) {
       #menu_newPrivateWindow,
@@ -1029,7 +1029,7 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
       }
     }
 
-[一部のキーボードショートカットを無効化したい]()の手順に則り、プライベートブラウジングを開始するためのキーボードショートカットを無効化します。[UI Text Overrider](https://github.com/clear-code/ui-text-overrider)と[MCD（AutoConfig）]()を併用する場合の設定は以下の通りです。
+[一部のキーボードショートカットを無効化したい]()の手順に則り、プライベートブラウジングを開始するためのキーボードショートカットを無効化します。[UI Text Overrider][]と[MCD（AutoConfig）]()を併用する場合の設定は以下の通りです。
 
     lockPref("extensions.uitextoverrider@clear-code.com.privateBrowsing",
       "#key_privatebrowsing");
@@ -1039,7 +1039,7 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
       "");
 
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1052,11 +1052,11 @@ UI要素を隠すためには、[globalChrome.css](https://github.com/clear-code
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、Firefox Syncの利用を禁止する機能を含むアドオンを作成することができます。
+[CCK Wizard][]を使用すると、Firefox Syncの利用を禁止する機能を含むアドオンを作成することができます。
 
 ### MCD用設定ファイルでの実現
 
-CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync](https://github.com/clear-code/disablesync)を使う方法があります。
+CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync][]を使う方法があります。
 [管理者によるアドオンのインストール手順]()に従ってDisable Syncを導入すると、以下の操作が完全に禁止されます。
 
  * ユーザがFirefox Syncの初期設定を行う。
@@ -1064,7 +1064,7 @@ CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、ア�
  * ユーザが手動で情報を同期する。
  * Firefoxが自動的に情報を同期する。
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 また、単に通信を無効化するだけであれば、[MCD（AutoConfig）]()などを使って以下の設定を反映することによっても実現可能です。
 
@@ -1099,7 +1099,7 @@ Disable Syncは、既に同期済みの設定を消去しません。
 
 ### 設定方法
 
-FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Update](https://github.com/clear-code/disableupdate)を使うことです。
+FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Update][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってDisable Updateを導入すると、以下の機能が完全に無効化されます。
 
  * FirefoxおよびThunderbirdが定期的に自身のアップデート情報を取得する。
@@ -1125,7 +1125,7 @@ FirefoxやThunderbirdのESR版は通常、あるメジャーバージョンの�
 
 ### 設定方法
 
-FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡単な方法は、アドオン [Only Minor Update](https://github.com/clear-code/only-minor-update)を使うことです。
+FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡単な方法は、アドオン [Only Minor Update][]を使うことです。
 [管理者によるアドオンのインストール手順]()に従ってOnly Minor Updateを導入すると、メジャーバージョンが異なるアップデートは適用されないようになります。
 
 ### 注意事項
@@ -1265,7 +1265,7 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
           </RDF:Description>
         </RDF:RDF>
     
-    例えばFirefox 24.2ESR向けのアドオンとして[DOM Inspector](https://addons.mozilla.org/firefox/addon/dom-inspector-6622/)の更新情報を提供するのであれば以下のようになります。
+    例えばFirefox 24.2ESR向けのアドオンとして[DOM Inspector][]の更新情報を提供するのであれば以下のようになります。
     
         <?xml version="1.0" encoding="UTF-8"?>
         <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
@@ -1392,7 +1392,7 @@ FirefoxやThunderbirdの初回起動時などに表示される「あなたの�
 
 <!--
 ## ダウンロード完了の通知を表示させたくない（未稿）
-	autoconfig
+  autoconfig
 旧ダウンロードマネージャが廃止されたので、これはこのままでは書けない気がする。
 何のために通知を表示させたくないのか、ということを汲み取って、新しいUIでその目的を達成するためのカスタマイズを考える必要がある。
 -->
@@ -1460,7 +1460,7 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
     // 例として、Mozilla Japanのページをホームの初期設定とする。
     defaultPref("browser.startup.homepage", "http://mozilla.jp/");
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1472,7 +1472,7 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、初期状態のブックマークを変更する機能を含むアドオンを作成することができます。
+[CCK Wizard][]を使用すると、初期状態のブックマークを変更する機能を含むアドオンを作成することができます。
 
 ### 設定ファイルで任意のブックマーク項目を初期状態に追加する
 
@@ -1521,7 +1521,7 @@ distribution.iniの内容は以下の要領で記述します。なお、日本�
     item.1.title=ブックマークメニューに追加したフォルダ中の項目1のタイトル
     item.1.link=ブックマークメニューに追加したフォルダ中の項目1のURL
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 ### 注意事項
 
@@ -1533,14 +1533,14 @@ distribution.iniを使った設定手順では項目を追加することはで�
 
 <!--
 ## ブックマークを初期状態で空にしたい（未稿）
-	bookmarks.html
+  bookmarks.html
 %AppDir%\browser\defaults\profile\bookmarks.html を設置するとできる。
 -->
 
 
 <!--
 ## ブックマークツールバーを初期状態で非表示にしたい（未稿）
-	localstore.rdf
+  localstore.rdf
 %AppDir%\browser\defaults\profile\localstore.rdf を設置するとできる。
 -->
 
@@ -1555,7 +1555,7 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、プロキシ設定を自動的に行うアドオンを作成することができます。
+[CCK Wizard][]を使用すると、プロキシ設定を自動的に行うアドオンを作成することができます。
 
 ### 設定ファイルでプロキシの設定を指定する
 
@@ -1572,7 +1572,7 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
     lockPref("network.proxy.type", 2);
     lockPref("network.proxy.autoconfig_url", "http://internal-server/proxy.pac");
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも同様のカスタマイズが可能です。
+また、[CCK Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1608,11 +1608,11 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
+[CCK Wizard][]を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
 
 ### より詳細な設定を伴う実現方法
 
-サイト別設定を管理者が詳細に管理する方法として、アドオン [Auto Permission](https://github.com/clear-code/autopermission)の利用が挙げられます。
+サイト別設定を管理者が詳細に管理する方法として、アドオン [Auto Permission][]の利用が挙げられます。
 例えば、Auto Permissionsを使って「www.example.com」に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
 
  1. [管理者によるアドオンのインストール手順]()に従ってAuto Permissionsを導入します。
@@ -1638,7 +1638,7 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
  * `1`：許可する。
  * `2`：禁止する。
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも機能の利用を許可するドメインの指定が可能です。
+また、[CCK Wizard][]でも機能の利用を許可するドメインの指定が可能です。
 
 
 
@@ -1669,11 +1669,11 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
 ### ウィザードでの実現
 
-[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
+[CCK Wizard][]を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
 
 ### より詳細な設定を伴う実現方法
 
-証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer](https://github.com/clear-code/certimporter)の利用が挙げられます。
+証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
 例えば、Cert Importerを使ってルート証明書「myCA.crt」を登録する場合の手順は以下の通りです。
 
  1. [管理者によるアドオンのインストール手順]()に従ってAuto Permissionsを導入します。
@@ -1682,7 +1682,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
 以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で 詳細→証明書→証明書を表示 と辿り、証明書が正しく登録されているかどうかを確認して下さい。
 
-また、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)でも昨日の利用を許可するドメインの指定が可能です。
+また、[CCK Wizard][]でも昨日の利用を許可するドメインの指定が可能です。
 
 #### 証明書の種類を正しく認識しない場合
 
@@ -1699,7 +1699,7 @@ Cert Importerが証明書自身に設定されたフラグを正しく認識で�
 
 #### SSLのセキュリティ例外の自動登録
 
-Cert Importerは、SSLのセキュリティ例外について、特定のホストを対象に設定する事もできます。詳細は[Cert Importerの説明](https://github.com/clear-code/certimporter)を参照して下さい。
+Cert Importerは、SSLのセキュリティ例外について、特定のホストを対象に設定する事もできます。詳細は[Cert Importer][]の説明文を参照して下さい。
 
 
 
@@ -1716,7 +1716,7 @@ Cert Importerは、SSLのセキュリティ例外について、特定のホス�
 ThunderbirdはIMAPサーバを使用するメールアカウントについて、メールの本文をダウンロードせずヘッダ情報だけをダウンロードする設定が可能です。
 しかしながら、ヘッダ情報はローカルに保存される上、一度表示したメールについては本文のデータもディスクキャッシュ上に保存されるため、情報漏洩対策としてIMAPを使用するという場合には、その設定だけでは目的を十分には達成できません。
 
-アドオン [IMAPキャッシュの自動消去（Clear IMAP Cache）](https://github.com/clear-code/only-minor-update)を導入すると、Thunderbirdを終了する度にダウンロード済みのヘッダ情報とディスクキャッシュを自動的に消去させることができます。
+アドオン [IMAPキャッシュの自動消去（Clear IMAP Cache）][]を導入すると、Thunderbirdを終了する度にダウンロード済みのヘッダ情報とディスクキャッシュを自動的に消去させることができます。
 これによって、情報漏洩対策としての実効性をより高めることができます。
 
 ### 注意事項
@@ -1735,8 +1735,8 @@ Outlookから送信したメールには、winmail.datというファイルが�
 このファイルにはリッチテキスト形式の本文が保存されていますが、Thunderbirdでは内容を閲覧することができません。
 そのため、添付されたwinmail.datをダブルクリック等で開こうとした場合には、ファイルが開かれるのではなくファイルのダウンロード（ファイルとして保存する処理）が開始されます。
 
-winmail.datの内容は、[WinmailOpener](https://www.google.co.jp/search?q=WinmailOpener)という別のソフトウェアで閲覧することができます。
-アドオン [Winmail Opener Bridge](https://github.com/clear-code/winmaildat)を導入すると、添付されたwinmail.datを開こうとした時に自動的にWinmailOpenerでファイルが開かれるようになります。
+winmail.datの内容は、[WinmailOpener][]という別のソフトウェアで閲覧することができます。
+アドオン [Winmail Opener Bridge][]を導入すると、添付されたwinmail.datを開こうとした時に自動的にWinmailOpenerでファイルが開かれるようになります。
 
 ### 注意事項
 
@@ -1752,7 +1752,7 @@ Winmail Opener BridgeにはWinmailOpenerは同梱されていません。利用�
 Thunderbirdのメールアカウント作成ウィザードでは、Mozilla公式に提供されているISPの情報や、メールサーバに設置された設定情報、一般的なメールサーバの設定の流儀などに従って、メールアドレスとパスワードを入力するだけでメールアカウントを半自動的に作成することができます。
 しかしながら、メールサーバなどの基本的な設定以外の項目（例えばHTMLメールの利用の可否など）は、その後改めて手動で設定する必要があります。
 
-アドオン [AutoConfiguration Hook](https://github.com/clear-code/achook)を使用すると、あらかじめメールアカウント情報のテンプレートとなる設定ファイルを用意しておくことにより、基本設定以外の項目についてもメールアカウント作成時の初期値を指定することができます。
+アドオン [AutoConfiguration Hook][]を使用すると、あらかじめメールアカウント情報のテンプレートとなる設定ファイルを用意しておくことにより、基本設定以外の項目についてもメールアカウント作成時の初期値を指定することができます。
 また、メールアドレスのローカルパートのみを入力させてメールアカウントを作成できる、特定組織向けのメールアカウント作成専用のウィザードも利用可能になります。
 
 
@@ -1766,7 +1766,7 @@ Thunderbirdのメールアカウント作成ウィザードでは、Mozilla公�
 Thunderbirdは、メールの宛先が正しいメールアドレスでない場合、メール送信時に警告が表示される仕様になっています。
 しかしながら、2つ目以降の宛先についてはこの確認が行われないという不具合（制限事項）があります。
 
-アドオン [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）](https://github.com/clear-code/alertinvalidaddresses)を使用すると、2つ目以降の宛先についても最初の宛先と同様の妥当性検証が行われるようになります。
+アドオン [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）][]を使用すると、2つ目以降の宛先についても最初の宛先と同様の妥当性検証が行われるようになります。
 
 
 
@@ -1779,7 +1779,7 @@ Thunderbirdは、メールの宛先が正しいメールアドレスでない場
 古いバージョンのThunderbirdでは、メール編集ウィンドウの本文領域にファイルをドラッグ＆ドロップすると、ファイルのURL文字列がその位置に挿入される仕様でした。
 しかしながら、現在のバージョンのThunderbirdでは、この機能は廃止されています。
 
-アドオン [ローカルファイルからのリンク挿入（Insert Link from Local File）](https://github.com/clear-code/insertlinkfromlocalfile)を導入すると、古いバージョンのThunderbirdと同様に、ファイルのドロップ位置にそのファイルのURLを挿入できるようになります。
+アドオン [ローカルファイルからのリンク挿入（Insert Link from Local File）][]を導入すると、古いバージョンのThunderbirdと同様に、ファイルのドロップ位置にそのファイルのURLを挿入できるようになります。
 挿入されたURLは、受信者側ではリンクとして利用することができます。
 
 これによって、社内でのメールのやりとりにおいて、ファイルを添付する代わりに共有フォルダに置きURLだけをやりとりする、といった使い方が容易になります。
@@ -1795,7 +1795,7 @@ Thunderbirdは、メールの宛先が正しいメールアドレスでない場
 Thunderbirdでは、Windowsのショートカットファイルをメールに添付することができません。
 また、添付されたショートカットファイルを受信した場合にも、それを直接開くことはできず、一旦ファイルとして保存してから改めて開く必要があります。
 
-アドオン [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）](https://github.com/clear-code/openshortcuts)を導入すると、ショートカットをメール編集ウィンドウの宛先領域周辺にドラッグ＆ドロップすることによってファイルとしてそのまま添付できるようになります（※メニューからの操作でコモンダイアログから選択した場合は、ショートカットのリンク先の実体ファイルが添付されます）。
+アドオン [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）][]を導入すると、ショートカットをメール編集ウィンドウの宛先領域周辺にドラッグ＆ドロップすることによってファイルとしてそのまま添付できるようになります（※メニューからの操作でコモンダイアログから選択した場合は、ショートカットのリンク先の実体ファイルが添付されます）。
 また、ショートカットが添付されたメールについては、ショートカットをダブルクリックするなどの操作によりリンク先の実体ファイルを直接開けるようになります。
 
 これによって、社内でのメールのやりとりにおいて、ファイルを添付する代わりに共有フォルダに置きショートカットだけをやりとりする、といった使い方が容易になります。
@@ -1812,7 +1812,7 @@ Thunderbirdでは、Windowsのショートカットファイルをメールに�
 Thunderbirdでは、プレーンテキスト形式のファイルを添付する際にファイルの文字エンコーディングを自動判別し、ヘッダ情報に含めるようになっています。
 しかしながら、この自動判別があまり正確でないため、Shift_JISやEUC-JPのテキストファイルを添付した場合に受信者側で文字化けして表示される事があります。
 
-アドオン [添付ファイルの文字エンコーディングの自動判別（Attachemnt Encoding Detector）](https://github.com/clear-code/attachment-encoding-localized-autodetect)を導入することにより、上記処理における文字エンコーディングの自動判別において言語別の自動判別器が使われるようになり、文字化けの発生を低減することができます。
+アドオン [添付ファイルの文字エンコーディングの自動判別（Attachemnt Encoding Detector）][]を導入することにより、上記処理における文字エンコーディングの自動判別において言語別の自動判別器が使われるようになり、文字化けの発生を低減することができます。
 
 
 
@@ -1827,7 +1827,7 @@ Thunderbirdでは、LDAPアドレス帳機能によって、ディレクトリ�
  * LDAPアドレス帳への書き込みはできません。読み込みのみの利用となります。
  * ディレクトリサーバに接続する際のユーザをWindowsのログオンユーザと連携させること（シングルサインオン）はできません。
 
-LDAPアドレス帳ではないアドレス帳の共有または同期を可能にする方法として、アドオン [Addressbooks Synchronizer](https://addons.mozilla.org/ja/thunderbird/addon/addressbooks-synchronizer/)の使用が挙げられます。
+LDAPアドレス帳ではないアドレス帳の共有または同期を可能にする方法として、アドオン [Addressbooks Synchronizer][]の使用が挙げられます。
 このアドオンを使用すると、例えば以下のような運用も可能となります。
 
  * アドレス帳をIMAPサーバ上にメールの添付ファイルとして保存し、複数PC間でアドレス帳を同期する。
@@ -1845,7 +1845,7 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
 
 キーワード：導入時初期設定
 
-アドオン [CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
+アドオン [CCK Wizard][]を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
 
  * ホームページの変更
  * Firefox Syncの無効化
@@ -1868,29 +1868,58 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
 
 キーワード：導入時初期設定
 
-実行ファイルを1つ実行するだけでFirefoxのインストールと設定ファイルの設置をすべて完了するソフトウェアの例としては、[Fx Meta Installer](https://github.com/clear-code/fx-meta-installer)があります。
-Fx Meta Instlalerの使用方法については、[開発・配布元による解説記事](http://www.clear-code.com/blog/2012/11/7.html)などを参照して下さい。
+実行ファイルを1つ実行するだけでFirefoxのインストールと設定ファイルの設置をすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
+Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][])などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
 
 
 # Firefox・Thunderbirdにアドオンをバンドルして展開したい
 
 キーワード：導入時初期設定
 
-実行ファイルを1つ実行するだけでFirefoxのインストールとアドオンのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer](https://github.com/clear-code/fx-meta-installer)があります。
-Fx Meta Instlalerの使用方法については、[開発・配布元による解説記事](http://www.clear-code.com/blog/2012/11/7.html)などを参照して下さい。
+実行ファイルを1つ実行するだけでFirefoxのインストールとアドオンのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
+Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
 
 
 # FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
 
 キーワード：導入時初期設定
 
-実行ファイルを1つ実行するだけでFirefoxのインストールとプラグインのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer](https://github.com/clear-code/fx-meta-installer)があります。
-Fx Meta Instlalerの使用方法については、[開発・配布元による解説記事](http://www.clear-code.com/blog/2012/11/7.html)などを参照して下さい。
+実行ファイルを1つ実行するだけでFirefoxのインストールとプラグインのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
+Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard](https://addons.mozilla.org/ja/firefox/addon/cck/)によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
 
 
+
+  [CCK Wizard]: https://addons.mozilla.org/ja/firefox/addon/cck/
+  [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
+  [Addressbooks Synchronizer]: https://addons.mozilla.org/ja/thunderbird/addon/addressbooks-synchronizer/
+  [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
+  [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
+  [globalChrome.css]: https://github.com/clear-code/globalchromecss
+  [UI Text Overrider]: https://github.com/clear-code/ui-text-overrider
+  [Cert Importer]: https://github.com/clear-code/certimporter
+  [Do Not Save Password]: https://github.com/clear-code/donotsavepassword
+  [Force Addon Status]: https://github.com/clear-code/force-addon-status
+  [Auto Permission]: https://github.com/clear-code/autopermission
+  [Only Minor Update]: https://github.com/clear-code/only-minor-update
+  [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://github.com/clear-code/only-minor-update
+  [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
+  [Winmail Opener Bridge]: https://github.com/clear-code/winmaildat
+  [AutoConfiguration Hook]: https://github.com/clear-code/achook
+  [Hide Option Pane]: https://github.com/clear-code/hide-option-pane
+  [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）]: https://github.com/clear-code/alertinvalidaddresses
+  [ローカルファイルからのリンク挿入（Insert Link from Local File）]: https://github.com/clear-code/insertlinkfromlocalfile
+  [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts
+  [添付ファイルの文字エンコーディングの自動判別（Attachemnt Encoding Detector）]: https://github.com/clear-code/attachment-encoding-localized-autodetect
+  [History Preferences Modifier]: https://github.com/clear-code/historyprefsmodifier
+  [Disable about:config]: https://github.com/clear-code/disableaboutconfig
+  [Disable Addons]: https://github.com/clear-code/disableaddons
+  [Disable Sync]: https://github.com/clear-code/disablesync
+  [Disable Update]: https://github.com/clear-code/disableupdate
+  [@-moz-document について参考]: http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document
+  [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
