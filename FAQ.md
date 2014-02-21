@@ -1099,8 +1099,8 @@ Disable Syncは、既に同期済みの設定を消去しません。
 
 ### 設定方法
 
-FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Update][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Updateを導入すると、以下の機能が完全に無効化されます。
+FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Auto Update][]を使うことです。
+[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Auto Updateを導入すると、以下の機能が完全に無効化されます。
 
  * FirefoxおよびThunderbirdが定期的に自身のアップデート情報を取得する。
  * Firefoxが検索エンジンの自動アップデート情報を取得する。
@@ -1612,10 +1612,10 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 
 ### より詳細な設定を伴う実現方法
 
-サイト別設定を管理者が詳細に管理する方法として、アドオン [Auto Permission][]の利用が挙げられます。
-例えば、Auto Permissionsを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
+サイト別設定を管理者が詳細に管理する方法として、アドオン [Permissions Auto Registerer][]の利用が挙げられます。
+例えば、Permissions Auto Registererを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)Permissions Auto Registererを導入します。
  2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
     
         lockPref("extensions.autopermission.sites.www.example.com", "password=2, geo=2, cookie=2, popup=2, indexedDB=2, fullscreen=2, image=2, install=2, offline-app=2");
@@ -1676,7 +1676,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
 例えば、Cert Importerを使ってルート証明書 `myCA.crt` を登録する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってAuto Permissionsを導入します。
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
  2. Firefoxの実行ファイルと同じ位置にある `defaults` フォルダに `myCA.crt` を置きます。
     Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt` となります。
 
@@ -1895,31 +1895,33 @@ Firefoxのインストール後に別途アドオンをインストールする�
 
 
 
-  [CCK Wizard]: https://addons.mozilla.org/ja/firefox/addon/cck/
-  [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
-  [Addressbooks Synchronizer]: https://addons.mozilla.org/ja/thunderbird/addon/addressbooks-synchronizer/
-  [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
-  [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
-  [globalChrome.css]: https://github.com/clear-code/globalchromecss
-  [UI Text Overrider]: https://github.com/clear-code/ui-text-overrider
-  [Cert Importer]: https://github.com/clear-code/certimporter
-  [Do Not Save Password]: https://github.com/clear-code/donotsavepassword
-  [Force Addon Status]: https://github.com/clear-code/force-addon-status
-  [Auto Permission]: https://github.com/clear-code/autopermission
-  [Only Minor Update]: https://github.com/clear-code/only-minor-update
-  [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://github.com/clear-code/only-minor-update
-  [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
-  [Winmail Opener Bridge]: https://github.com/clear-code/winmaildat
+  [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
+  [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://github.com/clear-code/achook
-  [Hide Option Pane]: https://github.com/clear-code/hide-option-pane
-  [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）]: https://github.com/clear-code/alertinvalidaddresses
-  [ローカルファイルからのリンク挿入（Insert Link from Local File）]: https://github.com/clear-code/insertlinkfromlocalfile
-  [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts
-  [添付ファイルの文字エンコーディングの自動判別（Attachemnt Encoding Detector）]: https://github.com/clear-code/attachment-encoding-localized-autodetect
-  [History Preferences Modifier]: https://github.com/clear-code/historyprefsmodifier
+  [CCK Wizard]: https://addons.mozilla.org/firefox/addon/cck/
+  [Cert Importer]: https://addons.mozilla.org/firefox/addon/cert-importer/
+  [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
   [Disable about:config]: https://github.com/clear-code/disableaboutconfig
   [Disable Addons]: https://github.com/clear-code/disableaddons
-  [Disable Sync]: https://github.com/clear-code/disablesync
-  [Disable Update]: https://github.com/clear-code/disableupdate
-  [@-moz-document について参考]: http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document
+  [Disable Auto Update]: https://addons.mozilla.org/firefox/addon/disable-auto-update/
+  [Disable Sync]: https://addons.mozilla.org/firefox/addon/disable-sync/
+  [Do Not Save Password]: https://github.com/clear-code/donotsavepassword
+  [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
+  [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
+  [Force Addon Status]: https://addons.mozilla.org/firefox/addon/force-addon-status/
+  [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
+  [globalChrome.css]: https://github.com/clear-code/globalchromecss
+  [Hide Option Pane]: https://github.com/clear-code/hide-option-pane
+  [History Preferences Modifier]: https://github.com/clear-code/historyprefsmodifier
+  [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
+  [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
+  [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
+  [UI Text Overrider]: https://github.com/clear-code/ui-text-overrider
+  [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://addons.mozilla.org/thunderbird/addon/open-windows-shortcuts-dire/
+  [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
+  [Winmail Opener Bridge]: https://addons.mozilla.org/thunderbird/addon/winmail-opener-bridge/
+  [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）]: https://addons.mozilla.org/thunderbird/addon/patch-to-alert-invalid-addr/
+  [ローカルファイルからのリンク挿入（Insert Link from Local File）]: https://addons.mozilla.org/thunderbird/addon/insert-link-from-local-file/
+  [添付ファイルの文字エンコーディングの自動判別（Attachemnt Encoding Detector）]: https://addons.mozilla.org/thunderbird/addon/attachemnt-encoding-detecto/
+  [@-moz-document について参考]: http://www.akatsukinishisu.net/wiki.cgi?%40-moz-document
