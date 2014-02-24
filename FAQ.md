@@ -61,7 +61,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 `autoconfig.cfg` で管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
 アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、`autoconfig.cfg` では管理できません。
 
-なお、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Preferences Modifier][]が利用できます。
+なお、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Prefs Modifier][]が利用できます。
 
 <!--
 defaultPref()だけを使うのであれば、distribution/distribution.iniで以下のようにするという手もある。
@@ -1901,23 +1901,23 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [CCK Wizard]: https://addons.mozilla.org/firefox/addon/cck/
   [Cert Importer]: https://addons.mozilla.org/firefox/addon/cert-importer/
   [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
-  [Disable about:config]: https://github.com/clear-code/disableaboutconfig
-  [Disable Addons]: https://github.com/clear-code/disableaddons
+  [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
+  [Disable Addons]: https://addons.mozilla.org/firefox/addon/disable-addons/
   [Disable Auto Update]: https://addons.mozilla.org/firefox/addon/disable-auto-update/
   [Disable Sync]: https://addons.mozilla.org/firefox/addon/disable-sync/
-  [Do Not Save Password]: https://github.com/clear-code/donotsavepassword
+  [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
   [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
   [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
   [Force Addon Status]: https://addons.mozilla.org/firefox/addon/force-addon-status/
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
-  [globalChrome.css]: https://github.com/clear-code/globalchromecss
-  [Hide Option Pane]: https://github.com/clear-code/hide-option-pane
-  [History Preferences Modifier]: https://github.com/clear-code/historyprefsmodifier
+  [globalChrome.css]: https://addons.mozilla.org/firefox/addon/globalchromecss/
+  [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
+  [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
   [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
   [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
-  [UI Text Overrider]: https://github.com/clear-code/ui-text-overrider
+  [UI Text Overrider]: https://addons.mozilla.org/firefox/addon/ui-text-overrider/
   [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://addons.mozilla.org/thunderbird/addon/open-windows-shortcuts-dire/
   [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
   [Winmail Opener Bridge]: https://addons.mozilla.org/thunderbird/addon/winmail-opener-bridge/
