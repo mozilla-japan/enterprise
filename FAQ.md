@@ -7,6 +7,8 @@
 FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自由に変更できないようにするための機能が備わっています。
 この機能は「Mission Control Desktop（MCD）」や「AutoConfig」などと呼ばれています。
 
+また、アドオンを使うとActiveDirectoryのグループポリシーで設定を集中管理することもできます。
+
 ### ウィザードでの実現
 
 [CCK Wizard][]を使用すると、MCD相当の設定を行うアドオンを作成することができます。
@@ -83,7 +85,46 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 -->
 
 
+## グループポリシーでの実現 {#group-policy}
 
+アドオン[GPO for Firefox][]を使用すると、グループポリシー経由でMCDと同様の設定の集中管理を行えます。
+
+### 設定の手順
+
+
+ * 各クライアントについては、[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってGPO for Firefoxをインストールします。
+ * ドメインコントローラについては、[アドオンのダウンロードページ][GPO for Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
+   その後、読み込まれたテンプレートを使って設定を行います。
+
+以降は、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
+
+### 注意点
+
+ * 上記ページからダウンロードできる管理用テンプレートファイルの内容は、すべて英語となっています。
+   日本語で設定を管理したい場合は、管理用テンプレートファイルを自分で翻訳する必要があります。
+ * 管理できる設定項目は、管理用テンプレートファイルに記述されている物のみとなります。
+   それ以外の設定を管理したい場合は、管理用テンプレートファイルを自分で編集する必要があります。
+
+### 管理用テンプレートファイルに無い設定項目の管理について
+
+FirefoxやThunderbird自体の更新によって追加・変更・廃止された設定をグループポリシーとして管理できるようにするためには、管理用テンプレートファイルを自分で修正・更新する必要があります。
+
+管理用テンプレートファイルを編集する際は、MCDでの設定で使用する設定名とその値が、ドメインのメンバとなるWindows PCの以下のレジストリキー以下に書き出されるようにして下さい。
+
+ * ユーザ自身による変更を許容しない、管理者が固定する設定（Locked Settings）
+   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
+   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\lockPref`
+ * ユーザ自身による変更を許容する、初期値の設定（Default Settings）
+   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\defaultPref`
+   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\defaultPref`
+
+真偽型の設定は、`true`を整数の`1`、`false`を整数の`0`として書き出して下さい。
+
+例えば「Firefoxの自動アップデートを禁止する設定を、全ユーザに対して、強制的に反映させる」という場合の設定内容は以下の要領です。
+
+ * 書き込む先のレジストリキー：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
+ * 書き込む値の名前：`app.update.enabled`
+ * 書き込む値のデータ：`0`
 
 
 
@@ -91,10 +132,12 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-FirefoxやThunderbirdには、管理者による設定管理機能「MCD（AutoConfig）」が備わっています。
-この機能は各クライアントのローカルディスク上に設置した設定ファイルだけでなく、サーバ上に設置した設定ファイルを読み込ませることもできます。
+ActiveDirectoryドメインに参加しているWindows PCでは、[グループポリシー](#group-policy)によって、管理者が全クライアントの設定を一括して管理・変更することができます。
 
-以下では、設定ファイルを `http://internalserver/autoconfig.jsc` として提供してFirefoxの自動アップデートを禁止するという場合を例にとって設定の手順を説明します。
+グループポリシーを使用しない場合でも、FirefoxやThunderbirdの独自の設定管理機能である[MCD（AutoConfig）](#mcd)では、各クライアントのローカルディスク上に設置した設定ファイルだけでなく、サーバ上に設置した設定ファイルを読み込ませることができます。
+これにより、管理者が1つの設定ファイルを管理するだけで全クライアントの設定を一括して管理・変更するという運用が可能です。
+
+以下では、設定ファイルを `http://internalserver/autoconfig.jsc` として提供してFirefoxの自動アップデートを禁止するという場合を例にとってMCDでの設定の手順を説明します。
 
 ### 設定方法
 
@@ -141,13 +184,13 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-[MCD（AutoConfig）](#mcd)機能を使うと、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
+[MCD（AutoConfig）](#mcd)や[グループポリシーによる設定](#group-policy)では、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
 
 ### ウィザードでの実現
 
 [CCK Wizard][]を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
 
-### MCD用設定ファイルでの実現
+### MCDでの実現
 
 [MCD（AutoConfig）](#mcd)機能が提供する `lockPref()` ディレクティブを使用すると、ユーザによる設定の変更を禁止できます。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
 
@@ -182,7 +225,11 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 なお、設定画面上部の`全般` `タブ`などのパネル切り替えボタン自体や、`詳細`における`更新`などのタブを非表示にする場合には注意が必要です。
 これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
 
+### グループポリシーでの実現
 
+[グループポリシーによる設定](#group-policy)では、ユーザ自身による変更を許容しない設定（Locked Settings）も可能です。
+
+ただし、グループポリシーとの連携だけでは設定項目は非表示にできません、設定項目を非表示にするためには、MCDの場合と同様に、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。
 
 
 
@@ -192,7 +239,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-[MCD（AutoConfig）](#mcd)などの方法でアカウント設定を管理者が管理する際に、ユーザがアカウント設定の画面にアクセスできないようにすることができます。
+[MCD（AutoConfig）](#mcd)や[グループポリシー](#group-policy)などの方法でアカウント設定を管理者が管理する際に、ユーザがアカウント設定の画面にアクセスできないようにすることができます。
 
 ### 設定方法
 
@@ -1934,6 +1981,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
   [globalChrome.css]: https://addons.mozilla.org/firefox/addon/globalchromecss/
+  [GPO for Firefox]: https://addons.mozilla.org/firefox/addon/gpo-for-firefox/
   [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
   [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
