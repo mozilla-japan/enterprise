@@ -87,13 +87,13 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 
 ### グループポリシーでの実現 {#group-policy}
 
-アドオン[GPO for Firefox][]を使用すると、グループポリシー経由でMCDと同様の設定の集中管理を行えます。
+アドオン[GPO For Firefox][]を使用すると、グループポリシー経由でMCDと同様の設定の集中管理を行えます。
 
 #### 設定の手順
 
 
- * 各クライアントについては、[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってGPO for Firefoxをインストールします。
- * ドメインコントローラについては、[アドオンのダウンロードページ][GPO for Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
+ * 各クライアントについては、[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってGPO For Firefoxをインストールします。
+ * ドメインコントローラについては、[アドオンのダウンロードページ][GPO For Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
    その後、読み込まれたテンプレートを使って設定を行います。
 
 以降は、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
@@ -1981,7 +1981,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
   [globalChrome.css]: https://addons.mozilla.org/firefox/addon/globalchromecss/
-  [GPO for Firefox]: https://addons.mozilla.org/firefox/addon/gpo-for-firefox/
+  [GPO For Firefox]: https://addons.mozilla.org/firefox/addon/gpo-for-firefox/
   [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
   [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
