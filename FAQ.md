@@ -712,10 +712,32 @@ FirefoxやThundebirdがクラッシュすると、通常はクラッシュレポ
 
 ### 設定方法
 
-クラッシュレポーターを無効化するためには、`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files (x86)\Mozilla Thunderbird\override.ini` など）に置きます。
+クラッシュレポーターを無効化する方法は複数あります。
+
+<!--
+http://mxr.mozilla.org/mozilla-central/source/toolkit/crashreporter/nsExceptionHandler.cpp#1861
+-->
+
+#### Windowsのレジストリを使用する
+
+Windowsのレジストリキー `HKEY_LOCAL_MACHINE\Software\Mozilla\Firefox\Crash Reporter` または `HKEY_CURRENT_USER\Software\Mozilla\Firefox\Crash Reporter` について、DWORD型の値 `SubmitCrashReport` を作成し、データを `0` に設定します。
+
+#### OS Xのアプリケーションごとの設定を使用する
+
+`Mozilla Crash Reporter` の設定 `submitReport` について、値を`false` にします。
+
+#### Linuxのユーザ固有の設定を使用する
+
+`~/.mozilla/firefox/Crash Reports/crashreporter.ini` の位置に以下の内容のテキストファイルを置きます。
 
     [Crash Reporter]
-    Enabled＝0
+    SubmitReport＝0
+
+#### 環境変数を使用する場合
+
+環境変数 `MOZ_CRASHREPORTER_DISABLE` の値を `1` に設定した状態でFirefoxを起動するとクラッシュレポータが無効化されます。この指定は上記の設定よりも優先され、どのプラットフォームにおいても利用できます。
+
+
 
 
 
@@ -1918,7 +1940,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
   [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
   [UI Text Overrider]: https://addons.mozilla.org/firefox/addon/ui-text-overrider/
-  [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://addons.mozilla.org/thunderbird/addon/open-windows-shortcuts-dire/
+  [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts/releases
   [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
   [Winmail Opener Bridge]: https://addons.mozilla.org/thunderbird/addon/winmail-opener-bridge/
   [不正なアドレスの警告表示パッチ（Patch to Alert Invalid Addresses）]: https://addons.mozilla.org/thunderbird/addon/patch-to-alert-invalid-addr/
