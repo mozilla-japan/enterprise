@@ -11,7 +11,15 @@ FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、MCD相当の設定を行うアドオンを作成することができます。
+[CCK Wizard][]を使用すると、MCD相当の設定を行うアドオンを作成することができます。大まかな手順は以下の通りです。
+
+ 1. 管理者のPC上のFirefoxに、CCK2 Wizardを通常通りインストールします。
+ 2. ツールバー上に追加される「CCK2 Wizard」ボタンをクリックし、ウィザードを起動します。
+ 3. 「File」→「New」と辿り、カスタマイズ用設定の名前と一意な識別子を入力します。
+ 4. ウィザード（設定の入力画面）が出るので、行いたいカスタマイズの内容を決定します。
+ 5. ウィザードの最後のページで「Create an Extension」または「Use AutoConfig」ボタンを押下し、カスタマイズ用のファイルを出力します。
+ 6. 5で「Create an Extension」を選択した場合、アドオンのインストールパッケージが出力されるので、各クライアントにアドオンをインストールします。
+    「AutoConfig」を選択した場合、カスタマイズ用ファイルを圧縮したZIPファイルが出力されるので、各クライアントのFirefoxのインストール先にZIPファイルの内容を展開して設定ファイル群をインストールします。
 
 
 ### MCD用設定ファイルでの実現 {#mcd}
@@ -188,7 +196,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
 
 ### MCDでの実現
 
@@ -199,7 +207,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. [DOM Inspector][] をインストールします。
- 2. `ツール`→`Web開発`→`DOM Inspector` でDOM Inspectorを起動し、その状態で設定画面を開く。
+ 2. `ツール`→`Web開発`→`DOM Inspector` でDOM Inspectorを起動し、その状態で設定画面を開きます。
  3. 設定ダイアログを操作し、非表示にしたい設定項目が表示された状態にします。
  4. `File`→`Inspect Chrome Document`を選択し、設定画面のタイトルと同じ項目を選択します。
  5. 非表示にしたい項目のIDを調べる。
@@ -294,7 +302,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 `about:config` の利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
 [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、`about:config` へのアクセスが完全に禁止されます。
 
-また、[CCK Wizard][]でも同様のカスタマイズが可能です。
+また、[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1080,7 +1088,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、プライベートブラウジング機能の利用を禁止する機能を含むアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、プライベートブラウジング機能の利用を禁止する機能を含むアドオンを作成することができます。
 
 ### MCD用設定ファイルでの実現
 
@@ -1108,7 +1116,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
       "");
 
 
-また、[CCK Wizard][]でも同様のカスタマイズが可能です。
+また、[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1121,11 +1129,11 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、Firefox Syncの利用を禁止する機能を含むアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、Firefox Syncの利用を禁止する機能を含むアドオンを作成することができます。
 
 ### MCD用設定ファイルでの実現
 
-CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync][]を使う方法があります。
+CCK2 Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync][]を使う方法があります。
 [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Syncを導入すると、以下の操作が完全に禁止されます。
 
  * ユーザがFirefox Syncの初期設定を行う。
@@ -1133,7 +1141,7 @@ CCK Wizard以外でFirefox Syncの利用を禁止する方法としては、ア�
  * ユーザが手動で情報を同期する。
  * Firefoxが自動的に情報を同期する。
 
-[CCK Wizard][]でも同様のカスタマイズが可能です。
+[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 また、単に通信を無効化するだけであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによっても実現可能です。
 
@@ -1529,7 +1537,7 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
     // 例として、Mozilla Japanのページをホームの初期設定とする。
     defaultPref("browser.startup.homepage", "http://mozilla.jp/");
 
-また、[CCK Wizard][]でも同様のカスタマイズが可能です。
+また、[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1541,7 +1549,7 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、初期状態のブックマークを変更する機能を含むアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、初期状態のブックマークを変更する機能を含むアドオンを作成することができます。
 
 ### 設定ファイルで任意のブックマーク項目を初期状態に追加する
 
@@ -1590,7 +1598,7 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
     item.1.title=ブックマークメニューに追加したフォルダ中の項目1のタイトル
     item.1.link=ブックマークメニューに追加したフォルダ中の項目1のURL
 
-また、[CCK Wizard][]でも同様のカスタマイズが可能です。
+また、[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 ### 注意事項
 
@@ -1624,7 +1632,7 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、プロキシ設定を自動的に行うアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、プロキシ設定を自動的に行うアドオンを作成することができます。
 
 ### 設定ファイルでプロキシの設定を指定する
 
@@ -1641,7 +1649,7 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
     lockPref("network.proxy.type", 2);
     lockPref("network.proxy.autoconfig_url", "http://internal-server/proxy.pac");
 
-また、[CCK Wizard][]でも同様のカスタマイズが可能です。
+また、[CCK2 Wizard][]でも同様のカスタマイズが可能です。
 
 
 
@@ -1677,7 +1685,7 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
 
 ### より詳細な設定を伴う実現方法
 
@@ -1707,7 +1715,7 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
  * `1`：許可する。
  * `2`：禁止する。
 
-また、[CCK Wizard][]でも機能の利用を許可するドメインの指定が可能です。
+また、[CCK2 Wizard][]でも機能の利用を許可するドメインの指定が可能です。
 
 
 
@@ -1738,7 +1746,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
 ### ウィザードでの実現
 
-[CCK Wizard][]を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
+[CCK2 Wizard][]を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
 
 ### より詳細な設定を伴う実現方法
 
@@ -1751,7 +1759,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
 以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で `詳細`→`証明書`→`証明書を表示`と辿り、証明書が正しく登録されているかどうかを確認して下さい。
 
-また、[CCK Wizard][]でも昨日の利用を許可するドメインの指定が可能です。
+また、[CCK2 Wizard][]でも昨日の利用を許可するドメインの指定が可能です。
 
 #### 証明書の種類を正しく認識しない場合
 
@@ -1914,7 +1922,7 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
 
 キーワード：導入時初期設定
 
-アドオン [CCK Wizard][]を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
+アドオン [CCK2 Wizard][]を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
 
  * ホームページの変更
  * Firefox Syncの無効化
@@ -1940,7 +1948,7 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
 実行ファイルを1つ実行するだけでFirefoxのインストールと設定ファイルの設置をすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard][]によってそのようなアドオンを作成することができます。
 
 
 # Firefox・Thunderbirdにアドオンをバンドルして展開したい
@@ -1950,7 +1958,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとアドオンのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard][]によってそのようなアドオンを作成することができます。
 
 
 # FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
@@ -1960,14 +1968,14 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとプラグインのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK Wizard][]によってそのようなアドオンを作成することができます。
+Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard][]によってそのようなアドオンを作成することができます。
 
 
 
   [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://addons.mozilla.org/firefox/addon/autoconfiguration-hook/
-  [CCK Wizard]: https://addons.mozilla.org/firefox/addon/cck/
+  [CCK2 Wizard]: https://addons.mozilla.org/firefox/addon/cck2wizard/
   [Cert Importer]: https://addons.mozilla.org/firefox/addon/cert-importer/
   [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
