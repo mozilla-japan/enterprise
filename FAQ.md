@@ -1976,7 +1976,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
 
   [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
-  [AutoConfiguration Hook]: https://addons.mozilla.org/firefox/addon/autoconfiguration-hook/
+  [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
   [CCK2 Wizard]: https://addons.mozilla.org/firefox/addon/cck2wizard/
   [Cert Importer]: https://addons.mozilla.org/firefox/addon/cert-importer/
   [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
