@@ -106,13 +106,13 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
  * ドメインコントローラについては、[アドオンのダウンロードページ][GPO For Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
    その後、読み込まれたテンプレートを使って設定を行います。
    例えば、Windows Server 2008R2での手順は以下の通りです。
-   1. Active Directoryドメインを構築する。
-   2. ドメインの管理者でログインする。
-   3. [ローカル グループ ポリシー エディターを開く](http://technet.microsoft.com/ja-jp/library/cc731745.aspx "ローカル グループ ポリシー エディターを開く")の手順に則って、ローカル グループ ポリシー エディターを起動する。
-     （ファイル名を「gpedit.msc」と指定して起動する。）
-   4. [従来の管理用テンプレートを追加または削除する](http://technet.microsoft.com/ja-jp/library/cc772560.aspx "従来の管理用テンプレートを追加または削除する")の手順に則って、テンプレートを読み込ませる。
-      （「コンピューターの構成」配下の「管理用テンプレート」を右クリックして「テンプレートの追加と削除」を選択し、firefox.admを指定して追加する。）
-   5. 「従来の管理用テンプレート（ADM）」配下に「Mozilla Firefox」が追加されるので、必要な設定を変更する。
+   1. Active Directoryドメインを構築します。
+   2. ドメインの管理者でログインします。
+   3. [ローカル グループ ポリシー エディターを開く](http://technet.microsoft.com/ja-jp/library/cc731745.aspx "ローカル グループ ポリシー エディターを開く")の手順に則って、ローカル グループ ポリシー エディターを起動します。
+     （ファイル名を「gpedit.msc」と指定して起動します。）
+   4. [従来の管理用テンプレートを追加または削除する](http://technet.microsoft.com/ja-jp/library/cc772560.aspx "従来の管理用テンプレートを追加または削除する")の手順に則って、テンプレートを読み込ませます。
+      （「コンピューターの構成」配下の「管理用テンプレート」を右クリックして「テンプレートの追加と削除」を選択し、firefox.admを指定して追加します。）
+   5. 「従来の管理用テンプレート（ADM）」配下に「Mozilla Firefox」が追加されるので、必要な設定を変更します。
 
 以降は、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
 
