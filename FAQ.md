@@ -978,6 +978,26 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 
 
+## 一定以上の日数が経過した履歴を自動的に消去したい
+
+キーワード：導入時初期設定、集中管理、情報漏洩対策
+
+現在のバージョンのFirefoxは、一定以上の日数が経過した履歴を自動的に消去する機能を持っていません。
+アドオンを使用する事で、古い履歴を自動的に消去させることができます。
+
+### 設定方法
+
+日数ベースでの履歴の管理機能をFirefoxに導入する方法としては、アドオン [Expire history by days](https://addons.mozilla.org/firefox/addon/expire-history-by-days/)の利用が挙げられます。
+例えば、Expire history by daysを使って履歴の有効期限を30日に設定する場合の手順は以下の通りです。
+
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Expire history by daysを導入します。
+ 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
+    
+        lockPref("extensions.bonardonet.expire-history-by-days.days", 30);
+
+
+
+
 # ユーザが使える機能を制限したい
 
 
@@ -1702,7 +1722,7 @@ Firefoxには、Cookieや位置情報などのWebページから利用できる�
 サイト別設定を管理者が詳細に管理する方法として、アドオン [Permissions Auto Registerer](https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/)の利用が挙げられます。
 例えば、Permissions Auto Registererを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)Permissions Auto Registererを導入します。
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
  2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
     
         lockPref("extensions.autopermission.sites.www.example.com", "password=2, geo=2, cookie=2, popup=2, indexedDB=2, fullscreen=2, image=2, install=2, offline-app=2");
