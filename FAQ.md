@@ -1594,6 +1594,12 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 `distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
 
     [Global]
+    ; カスタマイズ済みFirefoxを識別する一意な名前。
+    id=our-customized-firefox
+    ; カスタマイズのバージョン。
+    version=1.0
+    ; 「Mozilla Firefoxについて」に表示される説明文。
+    about=Customized Version
     ; 初期化が完了したことを保持する設定の名前。
     bookmarks.initialized.pref=distribution.ini.boomkarks.initialized
     
