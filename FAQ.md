@@ -1676,6 +1676,32 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
 
 
 
+## プロキシを使用しない例外サイト（ドメイン）を指定したい
+
+キーワード：導入時初期設定
+
+Firefoxは、プロキシを使用しない例外サイトを管理する設定UIを持っていません。
+その代わり、自動プロキシ設定スクリプト（PACファイル）を使うことで、アクセス先のURLに応じてプロキシを使用するかどうか、どのプロキシを使用するかを細かく制御する事ができます。
+
+### 設定方法
+
+ 1. 自動プロキシ設定スクリプト（PACファイル）を作成します。
+    記述方法は、[Microsoftの技術資料](http://technet.microsoft.com/ja-jp/library/cc985335.aspx "付録 B : 自動プロキシ構成スクリプトの例")などを三項にして下さい。
+ 2. 作成した自動プロキシ設定スクリプトをクライアントからアクセス可能な位置に設置し、そのURLを控えます。
+    例えば以下の要領です。
+    * Webサーバ上に設置する。`http://internal-server/proxy.pac` など。
+    * ネットワークドライブ上のファイルやローカルファイルとして設置する。`file:///Z:/firefox/proxy.pac` など。
+    * Sambaサーバ、NASなどの上に設置する。`file://///file-server/shared/firefox/proxy.pac` など。
+ 3. 作成した自動プロキシ設定スクリプトをFirefoxで使用するように設定します。
+    * ユーザ固有の設定とする場合は、Firefoxのオプション画面で `詳細`→`ネットワーク`→`接続設定`と辿り、`自動プロキシ設定スクリプトURL`を選択して、2で控えたURLを指定します。
+    * 設定を管理者が集中管理する場合は、`network.proxy.type` の値を `2` にした上で、`network.proxy.autoconfig_url` の値に2で控えたURLを指定します。
+      例えば[MCD（AutoConfig）](#mcd)では以下の要領です。
+      
+          lockPref("network.proxy.type", 2);
+          lockPref("network.proxy.autoconfig_url", "http://internal-server/proxy.pac");
+
+
+
 
 ## 履歴を保存させたくない
 
