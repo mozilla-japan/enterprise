@@ -985,26 +985,6 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 
 
-## 一定以上の日数が経過した履歴を自動的に消去したい
-
-キーワード：導入時初期設定、集中管理、情報漏洩対策
-
-現在のバージョンのFirefoxは、一定以上の日数が経過した履歴を自動的に消去する機能を持っていません。
-アドオンを使用する事で、古い履歴を自動的に消去させることができます。
-
-### 設定方法
-
-日数ベースでの履歴の管理機能をFirefoxに導入する方法としては、アドオン [Expire history by days](https://addons.mozilla.org/firefox/addon/expire-history-by-days/)の利用が挙げられます。
-例えば、Expire history by daysを使って履歴の有効期限を30日に設定する場合の手順は以下の通りです。
-
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Expire history by daysを導入します。
- 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
-    
-        lockPref("extensions.bonardonet.expire-history-by-days.days", 30);
-
-
-
-
 # ユーザが使える機能を制限したい
 
 
@@ -1712,6 +1692,26 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 ### 注意事項
 
 過去のバージョンのFirefoxでは日数単位で閲覧履歴の保持期限を設定することができましたが、現在のバージョンのFirefoxでは、閲覧履歴を保存するかしないかの2択となっています。よって、短い期間だけ履歴を保存するということはできません。
+
+
+
+
+## 一定以上の日数が経過した履歴を自動的に消去したい
+
+キーワード：導入時初期設定、機能制限
+
+現在のバージョンのFirefoxは、一定以上の日数が経過した履歴を自動的に消去する機能を持っていません。
+アドオンを使用する事で、古い履歴を自動的に消去させることができます。
+
+### 設定方法
+
+日数ベースでの履歴の管理機能をFirefoxに導入する方法としては、アドオン [Expire history by days](https://addons.mozilla.org/firefox/addon/expire-history-by-days/)の利用が挙げられます。
+例えば、Expire history by daysを使って履歴の有効期限を30日に設定する場合の手順は以下の通りです。
+
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Expire history by daysを導入します。
+ 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
+    
+        lockPref("extensions.bonardonet.expire-history-by-days.days", 30);
 
 
 
