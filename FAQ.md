@@ -1686,7 +1686,7 @@ Firefoxは、プロキシを使用しない例外サイトを管理する設定U
 ### 設定方法
 
  1. 自動プロキシ設定スクリプト（PACファイル）を作成します。
-    記述方法は、[Microsoftの技術資料](http://technet.microsoft.com/ja-jp/library/cc985335.aspx "付録 B : 自動プロキシ構成スクリプトの例")などを三項にして下さい。
+    記述方法は、[Microsoftの技術資料](http://technet.microsoft.com/ja-jp/library/cc985335.aspx "付録 B : 自動プロキシ構成スクリプトの例")などを参考にして下さい。
  2. 作成した自動プロキシ設定スクリプトをクライアントからアクセス可能な位置に設置し、そのURLを控えます。
     例えば以下の要領です。
     * Webサーバ上に設置する。`http://internal-server/proxy.pac` など。
