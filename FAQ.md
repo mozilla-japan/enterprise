@@ -194,6 +194,13 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 `autoconfig.jsc` の書式と設定可能な設定項目の種類は、autoconfig.cfgと同一です。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
 
+なお、`autoconfig.jsc` はWebサーバでの提供以外に、ローカルファイル、ファイル共有サーバ上のファイルなどの形でも提供できます。以下はすべて有効な指定です。
+
+    // ローカルファイルとして提供する場合（ネットワークドライブをマウントする場合など）
+    lockPref("autoadmin.global_config_url", "file:///Z:/firefox/autoconfig.jsc");
+    
+    // Sambaサーバ、NASなどの上にファイルを設置する場合
+    lockPref("autoadmin.global_config_url", "file://///file-server/shared/firefox/autoconfig.jsc");
 
 
 
