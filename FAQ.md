@@ -2020,7 +2020,7 @@ Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Ins
 Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
 
 
-# Firefox・Thunderbirdにアドオンをバンドルして展開したい
+## Firefox・Thunderbirdにアドオンをバンドルして展開したい
 
 キーワード：導入時初期設定
 
@@ -2030,7 +2030,7 @@ Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Ins
 Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
 
 
-# FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
+## FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
 
 キーワード：導入時初期設定
 
