@@ -271,7 +271,6 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
-    
 
         @-moz-document url-prefix(chrome://messenger/content/) {
           #menu_accountmgr,
