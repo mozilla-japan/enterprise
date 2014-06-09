@@ -1982,6 +1982,37 @@ LDAPアドレス帳ではないアドレス帳の共有または同期を可能�
 
 
 
+## 初期状態で表示するカラムを変更しておきたい
+
+キーワード：導入時初期設定
+
+Thunderbirdのスレッドペインでは、初期状態でどのカラムを表示しておくかが決め打ちになっており、例えば「重要度」のようなカラムをすべてのフォルダ・すべてのアカウントで最初から表示された状態にしておきたいと思っても、管理者がそれを全クライアントに反映する事はできません。
+
+アドオン[Set Default Columns][]を使用すると、初期状態で表示しておくカラムを[MCD（AutoConfig）](#mcd)の設定ファイルなどからカスタマイズすることができます。
+
+### 設定方法
+
+以下は、[MCD（AutoConfig）](#mcd)で、「重要度」のカラムを初期状態で表示するようにする設定例です。
+
+    lockPref("extensions.set-default-columns@clear-code.com.columns", [
+      "priorityCol", // 追加したカラム
+      "threadCol",
+      "threadCol",
+      "attachmentCol",
+      "flaggedCol",
+      "subjectCol",
+      "unreadButtonColHeader",
+      "senderCol",
+      "junkStatusCol",
+      "dateCol",
+      "locationCol"
+    ].join(","));
+
+既に1度でも内容を表示した事があるフォルダについては、最後に内容を表示した時の表示カラムの状態が記憶されています。
+ここで設定した既定の表示カラムを反映するためには、カラム行の右端のアイコンをクリックしてメニューから「初期状態に戻す」を選択する必要があります。
+
+
+
 # カスタマイズ済みのFirefox・Thunderbirdの展開
 
 
@@ -2063,6 +2094,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
   [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
   [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
+  [Set Default Columns]: https://addons.mozilla.org/thunderbird/addon/set-default-columns/
   [UI Text Overrider]: https://addons.mozilla.org/firefox/addon/ui-text-overrider/
   [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts/releases
   [WinmailOpener]: https://www.google.co.jp/search?q=WinmailOpener
