@@ -1331,10 +1331,10 @@ FirefoxやThunderbirdの自動アップデート機能は、通常のインス�
 
 ###　差分ファイルの入手
 
-差分アップデートの適用時には、Firefoxのアップデート用差分ファイルを公式のFTPサイトから入手する必要があります。
+差分アップデートの適用時には、アップデート用差分ファイルを公式のFTPサイトから入手する必要があります。
 URLの凡例は以下の通りです。
 
-    ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/[アップデート先バージョン]/update/win32/ja/[firefox-<アップデート元バージョン]-[アップデート先バージョン>.partial.mar
+    ftp://ftp.mozilla.org/pub/mozilla.org/[製品名]/releases/[アップデート先バージョン]/update/win32/ja/[製品名]-[アップデート元バージョン]-[アップデート先バージョン].partial.mar
 
 例えばFirefox 30からFirefox 31へアップデートする場合に必要な差分ファイルは以下の場所から入手できます。 
 
