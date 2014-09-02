@@ -718,6 +718,9 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
       clearPref("toolkit.telemetry.prompted");
     lockPref("toolkit.telemetry.prompted", 2);
     lockPref("toolkit.telemetry.rejected", true);
+    
+    // ツールバーカスタマイズのヒントにおける詳細情報へのリンク
+    lockPref("browser.customizemode.tip0.learnMoreUrl", "");
 
 
 
