@@ -1585,6 +1585,26 @@ FirefoxやThunderbirdの初回起動時などに表示される「あなたの�
 
 
 
+## パフォーマンス情報の自動送信に関するメッセージを表示させたくない
+
+キーワード：導入時初期設定
+
+FirefoxやThunderbirdの初回起動時などに表示される「Mozilla Firefox（Thunderbird）の改善のため、メモリ消費量、パフォーマンス、応答速度を自動的にMozillaに送信しますか？」のメッセージは、設定で無効化することができます。
+
+### 設定方法
+
+以下は、[MCD（AutoConfig）](#mcd)での設定例です。設定名はFirefoxとThunderbirdで共通です。
+
+    if (typeof getPref("toolkit.telemetry.prompted") == "boolean")
+      clearPref("toolkit.telemetry.prompted");
+    lockPref("toolkit.telemetry.prompted", 2);
+
+上記のメッセージが表示された際に「いいえ」を選択した状態にしたい場合（パフォーマンス情報の自動送信を禁止したい場合）は、以下も併せて指定します。
+
+    lockPref("toolkit.telemetry.enabled", false);
+    lockPref("toolkit.telemetry.rejected", true);
+
+
 
 <!--
 ## ダウンロード完了の通知を表示させたくない（未稿）
