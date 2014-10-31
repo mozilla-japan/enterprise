@@ -437,14 +437,15 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 この場合のインストール手順は以下の通りです。
 
- 1. Firefoxの実行ファイルと同じ位置に `extensions` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\extensions` となります。
+ 1. アプリケーション組み込みアドオンの設置用のフォルダを作成します。
+    * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
+    * `C:\Program Files (x86)\Mozilla Thunderbird` にインストールされているThunderbirdの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Thunderbird\extensions` となります。
  2. 1.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
     DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
  3. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを2.で作成したフォルダの中に置きます。
     DOM Inspectorであれば、以下のようなファイル配置になります。
-    * `C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\install.rdf`
-    * `C:\Program Files (x86)\Mozilla Firefox\extensions\inspector@mozilla.org\chrome.manifest`
+    * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\install.rdf`
+    * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\chrome.manifest`
     * ...
  4. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
     
@@ -458,9 +459,9 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
         //  2: 現在ログインしているユーザのすべてのユーザープロファイルを対象としたインストール
         //     （HKEY_CURRENT_USER以下のレジストリを使用したインストールなど）
         //  4: そのインストール先のアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\extensions 以下へのファイル配置）
+        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置）
         //  8: そのコンピュータのすべてのアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\extensions 以下へのファイル配置、
+        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置、
         //       HKEY_LOCAL_MACHINE以下のレジストリを使用したインストールなど）
     
     この設定を行わないと、アドオンは次回起動時には無効化された状態となります。
