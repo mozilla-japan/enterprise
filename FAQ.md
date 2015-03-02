@@ -1697,10 +1697,28 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+設定ファイルを使用して任意のブックマーク項目を初期状態に追加する手順は以下の通りです。
 
-    // 例として、Mozilla Japanのページをホームの初期設定とする。
-    defaultPref("browser.startup.homepage", "http://mozilla.jp/");
+ 1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
+ 2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
+    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+ 3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
+    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
+
+`distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
+
+    [Global]
+    ; カスタマイズ済みFirefoxを識別する一意な名前。
+    id=our-customized-firefox
+    ; カスタマイズのバージョン。
+    version=1.0
+    ; 「Mozilla Firefoxについて」に表示される説明文。
+    about=Customized Version
+    
+    [LocalizablePreferences]
+    ; 必ず以下の2項目をセットで指定する。
+    browser.startup.homepage="http://mozilla.jp/"
+    browser.startup.homepage_reset="http://mozilla.jp/"
 
 また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
 
