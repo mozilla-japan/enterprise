@@ -404,6 +404,8 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 #### パターン1：組み込みモジュールとしてインストールする
 
+※[Bug 1144127 (https://bugzilla.mozilla.org/show_bug.cgi?id=1144127 "1144127 – Remove support for distribution/bundles")での変更により、この方法はFirefox 40およびそれ以降のバージョンでは利用できなくなりました。
+
 この場合のインストール手順は以下の通りです。
 
  1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
