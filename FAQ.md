@@ -2252,7 +2252,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
-  [CCK2 Wizard]: https://addons.mozilla.org/firefox/addon/cck2wizard/
+  [CCK2 Wizard]: https://mike.kaply.com/cck2/
   [Cert Importer]: https://github.com/clear-code/certimporter/releases
   [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
