@@ -440,7 +440,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 この場合のインストール手順は以下の通りです。
 
  1. アドオンのインストールパッケージを入手します。
- 2. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたファイル群の中の「install.rdf」をテキストエディタなどで開き、<em:unpack>true</em:unpack>`または`em:unpack="true"`という記述があるかどうかを調べます。
+ 2. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたファイル群の中の「install.rdf」をテキストエディタなどで開き、`<em:unpack>true</em:unpack>`または`em:unpack="true"`という記述があるかどうかを調べます。
     * `unpack`の指定がある場合:
       1. アプリケーション組み込みアドオンの設置用のフォルダを作成します。
          * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
