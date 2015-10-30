@@ -2253,11 +2253,11 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
   [CCK2 Wizard]: https://addons.mozilla.org/firefox/addon/cck2wizard/
-  [Cert Importer]: https://addons.mozilla.org/firefox/addon/cert-importer/
+  [Cert Importer]: https://github.com/clear-code/certimporter/releases
   [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
-  [Disable Addons]: https://addons.mozilla.org/firefox/addon/disable-addons/
-  [Disable Auto Update]: https://addons.mozilla.org/firefox/addon/disable-auto-update/
+  [Disable Addons]: https://github.com/clear-code/disableaddons/releases
+  [Disable Auto Update]: https://github.com/clear-code/disableupdate/releases
   [Disable Sync]: https://addons.mozilla.org/firefox/addon/disable-sync/
   [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
   [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
