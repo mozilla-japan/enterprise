@@ -747,6 +747,8 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     // ツールバーカスタマイズのヒントにおける詳細情報へのリンク
     lockPref("browser.customizemode.tip0.learnMoreUrl", "");
 
+    // タイルのパフォーマンス情報
+    lockPref("browser.newtabpage.enhanced", false);
 
 
 
