@@ -378,15 +378,15 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     // Javaプラグインを強制的に無効化する例
     pref("extensions.force-addon-status@clear-code.com.plugins.java.pattern",
          "^Java\(TM\) Plug-in"); // 判別のためのルール（正規表現）
-    pref("extensions.force-addon-status@clear-code.com.plugins.java.status",
-         false); // 設定する有効・無効の状態（true=有効、false=無効）
+    pref("extensions.force-addon-status@clear-code.com.plugins.java.enabledState",
+         0); // 設定する有効・無効の状態（0=常に無効、1=クリックされたら有効にする、2=常に有効）
 
 アドオンの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.addons.(アドオンの内部的なID)` という名前の真偽値の設定を1つ作成します。
 値が `true` であればアドオンは有効化され、 `false` であれば無効化されます。
 
-プラグインの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` と `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).status` という2つの設定を使用します。
+プラグインの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` と `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という2つの設定を使用します。
 まずプラグインを識別するための正規表現のルールを `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` という名前の文字列型の設定として作成します。正規表現は、about:pluginsで表示されるプラグインの名前にマッチするようにします。
-次に、プラグインの状態を制御する `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` という名前の真偽型の設定を作成します。値が `true` であればプラグインは有効化され、 `false` であれば無効化されます。
+次に、プラグインの状態を制御する `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という名前の数値型の設定を作成します。値が `2` であればプラグインは常に有効化され、値が `0` であれば常に無効化されます。値が `1` であれば、初期状態では無効化され、プラグイン有効化のメッセージがクリックされると有効化されます（既定の動作）。
 
 
 
