@@ -298,8 +298,8 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
- 3. 2で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
+ 3. 2で作成したファイルをThunderbirdのインストール先の `chrome` フォルダに設置します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
  4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
