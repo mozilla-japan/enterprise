@@ -36,7 +36,7 @@ CCK2 Wizardの大まかな利用手順は以下の通りです。
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/prefs/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
@@ -165,7 +165,7 @@ Active Directoryドメインに参加しているWindows PCでは、[グルー�
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/prefs/` ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\defaults\prefs\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
