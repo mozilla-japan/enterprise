@@ -644,7 +644,7 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     pref("gecko.handlerService.schemes.webcal.3.uriTemplate", "");
     
     // オートコレクト用辞書の取得先URL
-    lockPref("browser.dictionaries.download.url", "")
+    lockPref("browser.dictionaries.download.url", "");
     
     // 位置情報サービスの説明用URL
     lockPref("browser.geolocation.warning.infoURL", "");
@@ -661,8 +661,9 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     lockPref("browser.safebrowsing.enabled", false);
     lockPref("browser.safebrowsing.malware.enabled", false);
     lockPref("browser.safebrowsing.gethashURL", "");
-    lockPref("browser.safebrowsing.keyURL", "");
-    lockPref("browser.safebrowsing.malware", "");
+    lockPref("browser.safebrowsing.keyURL", "");  // Firefox 38用
+    lockPref("browser.safebrowsing.malware", "");  // Firefox 38用
+    lockPref("browser.safebrowsing.malware.reportURL", "");
     lockPref("browser.safebrowsing.reportErrorURL", "");
     lockPref("browser.safebrowsing.reportGenericURL", "");
     lockPref("browser.safebrowsing.reportMalwareErrorURL", "");
@@ -670,7 +671,8 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     lockPref("browser.safebrowsing.reportPhishURL", "");
     lockPref("browser.safebrowsing.reportURL", "");
     lockPref("browser.safebrowsing.updateURL", "");
-    lockPref("browser.safebrowsing.warning.infoURL", "");
+    lockPref("browser.safebrowsing.warning.infoURL", "");  // Firefox 38用
+    lockPref("browser.safebrowsing.appRepURL", "");
     
     // 検索プロバイダ（検索エンジン）の取得元URL
     lockPref("browser.search.searchEnginesURL", "");
@@ -709,9 +711,19 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     // アドオンマネージャから新しいアドオンを探すためのURL
     lockPref("extensions.webservice.discoverURL", "");
     
+    // パッチ、組み込みのアドオンの更新
+    lockPref("extensions.systemAddon.update.url", "");
+    
     // プラグインのインストール情報、更新情報の取得元URL
     lockPref("pfs.datasource.url", "");
     lockPref("plugins.update.url", "");
+    
+    // UIツアー
+    lockPref("browser.uitour.themeOrigin", "");
+    lockPref("browser.uitour.url", "");
+    
+    // マルチプロセスモードのフィードバックを促すメッセージ
+    lockPref("app.feedback.baseURL", "");
     
     // Firefox Sync
     lockPref("services.sync.account", "");
@@ -723,13 +735,27 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     lockPref("services.sync.syncKeyHelpURL", "");
     lockPref("services.sync.termsURL", "");
     
+    // Firefox Sync向けモバイルアプリの宣伝リンク
+    lockPref("identity.mobilepromo.android", "");
+    lockPref("identity.mobilepromo.ios", "");
+    
+    // アドオンの署名義務化に関するメッセージ
+    lockPref("xpinstall.signatures.devInfoURL", "");
+    
     // SNS連携機能
-    lockPref("social.enabled", false);
+    lockPref("social.enabled", false);  // Firefox 38用
+    lockPref("social.activeProviders", "");  // Firefox 45用
     lockPref("social.directories", "");
+    lockPref("social.whitelist", "");  // Firefox 38用
+    lockPref("social.shareDirectory", "");
+    lockPref("social.remote-install.enabled", false);  // Firefox 45用
+    lockPref("social.share.activationPanelEnabled", false);  // Firefox 45用
+    lockPref("social.toast-notifications.enabled", false);  // Firefox 45用
     lockPref("social.whitelist", "");
     
     // スタートページ
     lockPref("startup.homepage_welcome_url", "");
+    lockPref("startup.homepage_welcome_url.additional", "");
     
     // クラッシュレポーターの関連情報
     lockPref("toolkit.crashreporter.infoURL", "");
