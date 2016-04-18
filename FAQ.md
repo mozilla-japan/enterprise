@@ -746,7 +746,6 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     lockPref("social.enabled", false);  // Firefox 38用
     lockPref("social.activeProviders", "");  // Firefox 45用
     lockPref("social.directories", "");
-    lockPref("social.whitelist", "");  // Firefox 38用
     lockPref("social.shareDirectory", "");
     lockPref("social.remote-install.enabled", false);  // Firefox 45用
     lockPref("social.share.activationPanelEnabled", false);  // Firefox 45用
