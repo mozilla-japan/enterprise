@@ -372,8 +372,8 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）](#mcd)を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
 
     // Test Pilotアドオンを強制的に無効化する例
-    pref("extensions.force-addon-status@clear-code.com.addons.tbtestpilot@labs.mozilla.com",
-         true); // 設定する有効・無効の状態（true=有効、false=無効）
+    pref("extensions.force-addon-status@clear-code.com.addons.tbtestpilot@labs.mozilla.com.status",
+         "disabled"); // 設定する有効・無効の状態（"enabled"=有効、"disabled"=無効）
     
     // Javaプラグインを強制的に無効化する例
     pref("extensions.force-addon-status@clear-code.com.plugins.java.pattern",
@@ -381,8 +381,8 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     pref("extensions.force-addon-status@clear-code.com.plugins.java.enabledState",
          0); // 設定する有効・無効の状態（0=常に無効、1=クリックされたら有効にする、2=常に有効）
 
-アドオンの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.addons.(アドオンの内部的なID)` という名前の真偽値の設定を1つ作成します。
-値が `true` であればアドオンは有効化され、 `false` であれば無効化されます。
+アドオンの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.addons.(アドオンの内部的なID).status` という名前の文字列型の設定を1つ作成します。
+値が `enabled` であればアドオンは有効化され、 `disabled` であれば無効化されます。
 
 プラグインの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` と `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という2つの設定を使用します。
 まずプラグインを識別するための正規表現のルールを `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` という名前の文字列型の設定として作成します。正規表現は、about:pluginsで表示されるプラグインの名前にマッチするようにします。
