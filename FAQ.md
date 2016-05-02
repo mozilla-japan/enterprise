@@ -928,6 +928,10 @@ Firefoxのスマートロケーションバー機能（ロケーションバー�
 
     // スマートロケーションバーのオートコンプリート機能の無効化
     lockPref("browser.urlbar.autocomplete.enabled", false);
+    lockPref("browser.urlbar.maxRichResults", -1);
+    lockPref("browser.urlbar.suggest.history", false);
+    lockPref("browser.urlbar.suggest.bookmark", false);
+    lockPref("browser.urlbar.suggest.openpage", false);
 
 なお、この設定を反映しても、既に保存されている入力履歴や閲覧履歴の削除までは行われません（単に表示されなくなります）。
 
