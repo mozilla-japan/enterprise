@@ -913,6 +913,17 @@ Firefoxのオートコンプリート機能（テキストボックスに入力�
 
 なお、この設定を反映しても、既に保存されている入力履歴の削除までは行われません。
 
+フォーム要素の非表示は[globalChrome.css][]に以下の設定を追加することで実現可能です。globalChrome.cssの設定方法は[一部の設定項目を非表示にして、ユーザが設定を変更できないようにしたい](https://www.mozilla.jp/business/faq/tech/setting-management/#faq3)を参照してください。
+
+    @-moz-document
+      url-prefix("chrome://browser/content/preferences/preferences.xul"),
+      url-prefix("chrome://browser/content/preferences/in-content/preferences.xul"),
+      url-prefix("about:preferences") {
+      #rememberForms {
+        visibility: collapse !important;
+        -moz-user-focus: ignore !important;
+      }
+    }
 
 
 
