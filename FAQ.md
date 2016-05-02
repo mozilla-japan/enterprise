@@ -928,10 +928,21 @@ Firefoxのスマートロケーションバー機能（ロケーションバー�
 
     // スマートロケーションバーのオートコンプリート機能の無効化
     lockPref("browser.urlbar.autocomplete.enabled", false);
+    lockPref("browser.urlbar.maxRichResults", -1);
 
 なお、この設定を反映しても、既に保存されている入力履歴や閲覧履歴の削除までは行われません（単に表示されなくなります）。
 
+要素の非表示は[globalChrome.css][]に以下の設定を追加することで実現可能です。globalChrome.cssの設定方法は[一部の設定項目を非表示にして、ユーザが設定を変更できないようにしたい](https://www.mozilla.jp/business/faq/tech/setting-management/#faq3)を参照してください。
 
+    @-moz-document
+      url-prefix("chrome://browser/content/preferences/preferences.xul"),
+      url-prefix("chrome://browser/content/preferences/in-content/preferences.xul"),
+      url-prefix("about:preferences") {
+      #locationBarGroup {
+        visibility: collapse !important;
+        -moz-user-focus: ignore !important;
+      }
+    }
 
 
 
