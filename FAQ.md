@@ -681,8 +681,10 @@ Firefoxにはネットワーク上のサーバと連携する機能が多数含�
     lockPref("datareporting.healthreport.service.enabled", false);
     lockPref("datareporting.healthreport.uploadEnabled", false);
     lockPref("datareporting.healthreport.about.reportUrl", "");
+    lockPref("datareporting.healthreport.about.reportUrlUnified", "");
     lockPref("datareporting.healthreport.documentServerURI", "");
     lockPref("datareporting.healthreport.infoURL", "");
+    lockPref("datareporting.policy.dataSubmissionEnabled", false);
     
     // Webアプリケーションのインストールを許可するドメイン
     lockPref("dom.mozApps.signed_apps_installable_from", "");
@@ -886,7 +888,12 @@ Firefoxには、利用時におけるメモリの使用状況などの性能に�
       clearPref("toolkit.telemetry.prompted");
     lockPref("toolkit.telemetry.prompted", 2);
     lockPref("toolkit.telemetry.rejected", true);
+    lockPref("datareporting.healthreport.service.enabled", false);
     lockPref("datareporting.healthreport.uploadEnabled", false);
+    lockPref("datareporting.healthreport.about.reportUrl", "");
+    lockPref("datareporting.healthreport.about.reportUrlUnified", "");
+    lockPref("datareporting.healthreport.documentServerURI", "");
+    lockPref("datareporting.healthreport.infoURL", "");
     lockPref("datareporting.policy.dataSubmissionEnabled", false);
 
 
