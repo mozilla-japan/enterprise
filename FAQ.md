@@ -1068,7 +1068,7 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 Firefoxはキーボードショートカットを管理する機能を含んでいませんが、アドオンを使うことによって、キーボードショートカットの割り当てを変更したりショートカットを無効化したりできます。
 
-個人での利用の場合は[Customizable Shortcuts][]が有用ですが、本項執筆時点のバージョンでは、管理者が行った設定を全体に展開するという用途には残念ながら向いていません。そこで本項では代わりに[UI Text Overrider][]を使った設定の手順を解説します。
+本項では、管理者が行った設定を全体に展開する用途を想定して、[UI Text Overrider][]を使った設定の手順を解説します。
 
 ### 設定方法
 
@@ -2300,7 +2300,6 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
   [CCK2 Wizard]: https://mike.kaply.com/cck2/
   [Cert Importer]: https://github.com/clear-code/certimporter/releases
-  [Customizable Shortcuts]: https://addons.mozilla.org/firefox/addon/customizable-shortcuts/
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
   [Disable Addons]: https://github.com/clear-code/disableaddons/releases
   [Disable Auto Update]: https://github.com/clear-code/disableupdate/releases
