@@ -1009,7 +1009,9 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
         @-moz-document url-prefix("about:home"),
                        url-prefix("chrome://browser/content/abouthome/aboutHome.xhtml") {
           *|*#restorePreviousSessionSeparator,
-          *|*#restorePreviousSession {
+          *|*#restorePreviousSession,
+          *|*[id="restorePreviousSessionSeparator"],
+          *|*[id="restorePreviousSession"] {
             visibility: collapse !important;
             -moz-user-focus: ignore !important;
           }
