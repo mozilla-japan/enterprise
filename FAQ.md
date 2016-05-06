@@ -999,12 +999,20 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 
  1. 「メモ帳」などのテキストエディタを開き、以下のスタイル指定を記述します。
     
+        @-moz-document url-prefix("chrome://browser/content/browser.xul") {
+          #historyRestoreLastSession,
+          #appMenuRestoreLastSession {
+            visibility: collapse !important;
+            -moz-user-focus: ignore !important;
+          }
+        }
         @-moz-document url-prefix("about:home"),
                        url-prefix("chrome://browser/content/abouthome/aboutHome.xhtml") {
           *|*#restorePreviousSessionSeparator,
-          *|*#restorePreviousSession {
-            visibility: collapse !important;
-            -moz-user-focus: ignore !important;
+          *|*#restorePreviousSession,
+          *|*[id="restorePreviousSessionSeparator"],
+          *|*[id="restorePreviousSession"] {
+            display: none !important;
           }
         }
     
