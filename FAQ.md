@@ -2307,7 +2307,7 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
   [Disable Addons]: https://github.com/clear-code/disableaddons/releases
   [Disable Auto Update]: https://github.com/clear-code/disableupdate/releases
-  [Disable Sync]: https://addons.mozilla.org/firefox/addon/disable-sync/
+  [Disable Sync]: https://github.com/clear-code/disablesync/releases
   [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
   [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
   [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
