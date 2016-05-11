@@ -1190,7 +1190,11 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
     @-moz-document url-prefix(chrome://browser/content/browser.xul) {
       #menu_newPrivateWindow,
-      #appmenu_newPrivateWindow {
+      #privatebrowsing-button,
+      #wrapper-privatebrowsing-button,
+      #key_privatebrowsing,
+      #Tools\:PrivateBrowsing,
+      #context-openlinkprivate {
         visibility: collapse !important;
         -moz-user-focus: ignore !important;
       }
