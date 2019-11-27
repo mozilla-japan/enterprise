@@ -1,0 +1,5 @@
+node_modules
+/*.txt
+src/*.md
+dist/*.html
+dist/**/*.html

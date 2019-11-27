@@ -1,0 +1,72 @@
+<?php
+
+$page_type          = 'QAPage'; // https://schema.org/QAPage
+$page_title         = '{{ title }} | 法人向け情報 | Mozilla Japan';
+$page_description   = 'Mozilla 製品の法人内での導入などに関して、よく寄せられる質問について回答をまとめました。ライセンス、サポート、リリース状況などについて不明な点があるときは、まずこちらをご覧ください。';
+$body_id            = 'tech-faq';
+$body_class         = 'users business faq tech';
+$css                = array('/business/static/styles/main'); // 最終更新日は /includes/functions.inc.php で管理
+
+$breadcrumbs        = array(
+  '/business/' => '法人向け情報',
+  '/business/faq/' => 'よくある質問',
+  '/business/faq/tech/' => '{{ title }}'
+);
+
+$header_nav = array(
+    "法人向け情報" => "/business/",
+    "導入事例" => "/business/profiles/",
+    "サポート" => "/business/support/",
+    "よくある質問" => "/business/faq/"
+);
+
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/templates/sandstone/default-header.inc.php';
+
+?>
+          <nav class="outer">
+            <ul class="inner">
+              <li><a href="/business/faq/">一般的な質問</a></li>
+              <li><a href="/business/faq/tech/">技術的な質問</a></li>
+            </ul>
+          </nav>
+          <main itemprop="mainContentOfPage" itemscope itemtype="http://schema.org/WebPageElement">
+            <div id="masthead" class="outer">
+              <div class="inner">
+                <header>
+                  <h1>{{ title }}</h1>
+                  <p>Mozilla 製品の法人内での導入などに関して、特に技術的な点に関してよく寄せられる質問について回答をまとめました。</p>
+                </header>
+              </div>
+            </div>
+            <div class="outer outer-3">
+              <div class="inner">
+                <div id="main-content">
+                  {%- for category in categories %}
+                  <section id="{{ category.id }}">
+                    <h2>{{ category.title }}</h2>
+                    <ul>
+                      {%- for item in category.items %}
+                      <li><a href="{{ category.id }}/#faq{{ loop.index }}">{{ item.title }}</a></li>
+                      {%- endfor %}
+                    </ul>
+                  </section>
+                  {%- endfor %}
+                </div><!-- end #main-content -->
+                <aside id="sidebar">
+                  <nav>
+                    <ul>
+                      {%- for category in categories %}
+                      <li><a href="{{ category.id }}/">{{ category.title }}</a></li>
+                      {%- endfor %}
+                    </ul>
+                  </nav>
+                </aside><!-- end #sidebar -->
+              </div>
+            </div>
+          </main>
+<?php 
+
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/business/includes/events.inc.php';
+@include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/templates/sandstone/default-footer.inc.php';
+
+?>

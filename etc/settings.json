@@ -1,0 +1,18 @@
+{
+  "title": "技術的なよくある質問",
+  "source": "https://raw.githubusercontent.com/mozilla-japan/enterprise/master/FAQ.md",
+  "download": "src",
+  "dest": "dist",
+  "ids": [
+    "setting-management",
+    "addons",
+    "multiple-versions",
+    "security",
+    "user-control",
+    "auto-update",
+    "suppression",
+    "customize-defaults",
+    "misc",
+    "provisioning"
+  ]
+}
