@@ -101,8 +101,6 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 `autoconfig.cfg` で管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
 アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、`autoconfig.cfg` では管理できません。
 
-なお、Firefox 43以前では、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Prefs Modifier][]が利用できます。Firefox 44以降ではこの問題は修正されています。
-
 <!--
 defaultPref()だけを使うのであれば、distribution/distribution.iniで以下のようにするという手もある。
 
@@ -1569,15 +1567,37 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 ### 設定方法
 
 日数ベースでの履歴の管理機能をFirefoxに導入する方法としては、アドオン [Expire history by days](https://addons.mozilla.org/firefox/addon/expire-history-by-days/)の利用が挙げられます。
-例えば、Expire history by daysを使って履歴の有効期限を30日に設定する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Expire history by daysを導入します。
- 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
+ただし、このアドオンは管理者が設定を変更する機能を持ちません。履歴の削除日数を管理者側で制御するためには、ポリシー設定に対応した派生版である[Flexible Expire History by Days](https://github.com/clear-code/flexible-expire-history-by-days/releases)を使用する必要があります。例えば、履歴を30日まで保持する設定であれば以下の要領です。
+
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Flexible Expire History by Daysを導入します。
+ 2. [グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)の[`3rdparty.Extensions`](https://github.com/mozilla/policy-templates/blob/master/README.md#sanitizeonshutdown-selective)、または[managed storage manifest](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_manifests#Managed_storage_manifests)を用いて設定を固定します。
+    以下はポリシー定義ファイルでの設定例です。
     
-        lockPref("extensions.bonardonet.expire-history-by-days.days", 30);
-
-
-
+    {
+      "policies": {
+        "3rdparty": {
+          "Extensions": {
+            "flexible-expire-history-by-days@clear-code.com": {
+              "frequency": 0,
+              "days":      30
+            }
+          }
+        }
+      }
+    }
+    
+    以下はmanaged storage manifestでの設定例です。
+    
+    {
+      "name": "flexible-expire-history-by-days@clear-code.com",
+      "description": "Configs for Flexible Expire History by Days",
+      "type": "storage",
+      "data": {
+        "frequency": 0,
+        "days":      30
+      }
+    }
 
 
 
@@ -1585,45 +1605,69 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 
 キーワード：導入時初期設定
 
-Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、`about:permissions`（サイト別設定マネージャ）で設定の変更や消去が可能です。
+Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、設定画面の「プライバシーとセキュリティ」配下の「許可設定」で設定の変更や消去が可能です。
 
-アドオンを使うことによって、これらのサイト別設定を管理者が任意の状態に設定することができます。
+### 設定方法
 
-### ウィザードでの実現
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Permissions`](https://github.com/mozilla/policy-templates/blob/master/README.md#permissions) 配下に設定を記述して下さい。
 
-[CCK2 Wizard](#cck)を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
+例えば、カメラ、マイク、位置情報、デスクトップ通知のそれぞれについて、既定ではアクセスを拒否しつつ `https://example.org` に対してのみ許可する場合は以下のようになります。
 
-### より詳細な設定を伴う実現方法
+    {
+      "policies": {
+        "Permissions": {
+          "Camera": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Microphone": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Location": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Notifications": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          }
+        }
+      }
+    }
 
-サイト別設定を管理者が詳細に管理する方法として、アドオン [Permissions Auto Registerer](https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/)の利用が挙げられます。
-例えば、Permissions Auto Registererを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
+逆に、既定ではアクセスを許可しつつ `https://example.org` に対してのみ禁止する場合は以下のようになります。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
- 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
-    
-        lockPref("extensions.autopermission.sites.www.example.com", "password=2, geo=2, cookie=2, popup=2, indexedDB=2, fullscreen=2, image=2, install=2, offline-app=2");
-
-設定名はサイト別設定を指定するサイトのドメイン名を含めて `extensions.autopermission.sites.<ドメイン名>` とします。設定値は、1つ以上の設定項目についてキーと値を `=` で繋げたリストをカンマ区切りで列挙した文字列で指定します。指定可能な設定項目は以下の通りです。
-
- * `password`：パスワードを保存する。
- * `geo`：位置情報を取得する。
- * `cookie`：Cookieを保存する。
- * `popup`：ポップアップウィンドウを開く。
- * `indexedDB`：オフラインストレージを利用する。
- * `fullscreen`：DOMフルスクリーンAPIを利用する。
- * `image`：画像を読み込む。
- * `install`：アドオンのインストールを許可する。
- * `offline-app`：オフラインアプリケーション用のキャッシュの利用を許可する。
-
-また、個々の項目の値は以下のいずれかを取ります。
-
- * `0`：不明。どうするかはユーザに尋ねる。
- * `1`：許可する。
- * `2`：禁止する。
-
-また、[CCK2 Wizard](#cck)でも機能の利用を許可するドメインの指定が可能です。
-
-
+    {
+      "policies": {
+        "Permissions": {
+          "Camera": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Microphone": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Location": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Notifications": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          }
+        }
+      }
+    }
 
 
 
@@ -1644,45 +1688,39 @@ Firefoxのロケーションバーでは通常、URL文字列の先頭の「http
 
 
 
-## 独自SSL証明書やルート証明書をあらかじめ登録済みの状態にしたい
+## 独自ルート証明書をあらかじめ登録済みの状態にしたい
 
 キーワード：導入時初期設定
 
-Firefoxにあらかじめ登録されている物以外の証明局によって署名された証明書（いわゆる自己署名証明書など）を使ったWebサイトにSSLで接続すると、Firefoxは不明な証明書として警告を表示します。それらの証明書を別途安全な手段で提供できるのであれば、証明書をFirefoxにあらかじめ登録しておくことで、警告画面を見ずにWebサイトを利用することができます。
+Firefoxにあらかじめ登録されている物以外の証明局によって署名された証明書を使ったWebサイトにSSLで接続すると、Firefoxは不明な証明書として警告を表示します。それらの証明書の発行元である独自認証局の証明書を別途安全な手段で提供できるのであれば、証明書をFirefoxにあらかじめ登録しておくことで、警告画面を見ずにWebサイトを利用することができます。
 
-### ウィザードでの実現
+### エンタープライズの証明書の自動インポート
 
-[CCK2 Wizard](#cck)を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
+FirefoxはActive DirectoryのグループポリシーによってWindowsに配布されたエンタープライズの証明書を自動的にインポートして認識します。
+Active Directoryを運用している場合、この方法での配布が最も手軽です。
 
-### より詳細な設定を伴う実現方法
+### PEM形式の証明書の自動インポート
 
-証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
-例えば、Cert Importerを使ってルート証明書 `myCA.crt` を登録する場合の手順は以下の通りです。
+Active Directoryを運用していない環境では、[ポリシー定義ファイル](#policies-json)を用いて証明書を自動インポートできます。
+手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
- 2. Firefoxの実行ファイルと同じ位置にある `defaults` フォルダに `myCA.crt` を置きます。
-    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\defaults\myCA.crt` となります。
-
-以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で `詳細`→`証明書`→`証明書を表示`と辿り、証明書が正しく登録されているかどうかを確認して下さい。
-
-また、[CCK2 Wizard](#cck)でも機能の利用を許可するドメインの指定が可能です。
-
-#### 証明書の種類を正しく認識しない場合
-
-Cert Importerが証明書自身に設定されたフラグを正しく認識できなかった場合、ルート証明書がSSLのサイト証明書として登録されるといった結果になることがあります。このような場合は、設定を用いて強制的に証明書の種類を上書き指定することができます。[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
-
-    defaultPref("extensions.certimporter.certs.myCA.crt", 1);
-
-証明書の種類を指定する設定の名前は `extensions.certimporter.certs.<ファイル名>` とし、値は以下の整数値の1つ以上の和を指定します。
-
- * `1`：ルート証明書。
- * `2`：ユーザー証明書。
- * `4`：E-mail証明書。
- * `8`：SSLサイト証明書。
+1. PEM形式の証明書ファイルをローカルディスク上またはUNCパスで表されるファイルサーバー上に設置します。
+2. ポリシー定義ファイルの [`Certificates.Install`](https://github.com/mozilla/policy-templates/blob/master/README.md#certificates--install) に、インポート対象の証明書ファイルのパスを指定します。例えば以下の要領です。
+   
+   {
+     "policies": {
+       "Certificates": {
+         "Install": [
+           "C:\\Users\\All Users\\cert1.pem",
+           "\\\\192.168.0.10\\shared\\cert2.pem"
+         ]
+       }
+     }
+   }
 
 #### SSLのセキュリティ例外の自動登録
 
-Cert Importerは、SSLのセキュリティ例外について、特定のホストを対象に設定する事もできます。詳細は[Cert Importer][]の説明文を参照して下さい。
+Firefoxは、SSLのセキュリティ例外について、特定のホストを対象に設定する機能を持ちません。
 
 
 
@@ -1854,38 +1892,12 @@ Thunderbirdのスレッドペインでは、初期状態でどのカラムを表
 # カスタマイズ済みのFirefox・Thunderbirdの展開
 
 
-
-## アドオンを1つインストールするだけでカスタマイズが完了する、という形で複雑なカスタマイズ内容を展開したい
-
-キーワード：導入時初期設定
-
-アドオン [CCK2 Wizard](#cck)を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
-
- * ホームページの変更
- * Firefox Syncの無効化
- * アドオンマネージャからのアドオンのインストールの禁止
- * その他、[MCD（AutoConfig）](#mcd)相当の設定変更
- * Firefoxを既定のブラウザに自動設定する
- * ヘルプメニューの変更
- * ドメインごとの機能の利用許可の初期設定
- * 検索エンジンの変更・追加
- * 初期状態のブックマークの内容の変更
- * Windowsレジストリの変更
- * 証明書の自動インポート
- * about:configの利用禁止
- * プライベートブラウジング機能の利用禁止
- * アドオンの同梱
- * プラグインの同梱
-
-
 ## Firefox・ThunderbirdにMCD（AutoConfig）の設定ファイルをバンドルして展開したい
 
 キーワード：導入時初期設定
 
 実行ファイルを1つ実行するだけでFirefoxのインストールと設定ファイルの設置をすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
-
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
 
 
 ## Firefox・Thunderbirdにアドオンをバンドルして展開したい
@@ -1895,8 +1907,6 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとアドオンのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
-
 
 ## FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
 
@@ -1905,32 +1915,22 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとプラグインのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
-
 
 
   [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
-  [CCK2 Wizard]: https://mike.kaply.com/cck2/
-  [Cert Importer]: https://github.com/clear-code/certimporter/releases
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
   [Disable Addons]: https://github.com/clear-code/disableaddons/releases
   [Disable Auto Update]: https://github.com/clear-code/disableupdate/releases
   [Disable Sync]: https://github.com/clear-code/disablesync/releases
   [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
-  [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
   [Duplicate Tabs Closer]: https://addons.mozilla.org/firefox/addon/duplicate-tabs-closer/
   [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
-  [Force Addon Status]: https://addons.mozilla.org/firefox/addon/force-addon-status/
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
   [globalChrome.css読み込み用スクリプト]: https://github.com/clear-code/globalchromecss/blob/master/autoconfig-globalchromecss.js
-  [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
-  [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
-  [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
-  [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
   [Set Default Columns]: https://addons.mozilla.org/thunderbird/addon/set-default-columns/
   [UI Text Overrider]: https://addons.mozilla.org/firefox/addon/ui-text-overrider/
   [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts/releases
