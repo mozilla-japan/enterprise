@@ -5,6 +5,7 @@
 キーワード：機能制限、導入時初期設定、集中管理
 
 FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自由に変更できないようにするための機能が備わっています。
+
 Firefox ESR60以降のバージョンでは、Active DirectoryのグループポリシーまはたJSON形式のポリシー定義ファイルを用いて設定を集中管理できます。
 また、従来からの設定の集中管理の仕組みである「Mission Control Desktop（MCD、あるいはAutoConfig）」も使用できます。
 
@@ -60,6 +61,8 @@ Active Directoryを運用していない場合や、Windows以外のプラット
     pref("general.config.filename", "autoconfig.cfg");
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
+    // 「globalChrome.css読み込み用スクリプト」を使用する場合は以下の行も必要です。
+    pref("general.config.sandbox_enabled", false);
 
 作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
@@ -180,60 +183,6 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 
 
-## 一部の設定項目を非表示にして、ユーザが設定を変更できないようにしたい
-
-キーワード：機能制限、導入時初期設定、集中管理
-
-[MCD（AutoConfig）](#mcd)や[グループポリシーによる設定](#group-policy)では、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
-
-### ウィザードでの実現
-
-[CCK2 Wizard](#cck)を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
-
-### MCDでの実現
-
-[MCD（AutoConfig）](#mcd)機能が提供する `lockPref()` ディレクティブを使用すると、ユーザによる設定の変更を禁止できます。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
-
-`lockPref()` によって値が固定された設定は、Firefox・Thunderbirdの設定画面上ではグレイアウトして表示されます。
-
-変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
-
- 1. [DOM Inspector][] をインストールします。
- 2. `ツール`→`Web開発`→`DOM Inspector` でDOM Inspectorを起動し、その状態で設定画面を開きます。
- 3. 設定ダイアログを操作し、非表示にしたい設定項目が表示された状態にします。
- 4. `File`→`Inspect Chrome Document`を選択し、設定画面のタイトルと同じ項目を選択します。
- 5. 非表示にしたい項目のIDを調べる。
- 6. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
-    
-    以下は Firefoxの設定の「一般」パネルにおける起動時の挙動の設定を非表示にする場合の例。
-    
-        @-moz-document url-prefix(chrome://browser/content/preferences/preferences.xul) {
-          #startupGroup {
-            /* display:none はDOMツリーに変化を与えて挙動を壊す恐れがあるため、
-               単に非表示にするのみとする。 */
-            visibility: collapse !important;
-            -moz-user-focus: ignore !important;
-          }
-        }
-    
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 7. 6で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
- 8. 7で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Firefox\chrome\globalChrome.css` となる。）
- 9. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
-
-なお、設定画面上部の`全般` `タブ`などのパネル切り替えボタン自体や、`詳細`における`更新`などのタブを非表示にする場合には注意が必要です。
-これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
-
-### グループポリシーでの実現
-
-[グループポリシーによる設定](#group-policy)では、ユーザ自身による変更を許容しない設定（Locked Settings）も可能です。
-
-ただし、グループポリシーとの連携だけでは設定項目は非表示にできません、設定項目を非表示にするためには、MCDの場合と同様に、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。
-
-
-
-
 
 ## Thunderbirdのアカウント設定を非表示にしたい（管理者が設定を集中管理するので、アカウント設定の画面にアクセスさせたくない）
 
@@ -243,9 +192,9 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、[globalChrome.css読み込み用スクリプト][]を使ってメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
- 1. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
+ 1. 「メモ帳」などのテキストエディタを開き、開発ツールで調べたIDを使って項目を非表示にするスタイル指定を記述します。
 
         @-moz-document url-prefix(chrome://messenger/content/) {
           #menu_accountmgr,
@@ -275,7 +224,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
  2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをThunderbirdのインストール先の `chrome` フォルダに設置します。
     （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
- 4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
+ 4. [MCD用設定ファイル](#mcd)を作成し、`autoconfig.cfg` に[globalChrome.css読み込み用スクリプト][]の内容を張り付けて設置します。
 
 
 
@@ -290,10 +239,15 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-`about:config` の利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、`about:config` へのアクセスが完全に禁止されます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`BlockAboutConfig`](https://github.com/mozilla/policy-templates/blob/master/README.md#blockaboutconfig) を `true` に設定して下さい。例えば以下の要領です。
 
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
+    {
+      "policies": {
+        "BlockAboutConfig": true
+      }
+    }
+
+これにより、`about:config` の読み込みがブロックされ、設定を変更できない状態になります。
 
 
 
@@ -310,59 +264,49 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-アドオンの利用を禁止する最も簡単な方法は、アドオン [Disable Addons][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Addonsを導入すると、以下の操作が完全に禁止されます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`BlockAboutAddons`](https://github.com/mozilla/policy-templates/blob/master/README.md#blockaboutaddons) を `true` に、[`InstallAddonsPermission.Default`](https://github.com/mozilla/policy-templates/blob/master/README.md#installaddonspermission) を `false` に設定して下さい。例えば以下の要領です。
 
- * ユーザがWebページからアドオンをダウンロードしてきてインストールする。
- * ユーザがアドオンのインストーラパッケージをFirefoxのウィンドウにドラッグ＆ドロップしてインストールする。
- * ユーザがアドオンのインストーラパッケージをFirefoxのショートカットにドラッグ＆ドロップしてインストールする。
- * ユーザがアドオンマネージャを閲覧・操作する。
+    {
+      "policies": {
+        "BlockAboutAddons": true,
+        "InstallAddonsPermission": {
+          "Default": false
+        }
+      }
+    }
+
+これにより、アドオンマネージャの読み込みがブロックされ、設定を変更できない状態になります。
+また、アドオンのインストール操作も禁止されるようになります。
 
 ### 注意事項
 
-アドオン「Disable Addons」は、既にインストール済みの他のアドオンの状態を変更しません。
-既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンやプラグイン（Javaなど）を常に無効化したい](#disable-addons-by-administrator)を参照して下さい。
-
-また、このアドオンはアドオンマネージャへのアクセスを禁止する機能を含むため、必然的に、アドオンマネージャを必要とする以下の操作が行えなくなります。
-
- * アドオンの有効・無効の状態を変更する。
- * アドオンをアンインストールする。
- * アドオンの設定を変更する。（Tab Mix Plusなどのように、`ツール`メニュー等からアドオンの設定を変更できるようになっている場合を除く）
-
-このアドオン自体をアンインストールするには、システム管理者がクライアント上からアドオンの実体となるファイルを削除する必要があります。
+この設定は、既にインストール済みの他のアドオンの状態を変更しません。
+既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンを常に無効化したい](#disable-addons-by-administrator)を参照して下さい。
 
 
 
 
-
-## 特定のアドオンやプラグイン（Javaなど）を常に無効化したい {#disable-addons-by-administrator}
+## 特定のアドオンを常に無効化したい {#disable-addons-by-administrator}
 
 キーワード：機能制限、導入時初期設定、集中管理、アドオン、プラグイン
 
-システムに導入されているJavaやFlashなどのプラグイン、他のソフトウェアが自動的に追加するアドオンなどを、システム管理者の判断で強制的に無効化することができます。
+既に導入されているアドオンを、システム管理者の判断で強制的に無効化（アンインストール）することができます。
 
 ### 設定方法
 
-アドオンやプラグインの有効・無効の状態をシステム管理者が制御する最も簡単な方法は、アドオン [Force Addon Status][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）](#mcd)を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Extensions.Uninstall`](https://github.com/mozilla/policy-templates/blob/master/README.md#extensions) に無効化したいアドオンのIDを列挙して下さい。
+例えば、[Duplicate Tabs Closer][]であれば以下の要領です。
 
-    // Test Pilotアドオンを強制的に無効化する例
-    pref("extensions.force-addon-status@clear-code.com.addons.tbtestpilot@labs.mozilla.com.status",
-         "disabled"); // 設定する有効・無効の状態（"enabled"=有効、"disabled"=無効）
-    
-    // Javaプラグインを強制的に無効化する例
-    pref("extensions.force-addon-status@clear-code.com.plugins.java.pattern",
-         "^Java\(TM\) Plug-in"); // 判別のためのルール（正規表現）
-    pref("extensions.force-addon-status@clear-code.com.plugins.java.enabledState",
-         0); // 設定する有効・無効の状態（0=常に無効、1=クリックされたら有効にする、2=常に有効）
+    {
+      "policies": {
+        "Extensions": {
+          "Uninstall": ["jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack"]
+        }
+      }
+    }
 
-アドオンの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.addons.(アドオンの内部的なID).status` という名前の文字列型の設定を1つ作成します。
-値が `enabled` であればアドオンは有効化され、 `disabled` であれば無効化されます。
-
-プラグインの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` と `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という2つの設定を使用します。
-まずプラグインを識別するための正規表現のルールを `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` という名前の文字列型の設定として作成します。正規表現は、about:pluginsで表示されるプラグインの名前にマッチするようにします。
-次に、プラグインの状態を制御する `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という名前の数値型の設定を作成します。値が `2` であればプラグインは常に有効化され、値が `0` であれば常に無効化されます。値が `1` であれば、初期状態では無効化され、プラグイン有効化のメッセージがクリックされると有効化されます（既定の動作）。
-
+これにより、IDが一致するアドオンが、次回以降の起動時に自動的にアンインストールされます。
+（アドオンをインストールしたまま無効化状態とすることはできません。）
 
 
 
@@ -374,98 +318,50 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインストールして使用します。
 以下の手順に則ると、管理者が、そのクライアント上のすべてのユーザを対象としてアドオンをインストールすることができます。
 
-管理者の手動操作によるアドオンのインストール方法にはいくつかのパターンがあり、それぞれメリットとデメリットがあります。
-[DOM Inspector][]をインストールする場合を例にとって、代表的な3つのパターンを解説します。
+以下、[Duplicate Tabs Closer][]をインストールする場合を例にとって解説します。
 
-#### パターン1：組み込みモジュールとしてインストールする
+#### パターン1：起動時に自動的にインストールされるアドオンとして登録する
 
-※[Bug 1144127 ](https://bugzilla.mozilla.org/show_bug.cgi?id=1144127 "1144127 – Remove support for distribution/bundles")での変更により、この方法はFirefox 40およびそれ以降のバージョンでは利用できなくなりました。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Extensions.Install`](https://github.com/mozilla/policy-templates/blob/master/README.md#extensions) にアドオンのXPIファイルのURLまたはパスを列挙して下さい。
+例えば、`192.168.0.10` のホストをファイル配信に使用するのであれば以下の要領です。
 
-この場合のインストール手順は以下の通りです。
+    {
+      "policies": {
+        "Extensions": {
+          "Install": [
+            "https://192.168.0.10/duplicate_tabs_closer-3.4.1-fx.xpi"
+          ]
+        }
+      }
+    }
 
- 1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
- 2. 1.で作成したフォルダの中に `bundles` という名前でフォルダを作成します。
- 3. 2.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-    DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
- 4. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを3.で作成したフォルダの中に置きます。
-    DOM Inspectorであれば、以下のようなファイル配置になります。
-    * `C:\Program Files\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf`
-    * `C:\Program Files\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest`
-    * ...
+`192.168.0.10` がWindowsのファイルサーバーまたはSambaサーバーである場合、UNCパスを用いた以下の指定の仕方も可能です。
 
-ただし、そのアドオンが検索プラグイン（検索プロバイダ）を含んでいる場合、検索プラグインのファイルは `distribution\bundles` 以下ではなく、`distribution\searchplugins\common` 以下に設置する必要があります。
+    {
+      "policies": {
+        "Extensions": {
+          "Install": [
+            "file:////192.168.0.10/shared/duplicate_tabs_closer-3.4.1-fx.xpi",
+            "\\\\\\\\\\192.168.0.10\\shared\\duplicate_tabs_closer-3.4.1-fx.xpi"
+          ]
+        }
+      }
+    }
 
-この手順でインストールしたアドオンは以下の特徴を持ちます。
-
- * *当該アドオンはアドオンマネージャの管理下から外れます。*
-   （Firefox組み込みのモジュールの1つとして認識されるようになります。）
-   * *当該アドオンはアドオンマネージャ上に表示されません。*
-     ユーザは当該アドオンをアドオンマネージャから認識できません。
-   * ユーザは当該アドオンを削除できません。
-   * *ユーザは当該アドオンを無効化できません。*
- * *当該アドオンは自動アップデートされません。*
-   ただし、アップデート後のバージョンを通常のアドオンとしてユーザがインストールすることはでき、その場合、その後は通常通り自動アップデートされるようになります。
- * *Add-on SDKベースのアドオン、再起動不要なアドオンは、この方法では動作しません。*
-   （ただし、例外的にこの方法でインストールしても動作する再起動不要なアドオンはいくつか存在します。）
- * *アドオンは次回起動時から強制的に有効化されます。*
- 
-#### パターン2：全ユーザ向けのアドオンとしてインストールする
-
-この場合のインストール手順は以下の通りです。
-
- 1. アドオンのインストールパッケージを入手します。
- 2. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたファイル群の中の「install.rdf」をテキストエディタなどで開き、`<em:unpack>true</em:unpack>`または`em:unpack="true"`という記述があるかどうかを調べます。
-    * `unpack`の指定がある場合:
-      1. アプリケーション組み込みアドオンの設置用のフォルダを作成します。
-         * `C:\Program Files\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files\Mozilla Thunderbird` にインストールされているThunderbirdの場合、作成するフォルダのパスは `C:\Program Files\Mozilla Thunderbird\extensions` となります。
-      2. 1.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-         DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
-      3. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを2.で作成したフォルダの中に置きます。
-         DOM Inspectorであれば、以下のようなファイル配置になります。
-         * `C:\Program Files\Mozilla Firefox\browser\extensions\inspector@mozilla.org\install.rdf`
-         * `C:\Program Files\Mozilla Firefox\browser\extensions\inspector@mozilla.org\chrome.manifest`
-         * ...
-    * `unpack`の指定が無い場合:
-      1. アドオンのインストールパッケージ（xpiファイル）のファイル名を、`アドオンの内部的なID.xpi`に変更します。
-         DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` となります。
-      2. 1.で用意したファイルを、適切な位置に設置します。
-         * `C:\Program Files\Mozilla Firefox` にインストールされているFirefoxの場合、ファイルを設置するフォルダのパスは `C:\Program Files\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files\Mozilla Thunderbird` にインストールされているThunderbirdの場合、ファイルを設置するフォルダのパスは `C:\Program Files\Mozilla Thunderbird\extensions` となります。
- 3. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
-    
-        pref("extensions.autoDisableScopes", 11);
-        // この設定値は、整数値で表現された以下のフラグの組み合わせ。
-        // ユーザの意図が関与せずにインストールされたアドオンが
-        // 以下のフラグで示されるインストール方法に該当する場合、そのアドオンは
-        // 次回起動時に自動的に無効化され、ユーザに有効化の可否が確認される。
-        //  1: 現在のユーザープロファイルのみを対象としたインストール
-        //     （通常のインストール）
-        //  2: 現在ログインしているユーザのすべてのユーザープロファイルを対象としたインストール
-        //     （HKEY_CURRENT_USER以下のレジストリを使用したインストールなど）
-        //  4: そのインストール先のアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files\Mozilla Firefox\browser\extensions 以下へのファイル配置）
-        //  8: そのコンピュータのすべてのアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files\Mozilla Firefox\browser\extensions 以下へのファイル配置、
-        //       HKEY_LOCAL_MACHINE以下のレジストリを使用したインストールなど）
-    
-    この設定を行わないと、アドオンは次回起動時には無効化された状態となります。
+これにより、次回以降の起動時に、各アドオンが自動的にユーザープロファイル配下へアンインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
 
- * *当該アドオンはアドオンマネージャの管理下に置かれます。*
-   * *当該アドオンはアドオンマネージャ上に表示されます。*
-     ユーザは当該アドオンをアドオンマネージャから認識できます。
-   * ユーザは当該アドオンを削除できません。
-     後述の通り、ユーザはアップデート後のアドオンを削除することはできますが、その場合は、管理者がインストールした最初のバージョンに戻るという結果になります。
+ * *既に存在しているユーザプロファイルでFirefoxを起動した場合も、当該アドオンはインストールされます*。
+ * 当該アドオンは、ユーザが自分でインストールしたのと同じ扱いになります。
+   * 当該アドオンはアドオンマネージャ上に表示されます。
+   * *ユーザは当該アドオンを削除できます。*
    * *ユーザは当該アドオンを無効化できます。*
- * *当該アドオンは自動アップデートされません。*
-   ただし、アップデート後のバージョンを通常のアドオンとしてユーザがインストールすることはでき、その場合、その後は通常通り自動アップデートされるようになります。
- * *Add-on SDKベースのアドオン、再起動不要なアドオンも、この方法でインストールできます。*
- * 「extensions.autoDisableScopes」の設定を変更していないと、*当該アドオンは次回起動時に強制的に無効化されます。*
+ * *当該アドオンは自動更新されます。*
 
-#### パターン3：新規プロファイル作成時に同時にインストールされるアドオンとして登録する
+自動更新を利用できない場面において、この方法でインストールしたアドオンを更新するためには、同じアドオンをバージョン番号を付与した別のURLまたはバージョン番号を付与した別のパスで`Extensions.Install`に列挙し直して再インストールする必要があります。
+
+#### パターン2：初回起動時（新規プロファイル作成時）に自動的にインストールされるアドオンとして登録する
 
 この場合のインストール手順は以下の通りです。
 
@@ -473,7 +369,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
     Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  2. 1.で作成したフォルダの中に `extensions` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンのインストールパッケージ（xpiファイル）を設置します。ファイル名はアドオンの内部的なIDに合わせて変更します。
-    DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` で、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi` となります。
+    Duplicate Tabs Closerであれば、ファイル名は `jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack.xpi` で、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\extensions\jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack.xpi` となります。
  4. ユーザ権限でFirefoxを起動します。それが初回起動であれば、アドオンが自動的にインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
@@ -484,16 +380,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
    * 当該アドオンはアドオンマネージャ上に表示されます。
    * *ユーザは当該アドオンを削除できます。*
    * *ユーザは当該アドオンを無効化できます。*
- * *当該アドオンは自動アップデートされます。*
- * Add-on SDKベースのアドオン、再起動不要なアドオンも、この方法でインストールできます。
-
-#### その他のパターン
-
-上記の3パターン以外にも、アドオンを管理者がインストールするための方法はいくつかあります。詳細は以下の開発者向け情報を参照して下さい。
-
- * [Installing extensions - Mozilla | MDN](https://developer.mozilla.org/en-US/Add-ons/Installing_extensions?redirectlocale=en-US&amp;redirectslug=Installing_extensions )（英語）
-
-
+ * *当該アドオンは自動自動更新されます。*
 
 
 
@@ -507,26 +394,9 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 キーワード：導入時初期設定
 
-Firefox（およびThundebrird）は通常、既にFirefoxが起動している状態でもう一度Firefoxをショートカット等から起動しようとすると、既に起動しているFirefoxにおいて新しいウィンドウを開くという操作になります。
-Firefoxの実行ファイルに対して起動オプションを与えることで、異なるユーザープロファイルでFirefoxを同時に起動することができます。
+Firefox（およびThundebrird） 68以降のバージョンは、インストール先パスとユーザープロファイルが紐付く形となっており、インストール先パスを変えるだけで別プロファイルで同時に起動できるようになっています。
 
-### 設定方法
-
-例として、（設定の検証などに使用する）新規プロファイル環境のFirefoxを同時に起動できるようにする手順を示します。
-
- 1. プロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\another` に作成することにします。
- 2. Firefoxを起動するためのショートカットをデスクトップ上にコピーし、任意の名前に変更します。
-    ここでは例として、`Firefox Another` とします。
- 3. 2.で作成した新しいショートカットのプロパティを開き、`リンク先` に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（1.で作成したフォルダのパス）"` というオプションの指定を加えます。
-     Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、最終的なリンク先は以下のようになります。
-     
-         "C:\Program Files\Mozilla Firefox\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\another"
-
-以上で、同じバージョンのFirefoxを別々のプロファイルで同時に起動できるようになります。
-通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動すると新規プロファイルの環境のFirefoxがそれぞれ起動します。
-
-なお、他のアプリケーションでリンクを開こうとした場合や、URLショートカットを開こうとした場合には、上記手順で作成した新規プロファイルではなく、既存プロファイルのFirefoxが起動します。
+従来からあるプロファイルを明示的に指定して起動する方法によるプロファイルの使い分けについては、[株式会社クリアコードのブログに記載されている技術情報](https://www.clear-code.com/blog/2019/6/14.html)などを参照して下さい。
 
 
 
@@ -534,32 +404,9 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
 
 キーワード：導入時初期設定
 
-Firefoxの実行ファイルに対して起動オプションを与えることで、異なるバージョンのFirefoxを同時に起動することができます。
+Firefox（およびThundebrird） 68以降のバージョンは、インストール先パスとユーザープロファイルが紐付く形となっており、インストール先パスを変えるだけで別プロファイルで同時に起動できるようになっています。
 
-### 設定方法
-
-例として、通常リリース版のFirefoxがインストールされている環境で、ESR版Firefoxを同時に起動できるようにする手順を示します。
-
- 1. 起動中のFirefoxのウィンドウをすべて閉じ、終了します。
- 2. 新たにインストールしたいバージョンのFirefoxのインストーラを起動します。
- 3. 「カスタムインストール」を選択し、インストール先を今まで使用していたバージョンのFirefoxとは異なる位置に指定します。
-    ここでは例として、`C:\Program Files\Mozilla Firefox ESR` にインストールすることにします。
-    また、この時デスクトップおよびスタートメニューのショートカットは作成しないようにします。
-    （既存のショートカットを上書きしないため）
- 4. ESR版Firefox起動専用のプロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\esr` に作成することにします。
- 5. 3.でインストールしたFirefoxの実行ファイルへのショートカットをデスクトップ上に作成し、任意の名前を付けます。
-    ここでは例として、「Firefox ESR」とします。
- 6. 5.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（5.で作成したフォルダのパス）"` というオプションの指定を加えます。
-    ここまでの手順の例に則ると、最終的なリンク先は以下のようになります。
-     
-         "C:\Program Files\Mozilla Firefox ESR\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\esr"
-
-以上で、通常リリース版のFirefoxとESR版Firefoxを同時に起動できるようになります。
-通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動するとESR版のFirefoxがそれぞれ起動します。
-
-なお、他のアプリケーションでリンクを開こうとした場合や、URLショートカットを開こうとした場合には、上記手順でセットアップしたESR版Firefoxではなく、通常リリース版（既存プロファイル）のFirefoxが起動します。
-
+従来からあるプロファイルを明示的に指定して起動する方法によるプロファイルの使い分けについては、[株式会社クリアコードのブログに記載されている技術情報](https://www.clear-code.com/blog/2019/6/14.html)などを参照して下さい。
 
 
 
@@ -970,7 +817,7 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 現在のバージョンのFirefoxでは、セッション管理機構自体を無効化することはできません。
 `about:home` での「以前のセッションを復元」機能のために、前回のセッション情報は常にディスク上に保存されます。
 
-セッションを一切保存しないようにすることはできませんが、[globalChrome.css][]を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
+セッションを一切保存しないようにすることはできませんが、[globalChrome.css読み込み用スクリプト][]を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. 「メモ帳」などのテキストエディタを開き、以下のスタイル指定を記述します。
     
@@ -1114,7 +961,7 @@ UI Text Overriderを使った方法では、挙動を変更できるのはFirefo
 
 ### 設定方法
 
-UI要素を隠すためには、[globalChrome.css][]などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+UI要素を隠すためには、[globalChrome.css読み込み用スクリプト][]などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
  1. [DOM Inspector][] をインストールします。
  2. `ツール`→`Web開発`→`DOM Inspector`でDOM Inspectorを起動します。
@@ -1161,7 +1008,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
     lockPref("browser.privatebrowsing.autostart", false);
 
-[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい](#hide-ui-elements)の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css][]を使う場合の設定は以下の通りです。
+[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい](#hide-ui-elements)の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css読み込み用スクリプト][]を使う場合の設定は以下の通りです。
 
     @-moz-document url-prefix(chrome://browser/content/browser.xul) {
       #menu_newPrivateWindow,
@@ -2285,12 +2132,12 @@ Firefoxのインストール後に別途アドオンをインストールする�
   [Disable Sync]: https://github.com/clear-code/disablesync/releases
   [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
   [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
+  [Duplicate Tabs Closer]: https://addons.mozilla.org/firefox/addon/duplicate-tabs-closer/
   [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
   [Force Addon Status]: https://addons.mozilla.org/firefox/addon/force-addon-status/
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
-  [globalChrome.css]: https://addons.mozilla.org/firefox/addon/globalchromecss/
-  [GPO For Firefox]: https://addons.mozilla.org/firefox/addon/gpo-for-firefox/
+  [globalChrome.css読み込み用スクリプト]: https://github.com/clear-code/globalchromecss/blob/master/autoconfig-globalchromecss.js
   [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
   [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
