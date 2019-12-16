@@ -5,23 +5,48 @@
 キーワード：機能制限、導入時初期設定、集中管理
 
 FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自由に変更できないようにするための機能が備わっています。
-この機能は「Mission Control Desktop（MCD）」や「AutoConfig」などと呼ばれています。
+Firefox ESR60以降のバージョンでは、Active DirectoryのグループポリシーまはたJSON形式のポリシー定義ファイルを用いて設定を集中管理できます。
+また、従来からの設定の集中管理の仕組みである「Mission Control Desktop（MCD、あるいはAutoConfig）」も使用できます。
 
-また、アドオンを使うとActive Directoryのグループポリシーで設定を集中管理することもできます。
 
-### ウィザードでの実現 {#cck}
+### グループポリシーでの実現 {#group-policy}
 
-アドオン [CCK2 Wizard][]を使用すると、MCD相当の設定を行ったり、それ以上のことをしたりするアドオンまたは設定ファイル群を作成することができます。
+[ポリシーテンプレート](https://github.com/mozilla/policy-templates)を使用してグループポリシー経由で設定の集中管理を行えます。
+[最新のリリース版ポリシーテンプレート](https://github.com/mozilla/policy-templates/releases)をダウンロードしてドメインコントローラに読み込ませ、各種の設定をActive Directory上で行うと、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
 
-CCK2 Wizardの大まかな利用手順は以下の通りです。
+#### 注意点
 
- 1. 管理者のPC上のFirefoxに、CCK2 Wizardを通常通りインストールします。
- 2. ツールバー上に追加される「CCK2 Wizard」ボタンをクリックし、ウィザードを起動します。
- 3. 「File」→「New」と辿り、カスタマイズ用設定の名前と一意な識別子を入力します。
- 4. ウィザード（設定の入力画面）が出るので、行いたいカスタマイズの内容を決定します。
- 5. ウィザードの最後のページで「Create an Extension」または「Use AutoConfig」ボタンを押下し、カスタマイズ用のファイルを出力します。
- 6. 5で「Create an Extension」を選択した場合、アドオンのインストールパッケージが出力されるので、各クライアントにアドオンをインストールします。
-    「AutoConfig」を選択した場合、カスタマイズ用ファイルを圧縮したZIPファイルが出力されるので、各クライアントのFirefoxのインストール先にZIPファイルの内容を展開して設定ファイル群をインストールします。
+ * 上記ページからダウンロードできる管理用テンプレートファイルの内容は日本語化されていません。
+   日本語で設定を管理したい場合は、管理用テンプレートファイルを自分で翻訳する必要があります。
+ * 管理できる設定項目は、管理用テンプレートファイルに記述されている物のみとなります。
+   それ以外の設定を管理したい場合は、[MozillaのBugzilla](https://bugzilla.mozilla.org/)経由で設定項目の追加を提案する必要があります。
+
+
+### ポリシー定義ファイルでの実現 {#policies-json}
+
+Active Directoryを運用していない場合や、Windows以外のプラットフォームでは、JSON形式のポリシー定義ファイルを設置する事によって、グループポリシーと同様の設定の集中管理を行えます。
+
+#### 設定方法
+
+以下のような内容のプレーンテキストファイル `policies.json` を用意します。
+
+    {
+      "policies": {
+        "DisableAppUpdate": true
+      }
+    }
+
+この例ではアプリケーションの自動更新を停止する設定のみを記述しています。
+記述可能な設定項目については、[ポリシーテンプレートのリポジトリ内にある説明（英語）](https://github.com/mozilla/policy-templates/blob/master/README.md)や[株式会社クリアコードのブログ内の解説](https://www.clear-code.com/blog/2018/5/12.html)などを参照して下さい。
+
+次に、作成した `policies.json` を、Firefoxのインストール先の `distribution/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\distribution\policies.json` など）。
+
+以上で設定は完了です。
+
+#### 注意点
+
+ * 管理できる設定項目は、グループポリシーで設定可能な項目のみとなります。
+   それ以外の設定を管理したい場合は、[MozillaのBugzilla](https://bugzilla.mozilla.org/)経由で設定項目の追加を提案する必要があります。
 
 
 ### MCD用設定ファイルでの実現 {#mcd}
@@ -36,14 +61,14 @@ CCK2 Wizardの大まかな利用手順は以下の通りです。
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("app.update.enabled", false);
 
-作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\autoconfig.cfg` など）。
 
 以上で設定は完了です。
 
@@ -93,56 +118,6 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 
 が、話がややこしくなるので、ここでは触れないことにする。
 -->
-
-
-### グループポリシーでの実現 {#group-policy}
-
-アドオン[GPO For Firefox][]を使用すると、グループポリシー経由でMCDと同様の設定の集中管理を行えます。
-
-#### 設定の手順
-
-
- * 各クライアントについては、[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってGPO For Firefoxをインストールします。
- * ドメインコントローラについては、[アドオンのダウンロードページ][GPO For Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
-   その後、読み込まれたテンプレートを使って設定を行います。
-   例えば、Windows Server 2008R2での手順は以下の通りです。
-   1. Active Directoryドメインを構築します。
-   2. ドメインの管理者でログインします。
-   3. [ローカル グループ ポリシー エディターを開く](http://technet.microsoft.com/ja-jp/library/cc731745.aspx "ローカル グループ ポリシー エディターを開く")の手順に則って、ローカル グループ ポリシー エディターを起動します。
-     （ファイル名を「gpedit.msc」と指定して起動します。）
-   4. [従来の管理用テンプレートを追加または削除する](http://technet.microsoft.com/ja-jp/library/cc772560.aspx "従来の管理用テンプレートを追加または削除する")の手順に則って、テンプレートを読み込ませます。
-      （「コンピューターの構成」配下の「管理用テンプレート」を右クリックして「テンプレートの追加と削除」を選択し、firefox.admを指定して追加します。）
-   5. 「従来の管理用テンプレート（ADM）」配下に「Mozilla Firefox」が追加されるので、必要な設定を変更します。
-
-以降は、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
-
-#### 注意点
-
- * 上記ページからダウンロードできる管理用テンプレートファイルの内容は、すべて英語となっています。
-   日本語で設定を管理したい場合は、管理用テンプレートファイルを自分で翻訳する必要があります。
- * 管理できる設定項目は、管理用テンプレートファイルに記述されている物のみとなります。
-   それ以外の設定を管理したい場合は、管理用テンプレートファイルを自分で編集する必要があります。
-
-#### 管理用テンプレートファイルに無い設定項目の管理について
-
-FirefoxやThunderbird自体の更新によって追加・変更・廃止された設定をグループポリシーとして管理できるようにするためには、管理用テンプレートファイルを自分で修正・更新する必要があります。
-
-管理用テンプレートファイルを編集する際は、MCDでの設定で使用する設定名とその値が、ドメインのメンバとなるWindows PCの以下のレジストリキー以下に書き出されるようにして下さい。
-
- * ユーザ自身による変更を許容しない、管理者が固定する設定（Locked Settings）
-   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
-   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\lockPref`
- * ユーザ自身による変更を許容する、初期値の設定（Default Settings）
-   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\defaultPref`
-   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\defaultPref`
-
-真偽型の設定は、`true`を整数の`1`、`false`を整数の`0`として書き出して下さい。
-
-例えば「Firefoxの自動アップデートを禁止する設定を、全ユーザに対して、強制的に反映させる」という場合の設定内容は以下の要領です。
-
- * 書き込む先のレジストリキー：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
- * 書き込む値の名前：`app.update.enabled`
- * 書き込む値のデータ：`0`
 
 
 
