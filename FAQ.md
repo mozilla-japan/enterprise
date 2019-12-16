@@ -165,14 +165,14 @@ Active Directoryドメインに参加しているWindows PCでは、[グルー�
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、`C:\Program Files\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("autoadmin.global_config_url", "http://internalserver/autoconfig.jsc");
 
-作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、`C:\Program Files\Mozilla Firefox\autoconfig.cfg` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.jsc` を用意します。
 
@@ -244,7 +244,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  7. 6で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  8. 7で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Firefox\chrome\globalChrome.css` となる。）
  9. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 なお、設定画面上部の`全般` `タブ`などのパネル切り替えボタン自体や、`詳細`における`更新`などのタブを非表示にする場合には注意が必要です。
@@ -299,7 +299,7 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをThunderbirdのインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
  4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
@@ -409,14 +409,14 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 この場合のインストール手順は以下の通りです。
 
  1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  2. 1.で作成したフォルダの中に `bundles` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
     DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
  4. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを3.で作成したフォルダの中に置きます。
     DOM Inspectorであれば、以下のようなファイル配置になります。
-    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf`
-    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest`
+    * `C:\Program Files\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf`
+    * `C:\Program Files\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest`
     * ...
 
 ただし、そのアドオンが検索プラグイン（検索プロバイダ）を含んでいる場合、検索プラグインのファイルは `distribution\bundles` 以下ではなく、`distribution\searchplugins\common` 以下に設置する必要があります。
@@ -443,21 +443,21 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
  2. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたファイル群の中の「install.rdf」をテキストエディタなどで開き、`<em:unpack>true</em:unpack>`または`em:unpack="true"`という記述があるかどうかを調べます。
     * `unpack`の指定がある場合:
       1. アプリケーション組み込みアドオンの設置用のフォルダを作成します。
-         * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files (x86)\Mozilla Thunderbird` にインストールされているThunderbirdの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Thunderbird\extensions` となります。
+         * `C:\Program Files\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\browser\extensions` となります。
+         * `C:\Program Files\Mozilla Thunderbird` にインストールされているThunderbirdの場合、作成するフォルダのパスは `C:\Program Files\Mozilla Thunderbird\extensions` となります。
       2. 1.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
          DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
       3. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを2.で作成したフォルダの中に置きます。
          DOM Inspectorであれば、以下のようなファイル配置になります。
-         * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\install.rdf`
-         * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\chrome.manifest`
+         * `C:\Program Files\Mozilla Firefox\browser\extensions\inspector@mozilla.org\install.rdf`
+         * `C:\Program Files\Mozilla Firefox\browser\extensions\inspector@mozilla.org\chrome.manifest`
          * ...
     * `unpack`の指定が無い場合:
       1. アドオンのインストールパッケージ（xpiファイル）のファイル名を、`アドオンの内部的なID.xpi`に変更します。
          DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` となります。
       2. 1.で用意したファイルを、適切な位置に設置します。
-         * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、ファイルを設置するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files (x86)\Mozilla Thunderbird` にインストールされているThunderbirdの場合、ファイルを設置するフォルダのパスは `C:\Program Files (x86)\Mozilla Thunderbird\extensions` となります。
+         * `C:\Program Files\Mozilla Firefox` にインストールされているFirefoxの場合、ファイルを設置するフォルダのパスは `C:\Program Files\Mozilla Firefox\browser\extensions` となります。
+         * `C:\Program Files\Mozilla Thunderbird` にインストールされているThunderbirdの場合、ファイルを設置するフォルダのパスは `C:\Program Files\Mozilla Thunderbird\extensions` となります。
  3. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
     
         pref("extensions.autoDisableScopes", 11);
@@ -470,9 +470,9 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
         //  2: 現在ログインしているユーザのすべてのユーザープロファイルを対象としたインストール
         //     （HKEY_CURRENT_USER以下のレジストリを使用したインストールなど）
         //  4: そのインストール先のアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置）
+        //     （C:\Program Files\Mozilla Firefox\browser\extensions 以下へのファイル配置）
         //  8: そのコンピュータのすべてのアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置、
+        //     （C:\Program Files\Mozilla Firefox\browser\extensions 以下へのファイル配置、
         //       HKEY_LOCAL_MACHINE以下のレジストリを使用したインストールなど）
     
     この設定を行わないと、アドオンは次回起動時には無効化された状態となります。
@@ -495,10 +495,10 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 この場合のインストール手順は以下の通りです。
 
  1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  2. 1.で作成したフォルダの中に `extensions` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンのインストールパッケージ（xpiファイル）を設置します。ファイル名はアドオンの内部的なIDに合わせて変更します。
-    DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` で、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi` となります。
+    DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` で、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi` となります。
  4. ユーザ権限でFirefoxを起動します。それが初回起動であれば、アドオンが自動的にインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
@@ -544,9 +544,9 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
  2. Firefoxを起動するためのショートカットをデスクトップ上にコピーし、任意の名前に変更します。
     ここでは例として、`Firefox Another` とします。
  3. 2.で作成した新しいショートカットのプロパティを開き、`リンク先` に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（1.で作成したフォルダのパス）"` というオプションの指定を加えます。
-     Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なリンク先は以下のようになります。
+     Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、最終的なリンク先は以下のようになります。
      
-         "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\another"
+         "C:\Program Files\Mozilla Firefox\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\another"
 
 以上で、同じバージョンのFirefoxを別々のプロファイルで同時に起動できるようになります。
 通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動すると新規プロファイルの環境のFirefoxがそれぞれ起動します。
@@ -568,7 +568,7 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
  1. 起動中のFirefoxのウィンドウをすべて閉じ、終了します。
  2. 新たにインストールしたいバージョンのFirefoxのインストーラを起動します。
  3. 「カスタムインストール」を選択し、インストール先を今まで使用していたバージョンのFirefoxとは異なる位置に指定します。
-    ここでは例として、`C:\Program Files (x86)\Mozilla Firefox ESR` にインストールすることにします。
+    ここでは例として、`C:\Program Files\Mozilla Firefox ESR` にインストールすることにします。
     また、この時デスクトップおよびスタートメニューのショートカットは作成しないようにします。
     （既存のショートカットを上書きしないため）
  4. ESR版Firefox起動専用のプロファイル情報保存用のフォルダを任意の位置に作成します。
@@ -578,7 +578,7 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
  6. 5.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（5.で作成したフォルダのパス）"` というオプションの指定を加えます。
     ここまでの手順の例に則ると、最終的なリンク先は以下のようになります。
      
-         "C:\Program Files (x86)\Mozilla Firefox ESR\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\esr"
+         "C:\Program Files\Mozilla Firefox ESR\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\esr"
 
 以上で、通常リリース版のFirefoxとESR版Firefoxを同時に起動できるようになります。
 通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動するとESR版のFirefoxがそれぞれ起動します。
@@ -1019,7 +1019,7 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをFirefoxのインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Firefox\chrome\globalChrome.css` となる。）
  4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 ただしこの場合においても、単にユーザーが手動操作でセッションを復元できなくなるだけであり、ディスク上にはセッション情報が依然として保存される状態であることにはご注意下さい。
@@ -1163,7 +1163,7 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  6. 5で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Firefox\chrome\globalChrome.css` となる。）
  8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
 
 
@@ -1483,7 +1483,7 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
  * Firefox 31へアップデートする。
  * 作業ディレクトリは C:\temp とする。 
  * Firefoxのインストール先は
-   C:\Program Files (x86)\Mozilla Firefox とする。
+   C:\Program Files\Mozilla Firefox とする。
 
  1. 管理者権限でコマンドプロンプトを起動する。
  2. 差分アップデート用のファイルを作業ディレクトリに
@@ -1494,7 +1494,7 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
  3. Firefoxのインストール先フォルダにあるupdater.exe を
     作業ディレクトリにコピーする。
     
-        > copy "C:\Program Files (x86)\Mozilla Firefox\updater.exe"
+        > copy "C:\Program Files\Mozilla Firefox\updater.exe"
           "C:\temp\updater.exe"
     
  4. 作業ディレクトリに配置したupdater.exeを、
@@ -1503,7 +1503,7 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
     起動する。
     
         > cd c:\temp
-        > updater.exe "C:\temp" "C:\Program Files (x86)\Mozilla Firefox" "C:\Program Files (x86)\Mozilla Firefox"
+        > updater.exe "C:\temp" "C:\Program Files\Mozilla Firefox" "C:\Program Files\Mozilla Firefox"
     
  5. アップデートの適用結果を確認する。
     
@@ -1612,7 +1612,7 @@ FirefoxやThundebirdの初回起動時に表示される `設定移行ウィザ�
 
 ### 設定方法
 
-`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files (x86)\Mozilla Thunderbird\override.ini` など）に置きます。
+`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files\Mozilla Thunderbird\override.ini` など）に置きます。
 
     [XRE]
     EnableProfileMigrator=false
@@ -1762,9 +1762,9 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
 
  1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
  2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
-    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
+    最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\distribution.ini` となります。
 
 `distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
 
@@ -1801,9 +1801,9 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 
  1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
  2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
-    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
+    最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\distribution.ini` となります。
 
 `distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
 
@@ -2051,7 +2051,7 @@ Firefoxにあらかじめ登録されている物以外の証明局によって�
 
  1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
  2. Firefoxの実行ファイルと同じ位置にある `defaults` フォルダに `myCA.crt` を置きます。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\defaults\myCA.crt` となります。
 
 以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で `詳細`→`証明書`→`証明書を表示`と辿り、証明書が正しく登録されているかどうかを確認して下さい。
 
