@@ -5,23 +5,49 @@
 キーワード：機能制限、導入時初期設定、集中管理
 
 FirefoxやThunderbirdには、設定を管理者が管理し、ユーザが自由に変更できないようにするための機能が備わっています。
-この機能は「Mission Control Desktop（MCD）」や「AutoConfig」などと呼ばれています。
 
-また、アドオンを使うとActive Directoryのグループポリシーで設定を集中管理することもできます。
+Firefox ESR60以降のバージョンでは、Active DirectoryのグループポリシーまはたJSON形式のポリシー定義ファイルを用いて設定を集中管理できます。
+また、従来からの設定の集中管理の仕組みである「Mission Control Desktop（MCD、あるいはAutoConfig）」も使用できます。
 
-### ウィザードでの実現 {#cck}
 
-アドオン [CCK2 Wizard][]を使用すると、MCD相当の設定を行ったり、それ以上のことをしたりするアドオンまたは設定ファイル群を作成することができます。
+### グループポリシーでの実現 {#group-policy}
 
-CCK2 Wizardの大まかな利用手順は以下の通りです。
+[ポリシーテンプレート](https://github.com/mozilla/policy-templates)を使用してグループポリシー経由で設定の集中管理を行えます。
+[最新のリリース版ポリシーテンプレート](https://github.com/mozilla/policy-templates/releases)をダウンロードしてドメインコントローラに読み込ませ、各種の設定をActive Directory上で行うと、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
 
- 1. 管理者のPC上のFirefoxに、CCK2 Wizardを通常通りインストールします。
- 2. ツールバー上に追加される「CCK2 Wizard」ボタンをクリックし、ウィザードを起動します。
- 3. 「File」→「New」と辿り、カスタマイズ用設定の名前と一意な識別子を入力します。
- 4. ウィザード（設定の入力画面）が出るので、行いたいカスタマイズの内容を決定します。
- 5. ウィザードの最後のページで「Create an Extension」または「Use AutoConfig」ボタンを押下し、カスタマイズ用のファイルを出力します。
- 6. 5で「Create an Extension」を選択した場合、アドオンのインストールパッケージが出力されるので、各クライアントにアドオンをインストールします。
-    「AutoConfig」を選択した場合、カスタマイズ用ファイルを圧縮したZIPファイルが出力されるので、各クライアントのFirefoxのインストール先にZIPファイルの内容を展開して設定ファイル群をインストールします。
+#### 注意点
+
+ * 上記ページからダウンロードできる管理用テンプレートファイルの内容は日本語化されていません。
+   日本語で設定を管理したい場合は、管理用テンプレートファイルを自分で翻訳する必要があります。
+ * 管理できる設定項目は、管理用テンプレートファイルに記述されている物のみとなります。
+   それ以外の設定を管理したい場合は、[MozillaのBugzilla](https://bugzilla.mozilla.org/)経由で設定項目の追加を提案する必要があります。
+
+
+### ポリシー定義ファイルでの実現 {#policies-json}
+
+Active Directoryを運用していない場合や、Windows以外のプラットフォームでは、JSON形式のポリシー定義ファイルを設置する事によって、グループポリシーと同様の設定の集中管理を行えます。
+
+#### 設定方法
+
+以下のような内容のプレーンテキストファイル `policies.json` を用意します。
+
+    {
+      "policies": {
+        "DisableAppUpdate": true
+      }
+    }
+
+この例ではアプリケーションの自動更新を停止する設定のみを記述しています。
+記述可能な設定項目については、[ポリシーテンプレートのリポジトリ内にある説明（英語）](https://github.com/mozilla/policy-templates/blob/master/README.md)や[株式会社クリアコードのブログ内の解説](https://www.clear-code.com/blog/2018/5/12.html)などを参照して下さい。
+
+次に、作成した `policies.json` を、Firefoxのインストール先の `distribution/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\distribution\policies.json` など）。
+
+以上で設定は完了です。
+
+#### 注意点
+
+ * 管理できる設定項目は、グループポリシーで設定可能な項目のみとなります。
+   それ以外の設定を管理したい場合は、[MozillaのBugzilla](https://bugzilla.mozilla.org/)経由で設定項目の追加を提案する必要があります。
 
 
 ### MCD用設定ファイルでの実現 {#mcd}
@@ -35,15 +61,17 @@ CCK2 Wizardの大まかな利用手順は以下の通りです。
     pref("general.config.filename", "autoconfig.cfg");
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
+    // 「globalChrome.css読み込み用スクリプト」を使用する場合は以下の行も必要です。
+    pref("general.config.sandbox_enabled", false);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("app.update.enabled", false);
 
-作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、 `C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、 `C:\Program Files\Mozilla Firefox\autoconfig.cfg` など）。
 
 以上で設定は完了です。
 
@@ -73,8 +101,6 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 `autoconfig.cfg` で管理できる設定項目は、about:config（設定エディタ）の一覧に表示される物、もしくは一覧に現れていない隠し設定のみに限られます。
 アドオンの有効・無効の状態、Webサイトごとの機能の利用許可、メニュー項目の表示・非表示などは、`autoconfig.cfg` では管理できません。
 
-なお、Firefox 43以前では、設定画面の「プライバシー」パネルに対応する設定を `pref()` や `defaultPref()` で変更した場合、設定ダイアログを開いた時の状態が期待通りに初期化されない場合があります。この問題の簡単な回避策としては、アドオン [History Prefs Modifier][]が利用できます。Firefox 44以降ではこの問題は修正されています。
-
 <!--
 defaultPref()だけを使うのであれば、distribution/distribution.iniで以下のようにするという手もある。
 
@@ -93,56 +119,6 @@ defaultPref()だけを使うのであれば、distribution/distribution.iniで�
 
 が、話がややこしくなるので、ここでは触れないことにする。
 -->
-
-
-### グループポリシーでの実現 {#group-policy}
-
-アドオン[GPO For Firefox][]を使用すると、グループポリシー経由でMCDと同様の設定の集中管理を行えます。
-
-#### 設定の手順
-
-
- * 各クライアントについては、[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってGPO For Firefoxをインストールします。
- * ドメインコントローラについては、[アドオンのダウンロードページ][GPO For Firefox]の「You can find an adm file ready to be used for your GPO at the following link.」と書かれた箇所にあるリンクから管理用テンプレートファイル（admファイル）をダウンロードして読み込ませます。
-   その後、読み込まれたテンプレートを使って設定を行います。
-   例えば、Windows Server 2008R2での手順は以下の通りです。
-   1. Active Directoryドメインを構築します。
-   2. ドメインの管理者でログインします。
-   3. [ローカル グループ ポリシー エディターを開く](http://technet.microsoft.com/ja-jp/library/cc731745.aspx "ローカル グループ ポリシー エディターを開く")の手順に則って、ローカル グループ ポリシー エディターを起動します。
-     （ファイル名を「gpedit.msc」と指定して起動します。）
-   4. [従来の管理用テンプレートを追加または削除する](http://technet.microsoft.com/ja-jp/library/cc772560.aspx "従来の管理用テンプレートを追加または削除する")の手順に則って、テンプレートを読み込ませます。
-      （「コンピューターの構成」配下の「管理用テンプレート」を右クリックして「テンプレートの追加と削除」を選択し、firefox.admを指定して追加します。）
-   5. 「従来の管理用テンプレート（ADM）」配下に「Mozilla Firefox」が追加されるので、必要な設定を変更します。
-
-以降は、ドメインに参加したWindows PC上でFirefoxを起動する度に、グループポリシーで変更された設定が読み込まれ、反映されるようになります。
-
-#### 注意点
-
- * 上記ページからダウンロードできる管理用テンプレートファイルの内容は、すべて英語となっています。
-   日本語で設定を管理したい場合は、管理用テンプレートファイルを自分で翻訳する必要があります。
- * 管理できる設定項目は、管理用テンプレートファイルに記述されている物のみとなります。
-   それ以外の設定を管理したい場合は、管理用テンプレートファイルを自分で編集する必要があります。
-
-#### 管理用テンプレートファイルに無い設定項目の管理について
-
-FirefoxやThunderbird自体の更新によって追加・変更・廃止された設定をグループポリシーとして管理できるようにするためには、管理用テンプレートファイルを自分で修正・更新する必要があります。
-
-管理用テンプレートファイルを編集する際は、MCDでの設定で使用する設定名とその値が、ドメインのメンバとなるWindows PCの以下のレジストリキー以下に書き出されるようにして下さい。
-
- * ユーザ自身による変更を許容しない、管理者が固定する設定（Locked Settings）
-   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
-   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\lockPref`
- * ユーザ自身による変更を許容する、初期値の設定（Default Settings）
-   * 全ユーザに反映する場合：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\defaultPref`
-   * ユーザごとに反映する場合：`HKEY_CURRENT_USER\Software\Policies\Mozilla\defaultPref`
-
-真偽型の設定は、`true`を整数の`1`、`false`を整数の`0`として書き出して下さい。
-
-例えば「Firefoxの自動アップデートを禁止する設定を、全ユーザに対して、強制的に反映させる」という場合の設定内容は以下の要領です。
-
- * 書き込む先のレジストリキー：`HKEY_LOCAL_MACHINE\Software\Policies\Mozilla\lockPref`
- * 書き込む値の名前：`app.update.enabled`
- * 書き込む値のデータ：`0`
 
 
 
@@ -165,14 +141,14 @@ Active Directoryドメインに参加しているWindows PCでは、[グルー�
     pref("general.config.vendor", "autoconfig");
     pref("general.config.obscure_value", 0);
 
-作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
+作成した `autoconfig.js` を、Firefoxのインストール先の `defaults/pref/` ディレクトリに置きます（Windowsであれば、`C:\Program Files\Mozilla Firefox\defaults\pref\autoconfig.js` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.cfg` を用意します。
 
     // 1行目は必ずコメントとしてください。
     lockPref("autoadmin.global_config_url", "http://internalserver/autoconfig.jsc");
 
-作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\autoconfig.cfg` など）。
+作成した `autoconfig.cfg` を、FirefoxまたはThunderbirdのインストール先ディレクトリに置きます（Windowsであれば、`C:\Program Files\Mozilla Firefox\autoconfig.cfg` など）。
 
 以下の内容のプレーンテキストファイル `autoconfig.jsc` を用意します。
 
@@ -205,60 +181,6 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 
 
-## 一部の設定項目を非表示にして、ユーザが設定を変更できないようにしたい
-
-キーワード：機能制限、導入時初期設定、集中管理
-
-[MCD（AutoConfig）](#mcd)や[グループポリシーによる設定](#group-policy)では、管理者がFirefoxやThunderbirdの設定を固定し、ユーザ自身による自由な変更を禁止することができます。また、アドオンを併用することによって、変更できなくした設定を画面上に表示しないようにすることができます。
-
-### ウィザードでの実現
-
-[CCK2 Wizard](#cck)を使用すると、設定値を変更不可能な状態に固定する機能を含むアドオンを作成することができます。
-
-### MCDでの実現
-
-[MCD（AutoConfig）](#mcd)機能が提供する `lockPref()` ディレクティブを使用すると、ユーザによる設定の変更を禁止できます。詳細は[設定を管理者が管理したい](#control-configurations-by-administrator)を参照して下さい。
-
-`lockPref()` によって値が固定された設定は、Firefox・Thunderbirdの設定画面上ではグレイアウトして表示されます。
-
-変更できない状態になっている設定項目をそもそもUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
-
- 1. [DOM Inspector][] をインストールします。
- 2. `ツール`→`Web開発`→`DOM Inspector` でDOM Inspectorを起動し、その状態で設定画面を開きます。
- 3. 設定ダイアログを操作し、非表示にしたい設定項目が表示された状態にします。
- 4. `File`→`Inspect Chrome Document`を選択し、設定画面のタイトルと同じ項目を選択します。
- 5. 非表示にしたい項目のIDを調べる。
- 6. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
-    
-    以下は Firefoxの設定の「一般」パネルにおける起動時の挙動の設定を非表示にする場合の例。
-    
-        @-moz-document url-prefix(chrome://browser/content/preferences/preferences.xul) {
-          #startupGroup {
-            /* display:none はDOMツリーに変化を与えて挙動を壊す恐れがあるため、
-               単に非表示にするのみとする。 */
-            visibility: collapse !important;
-            -moz-user-focus: ignore !important;
-          }
-        }
-    
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 7. 6で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
- 8. 7で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
- 9. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
-
-なお、設定画面上部の`全般` `タブ`などのパネル切り替えボタン自体や、`詳細`における`更新`などのタブを非表示にする場合には注意が必要です。
-これらの切り替えボタンやタブを単純に非表示にすると、ボタンやタブとパネルの内容の対応関係が崩れる場合があります。これらの問題の簡単な解決策としては、アドオン [Hide Option Pane][]の利用が挙げられます。
-
-### グループポリシーでの実現
-
-[グループポリシーによる設定](#group-policy)では、ユーザ自身による変更を許容しない設定（Locked Settings）も可能です。
-
-ただし、グループポリシーとの連携だけでは設定項目は非表示にできません、設定項目を非表示にするためには、MCDの場合と同様に、アドオン [globalChrome.css][]を使うなどしてUI要素を隠す必要があります。
-
-
-
-
 
 ## Thunderbirdのアカウント設定を非表示にしたい（管理者が設定を集中管理するので、アカウント設定の画面にアクセスさせたくない）
 
@@ -268,9 +190,9 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、アドオン [globalChrome.css][]を使うなどしてメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+アカウント設定画面へのアクセス経路をUI上に表示しないようにするためには、[globalChrome.css読み込み用スクリプト][]を使ってメニュー項目を隠す必要があります。globalChrome.css を使う場合の手順は以下の通りです。
 
- 1. 「メモ帳」などのテキストエディタを開き、4で調べたIDを使って項目を非表示にするスタイル指定を記述します。
+ 1. 「メモ帳」などのテキストエディタを開き、開発ツールで調べたIDを使って項目を非表示にするスタイル指定を記述します。
 
         @-moz-document url-prefix(chrome://messenger/content/) {
           #menu_accountmgr,
@@ -299,8 +221,8 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
     （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
  2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
  3. 2で作成したファイルをThunderbirdのインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
- 4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
+    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files\Mozilla Thunderbird\chrome\globalChrome.css` となる。）
+ 4. [MCD用設定ファイル](#mcd)を作成し、`autoconfig.cfg` に[globalChrome.css読み込み用スクリプト][]の内容を張り付けて設置します。
 
 
 
@@ -315,10 +237,15 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-`about:config` の利用を禁止する最も簡単な方法は、アドオン [Disable about:config][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable about:configを導入すると、`about:config` へのアクセスが完全に禁止されます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`BlockAboutConfig`](https://github.com/mozilla/policy-templates/blob/master/README.md#blockaboutconfig) を `true` に設定して下さい。例えば以下の要領です。
 
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
+    {
+      "policies": {
+        "BlockAboutConfig": true
+      }
+    }
+
+これにより、`about:config` の読み込みがブロックされ、設定を変更できない状態になります。
 
 
 
@@ -335,59 +262,49 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 
 ### 設定方法
 
-アドオンの利用を禁止する最も簡単な方法は、アドオン [Disable Addons][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Addonsを導入すると、以下の操作が完全に禁止されます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`BlockAboutAddons`](https://github.com/mozilla/policy-templates/blob/master/README.md#blockaboutaddons) を `true` に、[`InstallAddonsPermission.Default`](https://github.com/mozilla/policy-templates/blob/master/README.md#installaddonspermission) を `false` に設定して下さい。例えば以下の要領です。
 
- * ユーザがWebページからアドオンをダウンロードしてきてインストールする。
- * ユーザがアドオンのインストーラパッケージをFirefoxのウィンドウにドラッグ＆ドロップしてインストールする。
- * ユーザがアドオンのインストーラパッケージをFirefoxのショートカットにドラッグ＆ドロップしてインストールする。
- * ユーザがアドオンマネージャを閲覧・操作する。
+    {
+      "policies": {
+        "BlockAboutAddons": true,
+        "InstallAddonsPermission": {
+          "Default": false
+        }
+      }
+    }
+
+これにより、アドオンマネージャの読み込みがブロックされ、設定を変更できない状態になります。
+また、アドオンのインストール操作も禁止されるようになります。
 
 ### 注意事項
 
-アドオン「Disable Addons」は、既にインストール済みの他のアドオンの状態を変更しません。
-既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンやプラグイン（Javaなど）を常に無効化したい](#disable-addons-by-administrator)を参照して下さい。
-
-また、このアドオンはアドオンマネージャへのアクセスを禁止する機能を含むため、必然的に、アドオンマネージャを必要とする以下の操作が行えなくなります。
-
- * アドオンの有効・無効の状態を変更する。
- * アドオンをアンインストールする。
- * アドオンの設定を変更する。（Tab Mix Plusなどのように、`ツール`メニュー等からアドオンの設定を変更できるようになっている場合を除く）
-
-このアドオン自体をアンインストールするには、システム管理者がクライアント上からアドオンの実体となるファイルを削除する必要があります。
+この設定は、既にインストール済みの他のアドオンの状態を変更しません。
+既にインストール済みのアドオンをシステム管理者の判断で強制的に無効化する方法は、[特定のアドオンを常に無効化したい](#disable-addons-by-administrator)を参照して下さい。
 
 
 
 
-
-## 特定のアドオンやプラグイン（Javaなど）を常に無効化したい {#disable-addons-by-administrator}
+## 特定のアドオンを常に無効化したい {#disable-addons-by-administrator}
 
 キーワード：機能制限、導入時初期設定、集中管理、アドオン、プラグイン
 
-システムに導入されているJavaやFlashなどのプラグイン、他のソフトウェアが自動的に追加するアドオンなどを、システム管理者の判断で強制的に無効化することができます。
+既に導入されているアドオンを、システム管理者の判断で強制的に無効化（アンインストール）することができます。
 
 ### 設定方法
 
-アドオンやプラグインの有効・無効の状態をシステム管理者が制御する最も簡単な方法は、アドオン [Force Addon Status][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってForce Addon Statusを導入した上で、[MCD（AutoConfig）](#mcd)を使って以下のような設定を施すことで、指定したアドオンやプラグインの状態を強制的に設定することができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Extensions.Uninstall`](https://github.com/mozilla/policy-templates/blob/master/README.md#extensions) に無効化したいアドオンのIDを列挙して下さい。
+例えば、[Duplicate Tabs Closer][]であれば以下の要領です。
 
-    // Test Pilotアドオンを強制的に無効化する例
-    pref("extensions.force-addon-status@clear-code.com.addons.tbtestpilot@labs.mozilla.com.status",
-         "disabled"); // 設定する有効・無効の状態（"enabled"=有効、"disabled"=無効）
-    
-    // Javaプラグインを強制的に無効化する例
-    pref("extensions.force-addon-status@clear-code.com.plugins.java.pattern",
-         "^Java\(TM\) Plug-in"); // 判別のためのルール（正規表現）
-    pref("extensions.force-addon-status@clear-code.com.plugins.java.enabledState",
-         0); // 設定する有効・無効の状態（0=常に無効、1=クリックされたら有効にする、2=常に有効）
+    {
+      "policies": {
+        "Extensions": {
+          "Uninstall": ["jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack"]
+        }
+      }
+    }
 
-アドオンの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.addons.(アドオンの内部的なID).status` という名前の文字列型の設定を1つ作成します。
-値が `enabled` であればアドオンは有効化され、 `disabled` であれば無効化されます。
-
-プラグインの状態を制御する場合は、 `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` と `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という2つの設定を使用します。
-まずプラグインを識別するための正規表現のルールを `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).pattern` という名前の文字列型の設定として作成します。正規表現は、about:pluginsで表示されるプラグインの名前にマッチするようにします。
-次に、プラグインの状態を制御する `extensions.force-addon-status@clear-code.com.plugins.(ドットを含まない任意の識別名).enabledState` という名前の数値型の設定を作成します。値が `2` であればプラグインは常に有効化され、値が `0` であれば常に無効化されます。値が `1` であれば、初期状態では無効化され、プラグイン有効化のメッセージがクリックされると有効化されます（既定の動作）。
-
+これにより、IDが一致するアドオンが、次回以降の起動時に自動的にアンインストールされます。
+（アドオンをインストールしたまま無効化状態とすることはできません。）
 
 
 
@@ -399,106 +316,58 @@ Firefoxを起動してオプション（設定画面）を開き、`詳細`→`�
 FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインストールして使用します。
 以下の手順に則ると、管理者が、そのクライアント上のすべてのユーザを対象としてアドオンをインストールすることができます。
 
-管理者の手動操作によるアドオンのインストール方法にはいくつかのパターンがあり、それぞれメリットとデメリットがあります。
-[DOM Inspector][]をインストールする場合を例にとって、代表的な3つのパターンを解説します。
+以下、[Duplicate Tabs Closer][]をインストールする場合を例にとって解説します。
 
-#### パターン1：組み込みモジュールとしてインストールする
+#### パターン1：起動時に自動的にインストールされるアドオンとして登録する
 
-※[Bug 1144127 ](https://bugzilla.mozilla.org/show_bug.cgi?id=1144127 "1144127 – Remove support for distribution/bundles")での変更により、この方法はFirefox 40およびそれ以降のバージョンでは利用できなくなりました。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Extensions.Install`](https://github.com/mozilla/policy-templates/blob/master/README.md#extensions) にアドオンのXPIファイルのURLまたはパスを列挙して下さい。
+例えば、`192.168.0.10` のホストをファイル配信に使用するのであれば以下の要領です。
 
-この場合のインストール手順は以下の通りです。
+    {
+      "policies": {
+        "Extensions": {
+          "Install": [
+            "https://192.168.0.10/duplicate_tabs_closer-3.4.1-fx.xpi"
+          ]
+        }
+      }
+    }
 
- 1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
- 2. 1.で作成したフォルダの中に `bundles` という名前でフォルダを作成します。
- 3. 2.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-    DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
- 4. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを3.で作成したフォルダの中に置きます。
-    DOM Inspectorであれば、以下のようなファイル配置になります。
-    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\install.rdf`
-    * `C:\Program Files (x86)\Mozilla Firefox\distribution\bundles\inspector@mozilla.org\chrome.manifest`
-    * ...
+`192.168.0.10` がWindowsのファイルサーバーまたはSambaサーバーである場合、UNCパスを用いた以下の指定の仕方も可能です。
 
-ただし、そのアドオンが検索プラグイン（検索プロバイダ）を含んでいる場合、検索プラグインのファイルは `distribution\bundles` 以下ではなく、`distribution\searchplugins\common` 以下に設置する必要があります。
+    {
+      "policies": {
+        "Extensions": {
+          "Install": [
+            "file:////192.168.0.10/shared/duplicate_tabs_closer-3.4.1-fx.xpi",
+            "\\\\\\\\\\192.168.0.10\\shared\\duplicate_tabs_closer-3.4.1-fx.xpi"
+          ]
+        }
+      }
+    }
 
-この手順でインストールしたアドオンは以下の特徴を持ちます。
-
- * *当該アドオンはアドオンマネージャの管理下から外れます。*
-   （Firefox組み込みのモジュールの1つとして認識されるようになります。）
-   * *当該アドオンはアドオンマネージャ上に表示されません。*
-     ユーザは当該アドオンをアドオンマネージャから認識できません。
-   * ユーザは当該アドオンを削除できません。
-   * *ユーザは当該アドオンを無効化できません。*
- * *当該アドオンは自動アップデートされません。*
-   ただし、アップデート後のバージョンを通常のアドオンとしてユーザがインストールすることはでき、その場合、その後は通常通り自動アップデートされるようになります。
- * *Add-on SDKベースのアドオン、再起動不要なアドオンは、この方法では動作しません。*
-   （ただし、例外的にこの方法でインストールしても動作する再起動不要なアドオンはいくつか存在します。）
- * *アドオンは次回起動時から強制的に有効化されます。*
- 
-#### パターン2：全ユーザ向けのアドオンとしてインストールする
-
-この場合のインストール手順は以下の通りです。
-
- 1. アドオンのインストールパッケージを入手します。
- 2. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたファイル群の中の「install.rdf」をテキストエディタなどで開き、`<em:unpack>true</em:unpack>`または`em:unpack="true"`という記述があるかどうかを調べます。
-    * `unpack`の指定がある場合:
-      1. アプリケーション組み込みアドオンの設置用のフォルダを作成します。
-         * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files (x86)\Mozilla Thunderbird` にインストールされているThunderbirdの場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Thunderbird\extensions` となります。
-      2. 1.で作成したフォルダの中に、インストールしたいアドオンの内部的なIDと同じ名前でフォルダを作成します。
-         DOM Inspectorであれば、フォルダ名は `inspector@mozilla.org` となります。
-      3. アドオンのインストールパッケージ（xpiファイル）をZIP形式の圧縮ファイルとして展開し、取り出されたすべてのファイルやフォルダを2.で作成したフォルダの中に置きます。
-         DOM Inspectorであれば、以下のようなファイル配置になります。
-         * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\install.rdf`
-         * `C:\Program Files (x86)\Mozilla Firefox\browser\extensions\inspector@mozilla.org\chrome.manifest`
-         * ...
-    * `unpack`の指定が無い場合:
-      1. アドオンのインストールパッケージ（xpiファイル）のファイル名を、`アドオンの内部的なID.xpi`に変更します。
-         DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` となります。
-      2. 1.で用意したファイルを、適切な位置に設置します。
-         * `C:\Program Files (x86)\Mozilla Firefox` にインストールされているFirefoxの場合、ファイルを設置するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\browser\extensions` となります。
-         * `C:\Program Files (x86)\Mozilla Thunderbird` にインストールされているThunderbirdの場合、ファイルを設置するフォルダのパスは `C:\Program Files (x86)\Mozilla Thunderbird\extensions` となります。
- 3. [MCD（AutoConfig）](#mcd)などを使い、以下の設定を反映します。
-    
-        pref("extensions.autoDisableScopes", 11);
-        // この設定値は、整数値で表現された以下のフラグの組み合わせ。
-        // ユーザの意図が関与せずにインストールされたアドオンが
-        // 以下のフラグで示されるインストール方法に該当する場合、そのアドオンは
-        // 次回起動時に自動的に無効化され、ユーザに有効化の可否が確認される。
-        //  1: 現在のユーザープロファイルのみを対象としたインストール
-        //     （通常のインストール）
-        //  2: 現在ログインしているユーザのすべてのユーザープロファイルを対象としたインストール
-        //     （HKEY_CURRENT_USER以下のレジストリを使用したインストールなど）
-        //  4: そのインストール先のアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置）
-        //  8: そのコンピュータのすべてのアプリケーションのすべてのユーザを対象としたインストール
-        //     （C:\Program Files (x86)\Mozilla Firefox\browser\extensions 以下へのファイル配置、
-        //       HKEY_LOCAL_MACHINE以下のレジストリを使用したインストールなど）
-    
-    この設定を行わないと、アドオンは次回起動時には無効化された状態となります。
+これにより、次回以降の起動時に、各アドオンが自動的にユーザープロファイル配下へアンインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
 
- * *当該アドオンはアドオンマネージャの管理下に置かれます。*
-   * *当該アドオンはアドオンマネージャ上に表示されます。*
-     ユーザは当該アドオンをアドオンマネージャから認識できます。
-   * ユーザは当該アドオンを削除できません。
-     後述の通り、ユーザはアップデート後のアドオンを削除することはできますが、その場合は、管理者がインストールした最初のバージョンに戻るという結果になります。
+ * *既に存在しているユーザプロファイルでFirefoxを起動した場合も、当該アドオンはインストールされます*。
+ * 当該アドオンは、ユーザが自分でインストールしたのと同じ扱いになります。
+   * 当該アドオンはアドオンマネージャ上に表示されます。
+   * *ユーザは当該アドオンを削除できます。*
    * *ユーザは当該アドオンを無効化できます。*
- * *当該アドオンは自動アップデートされません。*
-   ただし、アップデート後のバージョンを通常のアドオンとしてユーザがインストールすることはでき、その場合、その後は通常通り自動アップデートされるようになります。
- * *Add-on SDKベースのアドオン、再起動不要なアドオンも、この方法でインストールできます。*
- * 「extensions.autoDisableScopes」の設定を変更していないと、*当該アドオンは次回起動時に強制的に無効化されます。*
+ * *当該アドオンは自動更新されます。*
 
-#### パターン3：新規プロファイル作成時に同時にインストールされるアドオンとして登録する
+自動更新を利用できない場面において、この方法でインストールしたアドオンを更新するためには、同じアドオンをバージョン番号を付与した別のURLまたはバージョン番号を付与した別のパスで`Extensions.Install`に列挙し直して再インストールする必要があります。
+
+#### パターン2：初回起動時（新規プロファイル作成時）に自動的にインストールされるアドオンとして登録する
 
 この場合のインストール手順は以下の通りです。
 
  1. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
+    Firefoxが `C:\Program Files\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files\Mozilla Firefox\distribution` となります。
  2. 1.で作成したフォルダの中に `extensions` という名前でフォルダを作成します。
  3. 2.で作成したフォルダの中に、インストールしたいアドオンのインストールパッケージ（xpiファイル）を設置します。ファイル名はアドオンの内部的なIDに合わせて変更します。
-    DOM Inspectorであれば、ファイル名は `inspector@mozilla.org.xpi` で、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\extensions\inspector@mozilla.org.xpi` となります。
+    Duplicate Tabs Closerであれば、ファイル名は `jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack.xpi` で、最終的なファイルのパスは `C:\Program Files\Mozilla Firefox\distribution\extensions\jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack.xpi` となります。
  4. ユーザ権限でFirefoxを起動します。それが初回起動であれば、アドオンが自動的にインストールされます。
 
 この手順でインストールしたアドオンは以下の特徴を持ちます。
@@ -509,16 +378,7 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
    * 当該アドオンはアドオンマネージャ上に表示されます。
    * *ユーザは当該アドオンを削除できます。*
    * *ユーザは当該アドオンを無効化できます。*
- * *当該アドオンは自動アップデートされます。*
- * Add-on SDKベースのアドオン、再起動不要なアドオンも、この方法でインストールできます。
-
-#### その他のパターン
-
-上記の3パターン以外にも、アドオンを管理者がインストールするための方法はいくつかあります。詳細は以下の開発者向け情報を参照して下さい。
-
- * [Installing extensions - Mozilla | MDN](https://developer.mozilla.org/en-US/Add-ons/Installing_extensions?redirectlocale=en-US&amp;redirectslug=Installing_extensions )（英語）
-
-
+ * *当該アドオンは自動自動更新されます。*
 
 
 
@@ -532,26 +392,9 @@ FirefoxやThunderbirdは通常、ユーザが任意のアドオンをインス�
 
 キーワード：導入時初期設定
 
-Firefox（およびThundebrird）は通常、既にFirefoxが起動している状態でもう一度Firefoxをショートカット等から起動しようとすると、既に起動しているFirefoxにおいて新しいウィンドウを開くという操作になります。
-Firefoxの実行ファイルに対して起動オプションを与えることで、異なるユーザープロファイルでFirefoxを同時に起動することができます。
+Firefox（およびThundebrird） 68以降のバージョンは、インストール先パスとユーザープロファイルが紐付く形となっており、インストール先パスを変えるだけで別プロファイルで同時に起動できるようになっています。
 
-### 設定方法
-
-例として、（設定の検証などに使用する）新規プロファイル環境のFirefoxを同時に起動できるようにする手順を示します。
-
- 1. プロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\another` に作成することにします。
- 2. Firefoxを起動するためのショートカットをデスクトップ上にコピーし、任意の名前に変更します。
-    ここでは例として、`Firefox Another` とします。
- 3. 2.で作成した新しいショートカットのプロパティを開き、`リンク先` に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（1.で作成したフォルダのパス）"` というオプションの指定を加えます。
-     Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なリンク先は以下のようになります。
-     
-         "C:\Program Files (x86)\Mozilla Firefox\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\another"
-
-以上で、同じバージョンのFirefoxを別々のプロファイルで同時に起動できるようになります。
-通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動すると新規プロファイルの環境のFirefoxがそれぞれ起動します。
-
-なお、他のアプリケーションでリンクを開こうとした場合や、URLショートカットを開こうとした場合には、上記手順で作成した新規プロファイルではなく、既存プロファイルのFirefoxが起動します。
+従来からあるプロファイルを明示的に指定して起動する方法によるプロファイルの使い分けについては、[株式会社クリアコードのブログに記載されている技術情報](https://www.clear-code.com/blog/2019/6/14.html)などを参照して下さい。
 
 
 
@@ -559,32 +402,9 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
 
 キーワード：導入時初期設定
 
-Firefoxの実行ファイルに対して起動オプションを与えることで、異なるバージョンのFirefoxを同時に起動することができます。
+Firefox（およびThundebrird） 68以降のバージョンは、インストール先パスとユーザープロファイルが紐付く形となっており、インストール先パスを変えるだけで別プロファイルで同時に起動できるようになっています。
 
-### 設定方法
-
-例として、通常リリース版のFirefoxがインストールされている環境で、ESR版Firefoxを同時に起動できるようにする手順を示します。
-
- 1. 起動中のFirefoxのウィンドウをすべて閉じ、終了します。
- 2. 新たにインストールしたいバージョンのFirefoxのインストーラを起動します。
- 3. 「カスタムインストール」を選択し、インストール先を今まで使用していたバージョンのFirefoxとは異なる位置に指定します。
-    ここでは例として、`C:\Program Files (x86)\Mozilla Firefox ESR` にインストールすることにします。
-    また、この時デスクトップおよびスタートメニューのショートカットは作成しないようにします。
-    （既存のショートカットを上書きしないため）
- 4. ESR版Firefox起動専用のプロファイル情報保存用のフォルダを任意の位置に作成します。
-    ここでは例として、`%AppData%\Mozilla\Firefox\Profiles\esr` に作成することにします。
- 5. 3.でインストールしたFirefoxの実行ファイルへのショートカットをデスクトップ上に作成し、任意の名前を付けます。
-    ここでは例として、「Firefox ESR」とします。
- 6. 5.で作成した新しいショートカットのプロパティを開き、「リンク先」に記載されているFirefoxの実行ファイルへのパスの後に、` -no-remote -profile "（5.で作成したフォルダのパス）"` というオプションの指定を加えます。
-    ここまでの手順の例に則ると、最終的なリンク先は以下のようになります。
-     
-         "C:\Program Files (x86)\Mozilla Firefox ESR\firefox.exe" -no-remote -profile "%AppData%\Mozilla\Firefox\Profiles\esr"
-
-以上で、通常リリース版のFirefoxとESR版Firefoxを同時に起動できるようになります。
-通常のショートカットで起動すると今まで通りのFirefoxが、上記手順で作成したショートカットで起動するとESR版のFirefoxがそれぞれ起動します。
-
-なお、他のアプリケーションでリンクを開こうとした場合や、URLショートカットを開こうとした場合には、上記手順でセットアップしたESR版Firefoxではなく、通常リリース版（既存プロファイル）のFirefoxが起動します。
-
+従来からあるプロファイルを明示的に指定して起動する方法によるプロファイルの使い分けについては、[株式会社クリアコードのブログに記載されている技術情報](https://www.clear-code.com/blog/2019/6/14.html)などを参照して下さい。
 
 
 
@@ -598,184 +418,195 @@ Firefoxの実行ファイルに対して起動オプションを与えること�
 
 Firefoxにはネットワーク上のサーバと連携する機能が多数含まれています。情報漏洩対策その他の理由から外部ネットワークへの意図しない通信を行わないようにしたい場合には、各機能を無効化することができます。
 
+ただし、以下の設定は行動収集スクリプト（トラッキングスクリプト）のブロックのためのブロックリストを取得する動作も無効化します。
+現在のWebでは行動収集スクリプトに起因する通信量が増大しており、Mozillaが提供するブロックリストを使用して通信を遮断した方が、結果的にバックグラウンドでの通信量が減る（ブロックリストの取得のための通信を無効化すると、通信量が却って増大する）という可能性も考えられます。
+Firefox自体が行うバックグラウンドでの通信をどこまで無効化するかについては慎重に判断することが推奨されます。
+
+
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+全ての外部向け通信を無効化するためには、[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)と、[MCD（AutoConfig）](#mcd)の両方を組み合わせる必要があります。
+ポリシー定義ファイルの設定例は以下の通りです。
 
+    {
+      "policies": {
+        "DisableAppUpdate": true,
+        "ExtensionUpdate": false,
+        "BlockAboutAddons": true,
+        "InstallAddonsPermission": {
+          "Default": false
+        },
+        "CaptivePortal": false,
+        "SearchSuggestEnabled": false,
+        "DisableTelemetry": true,
+        "DisableFirefoxAccounts": true,
+        "EnableTrackingProtection": {
+          "Value": false,
+          "Locked": true
+        },
+        "OverrideFirstRunPage": ""
+      }
+    }
 
-    // アプリケーション自体の自動更新のURL
-    lockPref("app.update.url", "");
-    lockPref("app.update.url.details", "");
-    lockPref("app.update.url.manual", "");
-    
+MCD用設定ファイルの設定例は以下の通りです。
+
+    // 攻撃サイトに対する警告の可否: しない
+    lockPref("browser.safebrowsing.malware.enabled", false);
+    lockPref("browser.safebrowsing.downloads.remote.url", "");
+    lockPref("browser.safebrowsing.provider.google.advisoryURL", "");
+    lockPref("browser.safebrowsing.provider.google.gethashURL", "");
+    lockPref("browser.safebrowsing.provider.google.reportMalwareMistakeURL", "");
+    lockPref("browser.safebrowsing.provider.google.reportPhishMistakeURL", "");
+    lockPref("browser.safebrowsing.provider.google.reportURL", "");
+    lockPref("browser.safebrowsing.provider.google.updateURL", "");
+    lockPref("browser.safebrowsing.provider.google4.advisoryURL", "");
+    lockPref("browser.safebrowsing.provider.google4.gethashURL", "");
+    lockPref("browser.safebrowsing.provider.google4.reportMalwareMistakeURL", "");
+    lockPref("browser.safebrowsing.provider.google4.reportPhishMistakeURL", "");
+    lockPref("browser.safebrowsing.provider.google4.reportURL", "");
+    lockPref("browser.safebrowsing.provider.google4.updateURL", "");
+    lockPref("browser.safebrowsing.provider.mozilla.gethashURL", "");
+    lockPref("browser.safebrowsing.provider.mozilla.updateURL", "");
+    lockPref("browser.safebrowsing.reportMalwareMistakeURL", "");
+    lockPref("browser.safebrowsing.reportPhishMistakeURL", "");
+    lockPref("browser.safebrowsing.reportPhishURL", "");
+    // ツールバーカスタマイズにおける、「その他のテーマを入手」の遷移の可否: 禁止する
+    lockPref("lightweightThemes.getMoreURL", "");
+    // ツールバーカスタマイズにおける、テーマの「おすすめ」の取得の可否: 禁止する
+    lockPref("lightweightThemes.recommendedThemes", "");
+    // 危険なアドオンとプラグインのブロックの可否: ブロックしない
+    lockPref("extensions.blocklist.enabled", false);
+    lockPref("extensions.blocklist.detailsURL", "");
+    lockPref("extensions.blocklist.itemURL", "");
+    lockPref("extensions.blocklist.url", "");
+    // プロトコルごとの外部Webアプリケーションへの連携: 使用しない
+    // Webフィード用のサービス
+    lockPref("browser.contentHandlers.types.0.name", "");
+    lockPref("browser.contentHandlers.types.0.uri", "");
+    lockPref("browser.contentHandlers.types.1.name", "");
+    lockPref("browser.contentHandlers.types.1.uri", "");
+    pref("browser.contentHandlers.types.2.name", "");
+    pref("browser.contentHandlers.types.2.uri", "");
+    pref("browser.contentHandlers.types.3.name", "");
+    pref("browser.contentHandlers.types.3.uri", "");
+    pref("browser.contentHandlers.types.4.name", "");
+    pref("browser.contentHandlers.types.4.uri", "");
+    pref("browser.contentHandlers.types.5.name", "");
+    pref("browser.contentHandlers.types.5.uri", "");
+    // IRC
+    lockPref("gecko.handlerService.schemes.irc.0.name", "");
+    lockPref("gecko.handlerService.schemes.irc.0.uriTemplate", "");
+    pref("gecko.handlerService.schemes.irc.1.name", "");
+    pref("gecko.handlerService.schemes.irc.1.uriTemplate", "");
+    pref("gecko.handlerService.schemes.irc.2.name", "");
+    pref("gecko.handlerService.schemes.irc.2.uriTemplate", "");
+    pref("gecko.handlerService.schemes.irc.3.name", "");
+    pref("gecko.handlerService.schemes.irc.3.uriTemplate", "");
+    lockPref("gecko.handlerService.schemes.ircs.0.name", "");
+    lockPref("gecko.handlerService.schemes.ircs.0.uriTemplate", "");
+    pref("gecko.handlerService.schemes.ircs.1.name", "");
+    pref("gecko.handlerService.schemes.ircs.1.uriTemplate", "");
+    pref("gecko.handlerService.schemes.ircs.2.name", "");
+    pref("gecko.handlerService.schemes.ircs.2.uriTemplate", "");
+    pref("gecko.handlerService.schemes.ircs.3.name", "");
+    pref("gecko.handlerService.schemes.ircs.3.uriTemplate", "");
+    // メール
+    lockPref("gecko.handlerService.schemes.mailto.0.name", "");
+    lockPref("gecko.handlerService.schemes.mailto.0.uriTemplate", "");
+    lockPref("gecko.handlerService.schemes.mailto.1.name", "");
+    lockPref("gecko.handlerService.schemes.mailto.1.uriTemplate", "");
+    pref("gecko.handlerService.schemes.mailto.2.name", "");
+    pref("gecko.handlerService.schemes.mailto.2.uriTemplate", "");
+    pref("gecko.handlerService.schemes.mailto.3.name", "");
+    pref("gecko.handlerService.schemes.mailto.3.uriTemplate", "");
+    // カレンダー
+    lockPref("gecko.handlerService.schemes.webcal.0.name", "");
+    lockPref("gecko.handlerService.schemes.webcal.0.uriTemplate", "");
+    pref("gecko.handlerService.schemes.webcal.1.name", "");
+    pref("gecko.handlerService.schemes.webcal.1.uriTemplate", "");
+    pref("gecko.handlerService.schemes.webcal.2.name", "");
+    pref("gecko.handlerService.schemes.webcal.2.uriTemplate", "");
+    pref("gecko.handlerService.schemes.webcal.3.name", "");
+    pref("gecko.handlerService.schemes.webcal.3.uriTemplate", "");
+    // ファイルのダウンロード保護により、危険なソフトウェアのインストールをブロックする: ブロックしない
+    lockPref("browser.safebrowsing.downloads.enabled", false);
+    // ファイルのダウンロード保護により、不要なソフトウェアのインストールの可能性がある場面で警告する: 警告しない
+    lockPref("browser.safebrowsing.downloads.remote.block_potentially_unwanted", false);
+    lockPref("browser.safebrowsing.downloads.remote.block_uncommon", false);
+    // 危険ででしゃばりなFlashコンテンツをブロック: ブロックしない
+    lockPref("plugins.flashBlock.enabled", false);
+    // 過去にデータ流出事故を起こしたWebサービスでの警告の表示: 警告を表示しない
+    lockPref("extensions.fxmonitor.enabled", false);
+    // リンク先の先読みの可否: 禁止する
+    lockPref("network.prefetch-next", false);
+    // 検索結果のローカライズ用地域コードの位置情報に基づく推定の可否: 禁止する
+    lockPref("browser.search.geoip.url", "");
+    // Gecko Media Pluginの利用の可否: 禁止する
+    lockPref("media.eme.enabled",false);
+    lockPref("media.gmp-eme-adobe.enabled",false);
+    lockPref("media.gmp-eme-adobe.autoupdate",false);
+    lockPref("media.gmp-gmpopenh264.enabled",false);
+    lockPref("media.gmp-gmpopenh264.autoupdate",false);
+    lockPref("media.gmp-widevinecdm.enabled",false);
+    lockPref("media.gmp-widevinecdm.autoupdate",false);
+    lockPref("media.gmp-manager.url", "about:blank");
+    lockPref("media.gmp-provider.enabled",false);
     // プラグインのブロック時などの詳細説明のURL
     lockPref("app.support.baseURL", "");
     // Webサイトの互換性情報のURL
     lockPref("breakpad.reportURL", "");
     // about:homeに表示するアドバイス情報の取得元URL
     lockPref("browser.aboutHomeSnippets.updateUrl", "");
-    
-    // Webサービスとの連携
-    // Webフィード用のサービス
-    lockPref("browser.contentHandlers.types.0.uri", "");
-    lockPref("browser.contentHandlers.types.1.uri", "");
-    pref("browser.contentHandlers.types.2.uri", "");
-    pref("browser.contentHandlers.types.3.uri", "");
-    pref("browser.contentHandlers.types.4.uri", "");
-    pref("browser.contentHandlers.types.5.uri", "");
-    // IRC用のサービス
-    lockPref("gecko.handlerService.schemes.irc.0.uriTemplate", "");
-    pref("gecko.handlerService.schemes.irc.1.uriTemplate", "");
-    pref("gecko.handlerService.schemes.irc.2.uriTemplate", "");
-    pref("gecko.handlerService.schemes.irc.3.uriTemplate", "");
-    lockPref("gecko.handlerService.schemes.ircs.0.uriTemplate", "");
-    pref("gecko.handlerService.schemes.ircs.1.uriTemplate", "");
-    pref("gecko.handlerService.schemes.ircs.2.uriTemplate", "");
-    pref("gecko.handlerService.schemes.ircs.3.uriTemplate", "");
-    // メール用のサービス
-    lockPref("gecko.handlerService.schemes.mailto.0.uriTemplate", "");
-    lockPref("gecko.handlerService.schemes.mailto.1.uriTemplate", "");
-    pref("gecko.handlerService.schemes.mailto.2.uriTemplate", "");
-    pref("gecko.handlerService.schemes.mailto.3.uriTemplate", "");
-    // カレンダー用のサービス
-    lockPref("gecko.handlerService.schemes.webcal.0.uriTemplate", "");
-    pref("gecko.handlerService.schemes.webcal.1.uriTemplate", "");
-    pref("gecko.handlerService.schemes.webcal.2.uriTemplate", "");
-    pref("gecko.handlerService.schemes.webcal.3.uriTemplate", "");
-    
     // オートコレクト用辞書の取得先URL
     lockPref("browser.dictionaries.download.url", "");
-    
     // 位置情報サービスの説明用URL
     lockPref("browser.geolocation.warning.infoURL", "");
-    // 位置情報をWi-Fiアクセスポイントから取得するためのURL
-    lockPref("geo.wifi.uri", "");
-    
-    // SSLの有無が混在しているページでの警告文のURL
-    lockPref("browser.mixedcontent.warning.infoURL", "");
-    
-    // 検索プロバイダ（検索エンジン）の自動更新を無効化
-    lockPref("browser.search.update", false);
-    
-    // Google Safe Browsing機能
-    lockPref("browser.safebrowsing.enabled", false);
-    lockPref("browser.safebrowsing.malware.enabled", false);
-    lockPref("browser.safebrowsing.gethashURL", "");
-    lockPref("browser.safebrowsing.keyURL", "");  // Firefox 38用
-    lockPref("browser.safebrowsing.malware", "");  // Firefox 38用
-    lockPref("browser.safebrowsing.malware.reportURL", "");
-    lockPref("browser.safebrowsing.reportErrorURL", "");
-    lockPref("browser.safebrowsing.reportGenericURL", "");
-    lockPref("browser.safebrowsing.reportMalwareErrorURL", "");
-    lockPref("browser.safebrowsing.reportMalwareURL", "");
-    lockPref("browser.safebrowsing.reportPhishURL", "");
-    lockPref("browser.safebrowsing.reportURL", "");
-    lockPref("browser.safebrowsing.updateURL", "");
-    lockPref("browser.safebrowsing.warning.infoURL", "");  // Firefox 38用
-    lockPref("browser.safebrowsing.appRepURL", "");
-    
+    // 地域ごとのデフォルトの検索サービス切り替え
+    lockPref("browser.search.geoSpecificDefaults", false);
+    lockPref("browser.search.geoSpecificDefaults.url", "");
     // 検索プロバイダ（検索エンジン）の取得元URL
     lockPref("browser.search.searchEnginesURL", "");
-    
-    // 統計情報送信用の機能
-    lockPref("datareporting.healthreport.service.enabled", false);
-    lockPref("datareporting.healthreport.uploadEnabled", false);
-    lockPref("datareporting.healthreport.about.reportUrl", "");
-    lockPref("datareporting.healthreport.about.reportUrlUnified", "");
-    lockPref("datareporting.healthreport.documentServerURI", "");
-    lockPref("datareporting.healthreport.infoURL", "");
-    lockPref("datareporting.policy.dataSubmissionEnabled", false);
-    
-    // Webアプリケーションのインストールを許可するドメイン
-    lockPref("dom.mozApps.signed_apps_installable_from", "");
-    
-    // 危険なアドオンのブロックリスト
-    lockPref("extensions.blocklist.enabled", false);
-    lockPref("extensions.blocklist.detailsURL", "");
-    lockPref("extensions.blocklist.itemURL", "");
-    lockPref("extensions.blocklist.url", "");
-    
-    // Mozilla Add-onsから新しいアドオンを検索するのを禁止
-    lockPref("extensions.getAddons.get.url", "");
-    lockPref("extensions.getAddons.getWithPerformance.url", "");
-    lockPref("extensions.getAddons.recommended.url", "");
-    lockPref("extensions.getAddons.search.browseURL", "");
-    lockPref("extensions.getAddons.search.url", "");
-    
-    // アドオンの自動更新
-    lockPref("extensions.update.enabled", false);
-    lockPref("extensions.update.background.url", "");
-    lockPref("extensions.update.url", "");
-    // Firefoxのアップデート後に行われるアドオンの互換性確認を併せて無効化する。
-    // （そうしないと、アドオンの互換性確認でFirefoxがフリーズしてしまう）
-    lockPref("extensions.showMismatchUI", false);
-    
-    // アドオンマネージャから新しいアドオンを探すためのURL
-    lockPref("extensions.webservice.discoverURL", "");
-    
+    // 接続の状態（接続が制限されているかどうかなど）を判定するためのアクセス先
+    lockPref("captivedetect.canonicalURL", "");
+    // Developer Editionの説明
+    lockPref("devtools.devedition.promo.url", "");
+    // 開発ツールで使用するデバイス
+    lockPref("devtools.devices.url", "");
+    // 開発者ツールからの外部サイト参照の無効化
+    lockPref("devtools.gcli.imgurUploadURL", "");
+    lockPref("devtools.gcli.jquerySrc", "");
+    lockPref("devtools.gcli.lodashSrc", "");
+    lockPref("devtools.gcli.underscoreSrc", "");
+    lockPref("devtools.remote.adb.extensionURL", "");
+    lockPref("devtools.webide.templatesURL", "");
+    // 実験的機能の案内の無効化
+    lockPref("experiments.manifest.uri", "");
     // パッチ、組み込みのアドオンの更新
     lockPref("extensions.systemAddon.update.url", "");
-    
-    // プラグインのインストール情報、更新情報の取得元URL
-    lockPref("pfs.datasource.url", "");
-    lockPref("plugins.update.url", "");
-    
-    // UIツアー
-    lockPref("browser.uitour.themeOrigin", "");
-    lockPref("browser.uitour.url", "");
-    
-    // マルチプロセスモードのフィードバックを促すメッセージ
-    lockPref("app.feedback.baseURL", "");
-    
-    // Firefox Sync
-    lockPref("services.sync.account", "");
-    lockPref("services.sync.username", "");
-    lockPref("services.sync.jpake.serverURL", "");
-    lockPref("services.sync.privacyURL", "");
-    lockPref("services.sync.serverURL", "");
-    lockPref("services.sync.statusURL", "");
-    lockPref("services.sync.syncKeyHelpURL", "");
-    lockPref("services.sync.termsURL", "");
-    
+    // パッチ、組み込みのアドオンの更新
+    lockPref("extensions.webservice.discoverURL", "");
+    // 位置情報をWi-Fiアクセスポイントから取得するためのURL
+    lockPref("geo.wifi.uri", "");
+    // Firefox Accounts
+    lockPref("identity.fxaccounts.remote.webchannel.uri", "");
     // Firefox Sync向けモバイルアプリの宣伝リンク
     lockPref("identity.mobilepromo.android", "");
     lockPref("identity.mobilepromo.ios", "");
-    
-    // アドオンの署名義務化に関するメッセージ
-    lockPref("xpinstall.signatures.devInfoURL", "");
-    
-    // SNS連携機能
-    lockPref("social.enabled", false);  // Firefox 38用
-    lockPref("social.activeProviders", "");  // Firefox 45用
-    lockPref("social.directories", "");
-    lockPref("social.shareDirectory", "");
-    lockPref("social.remote-install.enabled", false);  // Firefox 45用
-    lockPref("social.share.activationPanelEnabled", false);  // Firefox 45用
-    lockPref("social.toast-notifications.enabled", false);  // Firefox 45用
-    lockPref("social.whitelist", "");
-    
-    // スタートページ
-    lockPref("startup.homepage_welcome_url", "");
-    lockPref("startup.homepage_welcome_url.additional", "");
-    
+    // トラッキング防止の案内
+    lockPref("privacy.trackingprotection.introURL", "");
     // クラッシュレポーターの関連情報
     lockPref("toolkit.crashreporter.infoURL", "");
-    
-    // 利用状況の統計情報の送信先
-    lockPref("toolkit.telemetry.enabled", false);
-    lockPref("toolkit.telemetry.infoURL", "");
-    lockPref("toolkit.telemetry.server", "");
-    // 統計情報の送信に関するメッセージの無効化
-    if (typeof getPref("toolkit.telemetry.prompted") == "boolean")
-      clearPref("toolkit.telemetry.prompted");
-    lockPref("toolkit.telemetry.prompted", 2);
-    lockPref("toolkit.telemetry.rejected", true);
-    
-    // ツールバーカスタマイズのヒントにおける詳細情報へのリンク
-    lockPref("browser.customizemode.tip0.learnMoreUrl", "");
-
-    // タイルのパフォーマンス情報
-    lockPref("browser.newtabpage.enhanced", false);
+    // アドオンの署名義務化に関するメッセージ
+    lockPref("xpinstall.signatures.devInfoURL", "");
+    // IPv4, IPv6の疎通確認
+    lockPref("network.connectivity-service.enabled", false);
+    lockPref("network.connectivity-service.IPv4.url", "");
+    lockPref("network.connectivity-service.IPv6.url", "");
+    // DNSの疎通確認
+    lockPref("network.connectivity-service.DNSv4.domain", "");
+    lockPref("network.connectivity-service.DNSv6.domain", "");
+    // ブロックリスト等の取得
+    lockPref("services.settings.server", "localhost");
 
 
 
@@ -840,32 +671,8 @@ FirefoxやThundebirdがクラッシュすると、通常はクラッシュレポ
 
 ### 設定方法
 
-クラッシュレポーターを無効化する方法は複数あります。
-
-<!--
-http://mxr.mozilla.org/mozilla-central/source/toolkit/crashreporter/nsExceptionHandler.cpp#1861
--->
-
-#### Windowsのレジストリを使用する
-
-Windowsのレジストリキー `HKEY_LOCAL_MACHINE\Software\Mozilla\Firefox\Crash Reporter` または `HKEY_CURRENT_USER\Software\Mozilla\Firefox\Crash Reporter` について、DWORD型の値 `SubmitCrashReport` を作成し、データを `0` に設定します。
-
-#### OS Xのアプリケーションごとの設定を使用する
-
-`Mozilla Crash Reporter` の設定 `submitReport` について、値を`false` にします。
-
-#### Linuxのユーザ固有の設定を使用する
-
-`~/.mozilla/firefox/Crash Reports/crashreporter.ini` の位置に以下の内容のテキストファイルを置きます。
-
-    [Crash Reporter]
-    SubmitReport＝0
-
-#### 環境変数を使用する場合
-
-環境変数 `MOZ_CRASHREPORTER_DISABLE` の値を `1` に設定した状態でFirefoxを起動するとクラッシュレポータが無効化されます。この指定は上記の設定よりも優先され、どのプラットフォームにおいても利用できます。
-
-
+クラッシュレポーターの無効化は、通常の設定手順では行えず、環境変数の設定を必要とします。
+環境変数 `MOZ_CRASHREPORTER_DISABLE ` を `1` に設定した状態では、Firefoxがクラッシュしてもクラッシュレポータは起動しません。
 
 
 
@@ -882,19 +689,13 @@ Firefoxには、利用時におけるメモリの使用状況などの性能に�
 
 ### 設定方法
 
-以下は、統計情報を送信しない設定で固定する場合の、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisableTelemetry`](https://github.com/mozilla/policy-templates/blob/master/README.md#disabletelemetry) を `true` に設定して下さい。例えば以下の要領です。
 
-    if (typeof getPref("toolkit.telemetry.prompted") == "boolean")
-      clearPref("toolkit.telemetry.prompted");
-    lockPref("toolkit.telemetry.prompted", 2);
-    lockPref("toolkit.telemetry.rejected", true);
-    lockPref("datareporting.healthreport.service.enabled", false);
-    lockPref("datareporting.healthreport.uploadEnabled", false);
-    lockPref("datareporting.healthreport.about.reportUrl", "");
-    lockPref("datareporting.healthreport.about.reportUrlUnified", "");
-    lockPref("datareporting.healthreport.documentServerURI", "");
-    lockPref("datareporting.healthreport.infoURL", "");
-    lockPref("datareporting.policy.dataSubmissionEnabled", false);
+    {
+      "policies": {
+        "DisableTelemetry": true
+      }
+    }
 
 
 
@@ -906,10 +707,13 @@ Firefoxのオートコンプリート機能（テキストボックスに入力�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisableFormHistory`](https://github.com/mozilla/policy-templates/blob/master/README.md#disableformhistory) を `true` に設定して下さい。例えば以下の要領です。
 
-    // Webページ上のフォーム要素、およびWeb検索バーのオートコンプリート機能の無効化
-    lockPref("browser.formfill.enable", false);
+    {
+      "policies": {
+        "DisableTelemetry": true
+      }
+    }
 
 なお、この設定を反映しても、既に保存されている入力履歴の削除までは行われません。
 
@@ -924,7 +728,7 @@ Firefoxのスマートロケーションバー機能（ロケーションバー�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
     // スマートロケーションバーのオートコンプリート機能の無効化
     lockPref("browser.urlbar.autocomplete.enabled", false);
@@ -932,6 +736,7 @@ Firefoxのスマートロケーションバー機能（ロケーションバー�
     lockPref("browser.urlbar.suggest.history", false);
     lockPref("browser.urlbar.suggest.bookmark", false);
     lockPref("browser.urlbar.suggest.openpage", false);
+    lockPref("browser.urlbar.suggest.searches", false);
 
 なお、この設定を反映しても、既に保存されている入力履歴や閲覧履歴の削除までは行われません（単に表示されなくなります）。
 
@@ -947,18 +752,15 @@ FirefoxおよびThunderbirdのパスワードマネージャ機能は無効化�
 
 ### 設定方法
 
-パスワードマネージャの利用を禁止する最も簡単な方法は、アドオン [Do Not Save Password][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDo Not Save Passwordを導入すると、以下の効果を得ることができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`OfferToSaveLogins`](https://github.com/mozilla/policy-templates/blob/master/README.md#offertosavelogins) を `false` に設定して下さい。例えば以下の要領です。
 
- * パスワードマネージャ機能を無効化し、パスワードの保存を禁止する。
- * 既にパスワードマネージャに保存されてしまっているパスワードをすべて消去する。
+    {
+      "policies": {
+        "OfferToSaveLogins": false
+      }
+    }
 
-また、既に保存されてしまっているパスワードについては特に削除しなくてもよい（それ以後のパスワードの保存を禁止するのみでよい）のであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによってパスワードマネージャを無効化できます。
-
-    lockPref("signon.rememberSignons", false);
-
-
-
+なお、この設定を反映しても、既に保存されてしまっているパスワードの削除までは行われません。
 
 
 
@@ -970,59 +772,30 @@ Firefoxのセッション関連機能はある程度まで無効化すること�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
-    // Firefox起動時の表示ページの設定。
-    // 3にすると前回セッションの復元となるので、それ以外を選択する。
-    lockPref("browser.startup.page", 0);
-    // Firefoxやアドオンの更新後の再起動などでの1回だけのセッション復元を禁止する
-    lockPref("browser.sessionstore.resume_session_once", false);
-    // クラッシュからの復帰時の自動的なセッション復元を禁止する
-    lockPref("browser.sessionstore.max_resumed_crash", -1);
-    lockPref("browser.sessionstore.resume_from_crash", false);
-    // 閉じたタブを開き直す機能を無効化する
+    lockPref("privacy.sanitize.sanitizeOnShutdown", true);
+    lockPref("privacy.clearOnShutdown.sessions", true);
     lockPref("browser.sessionstore.max_tabs_undo", 0);
-    // 閉じたウィンドウを開き直す機能を無効化する
     lockPref("browser.sessionstore.max_windows_undo", 0);
-    // フォームの入力内容などのプライバシー情報を保存させない
+    lockPref("browser.sessionstore.max_resumed_crashes", -1);
+    lockPref("browser.sessionstore.max_serialize_back", 0);
+    lockPref("browser.sessionstore.max_serialize_forward", 0);
+    lockPref("browser.sessionstore.resume_from_crash", false);
+    lockPref("browser.sessionstore.resume_session_once", false);
     lockPref("browser.sessionstore.privacy_level", 2);
     lockPref("browser.sessionstore.privacy_level_deferred", 2);
+    // 3にすると前回セッションの復元となるので、それ以外を選択する。
+    // 0: 空白ページ、1: ホームページ
+    lockPref("browser.startup.page", 0);
 
 この設定により、ディスク上に保存されるセッション情報は最小限の物となります。
 
 ### 注意事項
 
 現在のバージョンのFirefoxでは、セッション管理機構自体を無効化することはできません。
-`about:home` での「以前のセッションを復元」機能のために、前回のセッション情報は常にディスク上に保存されます。
-
-セッションを一切保存しないようにすることはできませんが、[globalChrome.css][]を使うなどしてボタンを非表示にして、セッションを復元する手段へのアクセスを禁じることはできます。globalChrome.css を使う場合の手順は以下の通りです。
-
- 1. 「メモ帳」などのテキストエディタを開き、以下のスタイル指定を記述します。
-    
-        @-moz-document url-prefix("chrome://browser/content/browser.xul") {
-          #historyRestoreLastSession,
-          #appMenuRestoreLastSession {
-            visibility: collapse !important;
-            -moz-user-focus: ignore !important;
-          }
-        }
-        @-moz-document url-prefix("about:home"),
-                       url-prefix("chrome://browser/content/abouthome/aboutHome.xhtml") {
-          *|*#restorePreviousSessionSeparator,
-          *|*#restorePreviousSession,
-          *|*[id="restorePreviousSessionSeparator"],
-          *|*[id="restorePreviousSession"] {
-            display: none !important;
-          }
-        }
-    
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 2. 1で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
- 3. 2で作成したファイルをFirefoxのインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
- 4. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
-
-ただしこの場合においても、単にユーザーが手動操作でセッションを復元できなくなるだけであり、ディスク上にはセッション情報が依然として保存される状態であることにはご注意下さい。
+上記の設定を行っても、タブで現在開いているページの情報だけはセッション情報に必ず保存されます。
+また、閉じたウィンドウを開き直すためのデータもセッション中1つは必ず保持されます。
 
 
 
@@ -1035,9 +808,13 @@ FirefoxのWeb検索バーはGoogleなどの検索における検索語句の候�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`SearchSuggestEnabled`](https://github.com/mozilla/policy-templates/blob/master/README.md#searchsuggestenabled) を `false` に設定して下さい。例えば以下の要領です。
 
-    lockPref("browser.search.suggest.enabled", false);
+    {
+      "policies": {
+        "SearchSuggestEnabled": false
+      }
+    }
 
 
 
@@ -1051,7 +828,7 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
     lockPref("geo.enabled", false);
 
@@ -1066,67 +843,15 @@ Firefoxは地図などのWebサービスに対して現在位置の情報を通�
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-Firefoxはキーボードショートカットを管理する機能を含んでいませんが、アドオンを使うことによって、キーボードショートカットの割り当てを変更したりショートカットを無効化したりできます。
-
-本項では、管理者が行った設定を全体に展開する用途を想定して、[UI Text Overrider][]を使った設定の手順を解説します。
+現在のバージョンのFirefoxはキーボードショートカットを管理する機能を含んでいません。
+ポリシー設定で機能を無効化する事によって、その機能に紐付くキーボードショートカットを無効化する事はできます。
 
 ### 設定方法
 
-大まかな手順は以下の通りです。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、対応する機能を無効化して下さい。例えば以下の要領です。
 
- 1. [DOM Inspector][] をインストールします。
- 2. `ツール`→`Web開発`→`DOM Inspector`でDOM Inspectorを起動します。
- 3. `File`→`Inspect Chrome Document`を選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
- 3. `<window>` 直下の`<keyset id="devtoolsKeyset">` や `<keyset id="mainKeyset">` を選択し、サブツリーを展開します。
- 4. `<keyset>` 直下に多数ある `<key>` から目的のショートカットを定義している物を見つけ出します。
- 5. [MCD（AutoConfig）](#mcd)を使用し、UI Text Overriderで当該ショートカットを無効化するための設定を行います。
- 6. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってUI Text Overriderを導入します。
-
-Ctrl-T（新しいタブを開く）に対応する `<key>` を例として、4および5の詳細な手順を説明します。以下はCtrl-Tのショートカットを定義している `<key>` です。
-
-    <key id="key_newNavigatorTab"
-         key="t"
-         modifiers="accel"
-         command="cmd_newNavigatorTab"/>
-
-`<key>` は、 `key` または `keycode` のいずれかの属性を持ちます。アルファベットや記号など通常の文字入力用のキーを使うショートカットでは `key` 属性の値にそのキーの文字が指定されており、F1などのファンクションキーやTab、BackSpaceなどの特殊なキーを使うショートカットでは `keycode` 属性の値にそのキーの仮想キーコード名（ `VK_TAB` や `VK_BACK` など。一覧は[KeyboardEvent - Web API interfaces](https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent#Virtual_key_codes)を参照して下さい)が指定されています。
-
-また、Ctrlキーなどの修飾キーを伴うショートカットでは、 `modifiers` 属性に修飾キーが指定されています。`modifiers` 属性の値は修飾キー名のカンマ区切りのリストで、 `alt`, `control`, `meta`（MacのCommandキーに対応）, `shift`, および `accel`（Macでは `meta` と見なされ、それ以外の環境では `control` と見なされる）のうちの1つ以上の組み合わせとなります。
-
-上記の情報を手がかりにして、挙動を変えたいキーボードショートカットに対応する `<key>` を探します。見つかったら、それを無効化するための設定を[MCD（AutoConfig）](#mcd)の設定ファイルに記述します。凡例は以下の通りです。
-
-    lockPref("extensions.uitextoverrider@clear-code.com.<定義名>",
-      "要素を特定するためのCSSセレクタ");
-    lockPref("extensions.uitextoverrider@clear-code.com.<定義名>.<属性名1>",
-      "値");
-    lockPref("extensions.uitextoverrider@clear-code.com.<定義名>.<属性名2>",
-      "値");
-    ...
-
-先のCtrl-Tを無効化する場合は、以下のようになります。
-
-    lockPref("extensions.uitextoverrider@clear-code.com.newNavigatorTab",
-      "#key_newNavigatorTab"); // IDセレクタを使用
-    lockPref("extensions.uitextoverrider@clear-code.com.newNavigatorTab.disabled",
-      "true"); // disabled属性をtrueに設定し、ショートカットを無効化する
-    lockPref("extensions.uitextoverrider@clear-code.com.newNavigatorTab.command",
-      ""); // コマンドの割り当てを無くし、万が一にも動作しないようにする
-
-
-### 注意事項
-
-UI Text Overriderを使った方法では、挙動を変更できるのはFirefoxのUI上で `<key>` が定義されているキーボートショートカットのみとなります。例えば以下のようなショートカットは挙動を変更できません。
-
- * Ctrl-←, →, ↑, ↓
- * Ctrl-F4（ウィンドウまたはタブを閉じる）
- * F7（キャレットブラウズモードを切り替える）
- * Alt（メニューバーを表示する）
- * F10（メニューバーにフォーカスする）
- * Home（ページ先頭にスクロールする）
- * End（ページ末尾にスクロールする）
-
-このようなショートカットを無効化するためには、 userChrome.jsスクリプトや独自開発のアドオンなどを使う必要があります。
-
+* ファイル＞新しいプライベートウィンドウを開く (Ctrl-Shift-P): [`DisablePrivateBrowsing`](https://github.com/mozilla/policy-templates/blob/master/README.md#disableprivatebrowsing) を `true` に設定
+* ツール＞ウェブ開発（開発ツールボタン） およびその配下の機能: [`DisableDeveloperTools`](https://github.com/mozilla/policy-templates/blob/master/README.md#disabledevelopertools) を `true` に設定
 
 
 
@@ -1135,38 +860,21 @@ UI Text Overriderを使った方法では、挙動を変更できるのはFirefo
 
 キーワード：機能制限、導入時初期設定、集中管理
 
-アドオンを使うことで、Firefoxの特定のUI要素を画面上に表示しないようにしてユーザによる操作を禁止することができます。
+現在のバージョンのFirefoxは特定のUI要素の表示・非表示を管理する機能を原則として含んでいません。
+ポリシー設定で機能を無効化する事によって、その機能に紐付くUIを無効化する事はできます。
 
 ### 設定方法
 
-UI要素を隠すためには、[globalChrome.css][]などのアドオンを使ってUI要素を隠すスタイル指定を適用する必要があります。globalChrome.css を使う場合の手順は以下の通りです。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、対応する機能を無効化して下さい。例えば以下の要領です。
 
- 1. [DOM Inspector][] をインストールします。
- 2. `ツール`→`Web開発`→`DOM Inspector`でDOM Inspectorを起動します。
- 3. `File`→`Inspect Chrome Document`を選択し、ブラウザのウィンドウのタイトルと同じ項目を選択します。
- 3. ツリーを展開していくか、もしくはツールバーの左端にある「Find a node to inspect by clicking on it」ボタンをクリックした後にブラウザウィンドウの非表示にしたいUI要素をクリックするかして、非表示にしたいUI要素の詳細を表示します。
- 4. UI要素のIDもしくは他の要素と類似していない特徴を調べる。
- 5. 「メモ帳」などのテキストエディタを開き、4で調べた情報を使って項目を非表示にするスタイル指定を記述します。
-    
-    以下は メニューバーを非表示にする場合の例。
-    
-        @-moz-document url-prefix(chrome://browser/content/browser.xul) {
-          #toolbar-menubar,
-          #toolbar-menubar * /* 子孫要素も同様に非表示および無効化する */ {
-            /* display:none はDOMツリーに変化を与えて挙動を壊す恐れがあるため、
-               単に非表示にするのみとする。 */
-            visibility: collapse !important;
-            -moz-user-focus: ignore !important;
-          }
-        }
-    
-    （ `@-moz-document` は、特定のウィンドウに対してのみスタイル指定を反映させるための記述です。詳細は[@-moz-document について参考][]を参照して下さい。）
- 6. 5で作成した内容を `globalChrome.css` という名前のプレーンテキストファイルに保存します。
- 7. 6で作成したファイルをFirefox（Thunderbird）のインストール先の `chrome` フォルダに設置します。
-    （Windows Vista以降の場合のファイルの設置場所は `C:\Program Files (x86)\Mozilla Firefox\chrome\globalChrome.css` となる。）
- 8. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従って[globalChrome.css][]を導入します。
-
-
+* ファイル＞新しいプライベートウィンドウを開く (Ctrl-Shift-P): [`DisablePrivateBrowsing`](https://github.com/mozilla/policy-templates/blob/master/README.md#disableprivatebrowsing) を `true` に設定
+* ツール＞ウェブ開発（開発ツールボタン） およびその配下の機能: [`DisableDeveloperTools`](https://github.com/mozilla/policy-templates/blob/master/README.md#disabledevelopertools) を `true` に設定
+* ヘルプ＞トラブルシューティング情報: [`BlockAboutSupport`](https://github.com/mozilla/policy-templates/blob/master/README.md#blockaboutsupport) を `true` に設定
+* ヘルプ＞フィードバックを送信: [`DisableFeedbackCommands`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablefeedbackcommands) を `true` に設定
+* ヘルプ＞アドオンを無効にして再起動: [`DisableSafeMode`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablesafemode) を `true` に設定
+* コンテンツ領域のコンテキストメニュー＞デスクトップの背景に設定: [`DisableSetDesktopBackground`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablesetdesktopbackground) を `true` に設定
+* Firefox Sync: [`DisableFirefoxAccounts`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablefirefoxaccounts) を `true` に設定
+* Pocket: [`DisablePocket`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablepocket) を `true` に設定
 
 
 
@@ -1176,41 +884,15 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
 プライベートブラウジング機能へのアクセス経路を無効化することで、ユーザのプライベートブラウジング機能の利用を禁止できます。
 
-### ウィザードでの実現
+### 設定方法
 
-[CCK2 Wizard](#cck)を使用すると、プライベートブラウジング機能の利用を禁止する機能を含むアドオンを作成することができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisablePrivateBrowsing`](https://github.com/mozilla/policy-templates/blob/master/README.md#disableprivatebrowsing) を `true` に設定して下さい。例えば以下の要領です。
 
-### MCD用設定ファイルでの実現
-
-[MCD（AutoConfig）](#mcd)を使い、プライベートブラウジングモードで起動する機能を無効化します。設定は以下の通りです。
-
-    lockPref("browser.privatebrowsing.autostart", false);
-
-[一部のメニュー項目やツールバーボタンなどのUI要素を非表示にしたい](#hide-ui-elements)の手順に則り、プライベートブラウジングを開始するためのメニュー項目を非表示にします。[globalChrome.css][]を使う場合の設定は以下の通りです。
-
-    @-moz-document url-prefix(chrome://browser/content/browser.xul) {
-      #menu_newPrivateWindow,
-      #privatebrowsing-button,
-      #wrapper-privatebrowsing-button,
-      #key_privatebrowsing,
-      #Tools\:PrivateBrowsing,
-      #context-openlinkprivate {
-        visibility: collapse !important;
-        -moz-user-focus: ignore !important;
+    {
+      "policies": {
+        "DisablePrivateBrowsing": true
       }
     }
-
-[一部のキーボードショートカットを無効化したい](#disable-keyboard-shortcuts)の手順に則り、プライベートブラウジングを開始するためのキーボードショートカットを無効化します。[UI Text Overrider][]と[MCD（AutoConfig）](#mcd)を併用する場合の設定は以下の通りです。
-
-    lockPref("extensions.uitextoverrider@clear-code.com.privateBrowsing",
-      "#key_privatebrowsing");
-    lockPref("extensions.uitextoverrider@clear-code.com.privateBrowsing.disabled",
-      "true");
-    lockPref("extensions.uitextoverrider@clear-code.com.privateBrowsing.command",
-      "");
-
-
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
 
 
 
@@ -1221,38 +903,15 @@ UI要素を隠すためには、[globalChrome.css][]などのアドオンを使�
 
 無用なトラブルや情報の流出を避けるため、ユーザが任意にFirefox Syncをセットアップできないよう設定することができます。
 
-### ウィザードでの実現
+### 設定方法
 
-[CCK2 Wizard](#cck)を使用すると、Firefox Syncの利用を禁止する機能を含むアドオンを作成することができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisableFirefoxAccounts`](https://github.com/mozilla/policy-templates/blob/master/README.md#disablefirefoxaccounts) を `true` に設定して下さい。例えば以下の要領です。
 
-### MCD用設定ファイルでの実現
-
-CCK2 Wizard以外でFirefox Syncの利用を禁止する方法としては、アドオン [Disable Sync][]を使う方法があります。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Syncを導入すると、以下の操作が完全に禁止されます。
-
- * ユーザがFirefox Syncの初期設定を行う。
- * ユーザがFirefox Syncのツールバーボタンを追加する。
- * ユーザが手動で情報を同期する。
- * Firefoxが自動的に情報を同期する。
-
-[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
-
-また、単に通信を無効化するだけであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによっても実現可能です。
-
-    lockPref("services.sync.serverURL", "");
-    lockPref("services.sync.jpake.serverURL", "");
-    lockPref("services.sync.termsURL", "");
-    lockPref("services.sync.privacyURL", "");
-    lockPref("services.sync.statusURL", "");
-    lockPref("services.sync.syncKeyHelpURL", "");
-
-### 注意事項
-
-Disable Syncは、既に同期済みの設定を消去しません。
-既にユーザがFirefox Syncを利用しており、サーバおよび他のクライアントに設定を同期している場合、それらは別途削除する必要があります。
-
-
-
+    {
+      "policies": {
+        "DisableFirefoxAccounts": true
+      }
+    }
 
 
 
@@ -1270,42 +929,34 @@ Disable Syncは、既に同期済みの設定を消去しません。
 
 ### 設定方法
 
-FirefoxやThunderbirdの自動アップデートを禁止する最も簡単な方法は、アドオン [Disable Auto Update][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってDisable Auto Updateを導入すると、以下の機能が完全に無効化されます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisableAppUpdate`](https://github.com/mozilla/policy-templates/blob/master/README.md#disableappupdate) を `true` に設定して下さい。例えば以下の要領です。
 
- * FirefoxおよびThunderbirdが定期的に自身のアップデート情報を取得する。
- * Firefoxが検索エンジンの自動アップデート情報を取得する。
- * 「オプション」から自動アップデートの設定を変更する。
-
-また、単に自動アップデート情報の取得処理を無効化するだけであれば、[MCD（AutoConfig）](#mcd)などを使って以下の設定を反映することによっても実現可能です。
-
-    lockPref("app.update.auto", false);
-    lockPref("app.update.enabled", false);
-    lockPref("browser.search.update", false);
-
-
+    {
+      "policies": {
+        "DisableAppUpdate": true
+      }
+    }
 
 
 ## Firefox・Thunderbirdの自動アップデートについて、メジャーアップデートは禁止し、マイナーアップデートのみ自動で適用したい
 
 キーワード：機能制限、集中管理、自動アップデート
 
-FirefoxやThunderbirdのESR版は通常、あるメジャーバージョンのサポートが終了すると、自動アップデート経由で次のメジャーバージョンにアップデートされます。例えばFirefox 17.0.11ESRは、順次Firefox 24ESRへアップデートされます。
+FirefoxやThunderbirdのESR版は通常、あるメジャーバージョンのサポートが終了すると、自動アップデート経由で次のメジャーバージョンにアップデートされます。例えばFirefox ESR68は、順次Firefox ESR78へアップデートされます。
 
-このようなメジャーバージョンの変更を伴う自動アップデートの適用を禁止し、マイナーバージョンの変更のみを適用するよう設定することができます。
+このようなメジャーバージョンの変更を伴う自動アップデートの適用を禁止し、マイナーバージョンの変更のみを適用するには、組織内で提供する更新情報を参照するようにする必要があります。
 
 ### 設定方法
 
-FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡単な方法は、アドオン [Only Minor Update][]を使うことです。
-[管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってOnly Minor Updateを導入すると、メジャーバージョンが異なるアップデートは適用されないようになります。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`AppUpdateURL`](https://github.com/mozilla/policy-templates/blob/master/README.md#AppUpdateURL) を社内ホスト上のURLに設定して下さい。例えば以下の要領です。
 
-### 注意事項
+    {
+      "policies": {
+        "AppUpdateURL": "http://192.168.0.10/update.xml"
+      }
+    }
 
-このアドオンは、内部的に `app.update.url.override` を上書きします。そのため、この設定を用いて自動アップデート情報の提供元を変更するカスタマイズとの併用はできません。
-自動アップデート情報の提供元を変更する場合は、提供する自動アップデート情報の側で、マイナーアップデートの情報のみを提供する形で運用して下さい。
-
-
-
+上記URLで提供する更新情報の内容の記述方法は次項を参照して下さい。
 
 
 ## Firefox・Thunderbirdの自動アップデートの提供タイミングを組織内で制御したい
@@ -1331,11 +982,11 @@ FirefoxやThunderbirdのメジャーアップデートを禁止する最も簡�
     この方法は説明が煩雑なので紹介しない。
 -->
 
-Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更新するための情報およびファイルを静的なファイルとして提供する場合を例として、手順を説明します。
+Firefox ESR60.7.0（64bit版）が導入済みのクライアントをFirefox ESR68.0（64bit版）に更新するための情報およびファイルを静的なファイルとして提供する場合を例として、手順を説明します。
 
- 1. アップデート用のアーカイブファイルをMozillaのFTPサーバから入手します。
-    * FTPサーバ上には各バージョンのアップデート用差分ファイル、完全アップデート用アーカイブファイルが保存されており、以下のようなURLでダウンロードすることができます。
-      [ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/24.2.0esr/update/win32/ja/](ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/24.2.0esr/update/win32/ja/)
+ 1. アップデート用のアーカイブファイルをMozillaのリリースサーバから入手します。
+    * リリースサーバ上には各バージョンのアップデート用差分ファイル、完全アップデート用アーカイブファイルが保存されており、以下のようなURLでダウンロードすることができます。
+      [https://releases.mozilla.org/pub/firefox/releases/68.0esr/update/win64/ja/](https://releases.mozilla.org/pub/firefox/releases/68.0esr/update/win64/ja/)
     * ファイル名に `partial` と付いている物は差分アップデート用ファイル、`completet` と付いている物は完全アップデート用ファイルです。差分アップデート用ファイルはファイル名で示されている更新前バージョンに対してのみ適用できます。
  2. 1でダウンロードしたファイルを、自組織内からアクセスできるHTTPサーバ上に設置します。
     Sambaサーバ上のファイルにファイルとしてアクセスする形態や、ローカルのファイルシステムにマウントしてファイルとしてアクセスする形態では利用できず、あくまでHTTP経由でダウンロードできる状態にしておく必要があります。
@@ -1356,15 +1007,15 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
           </update>
         </updates>
     
-    例えばFirefox 24.2ESRへの更新で、ハッシュをSHA-512で用意するのあれば、以下のようになります。
+    例えばFirefox ESR68.0への更新で、ハッシュをSHA-512で用意するのあれば、以下のようになります。
     
         <?xml version="1.0"?>
         <updates>
           <update type="minor"
-                  displayVersion="24.2.0esr"
-                  appVersion="24.2.0"
-                  platformVersion="24.2.0"
-                  buildID="20131205180928"
+                  displayVersion="68.0esr"
+                  appVersion="68.0"
+                  platformVersion="68.0"
+                  buildID="about:supportで確認できるビルドID"
                   actions="silent">
             <patch type="complete"
                    URL="marファイルのダウンロード用URL"
@@ -1374,9 +1025,13 @@ Firefox 24.1.1ESRが導入済みのクライアントをFirefox 24.2.0ESRに更�
         </updates>
     
  4. 3で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 5. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定 `app.update.url.override` の*ユーザ設定値*に4で設置したファイルのURL文字列を指定します。
-    * ローカルファイルやファイル共有サーバ上のファイルである場合は、`file:///` から始まるファイルURLを指定します。
-    * MCDを使う場合、ディレクティブとしては `lockPref()` や `defaultPref()` ではなく `pref()` を使用します。
+ 5. [グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`AppUpdateURL`](https://github.com/mozilla/policy-templates/blob/master/README.md#AppUpdateURL) を4で設置したファイルのURL文字列に設定して下さい。例えば以下の要領です。
+
+    {
+      "policies": {
+        "AppUpdateURL": "http://192.168.0.10/update.xml"
+      }
+    }
 
 以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置した `update.xml` ならびにアップデート用のアーカイブファイルを適宜更新するようにして下さい。
 
@@ -1412,17 +1067,20 @@ FirefoxやThunderbirdの自動アップデート機能は、通常のインス�
 差分アップデートの適用時には、アップデート用差分ファイルを公式のFTPサイトから入手する必要があります。
 URLの凡例は以下の通りです。
 
-    ftp://ftp.mozilla.org/pub/mozilla.org/[製品名]/releases/[アップデート先バージョン]/update/win32/ja/[製品名]-[アップデート元バージョン]-[アップデート先バージョン].partial.mar
+    Windows用64bit版：
+    https://releases.mozilla.org/pub/mozilla.org/[製品名]/releases/[アップデート先バージョン]/update/win64/ja/[製品名]-[アップデート元バージョン]-[アップデート先バージョン].partial.mar
+    Windows用32bit版：
+    https://releases.mozilla.org/pub/mozilla.org/[製品名]/releases/[アップデート先バージョン]/update/win32/ja/[製品名]-[アップデート元バージョン]-[アップデート先バージョン].partial.mar
 
-例えばFirefox 30からFirefox 31へアップデートする場合に必要な差分ファイルは以下の場所から入手できます。 
+例えばFirefox ESR68.0（64bit版）からESR68.1.0（64bit版）へアップデートする場合に必要な差分ファイルは以下の場所から入手できます。 
 
-    ftp://ftp.mozilla.org/pub/mozilla.org/firefox/releases/31.0/update/win32/ja/firefox-30.0-31.0.partial.mar 
+    https://releases.mozilla.org/pub/firefox/releases/68.1.0esr/update/win64/ja/firefox-68.0esr-68.1.0esr.partial.mar 
 
 差分ファイルによるアップデートを行うには、現在インストールされているFirefoxのバージョンに対応した差分ファイルが必要となります。
 差分ファイルが想定する「アップデート前のバージョン」が現在インストールされているFirefoxのバージョンに一致しない場合、差分アップデートは行えません。
 
 通常、公式のFTPサイトでは特定バージョンのFirefoxに対して、それ以前のいくつかのバージョンからの差分アップデート用のファイルのみが配布されています。
-差分ファイルが用意されていないパターン、例えばFirefox 25.0からFirefox 31へアップデートするというような、間のバージョンを多数飛ばしたアップデートは原則として行えないものとご理解下さい。
+差分ファイルが用意されていないパターン、例えばFirefox ESR60.0からESR68.0へアップデートするというような、間のバージョンを多数飛ばしたアップデートは原則として行えないものとご理解下さい。
 
 ### 差分更新の適用手順の凡例
 
@@ -1479,22 +1137,22 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
 
 本項では、例として以下のバージョンにおける差分更新の適用時の具体的な手順を示します。
 
- * 現在Firefox 30がインストールされている。
- * Firefox 31へアップデートする。
+ * 現在Firefox ESR68.0がインストールされている。
+ * Firefox ESR68.1.0へアップデートする。
  * 作業ディレクトリは C:\temp とする。 
  * Firefoxのインストール先は
-   C:\Program Files (x86)\Mozilla Firefox とする。
+   C:\Program Files\Mozilla Firefox とする。
 
  1. 管理者権限でコマンドプロンプトを起動する。
  2. 差分アップデート用のファイルを作業ディレクトリに
     update.marというファイル名で配置する。
     
-        > copy firefox-30.0-31.0.partial.mar "C:\temp\update.mar"
+        > copy firefox-68.0esr-68.1.0esr.partial.mar "C:\temp\update.mar"
     
  3. Firefoxのインストール先フォルダにあるupdater.exe を
     作業ディレクトリにコピーする。
     
-        > copy "C:\Program Files (x86)\Mozilla Firefox\updater.exe"
+        > copy "C:\Program Files\Mozilla Firefox\updater.exe"
           "C:\temp\updater.exe"
     
  4. 作業ディレクトリに配置したupdater.exeを、
@@ -1503,7 +1161,7 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
     起動する。
     
         > cd c:\temp
-        > updater.exe "C:\temp" "C:\Program Files (x86)\Mozilla Firefox" "C:\Program Files (x86)\Mozilla Firefox"
+        > updater.exe "C:\temp" "C:\Program Files\Mozilla Firefox" "C:\Program Files\Mozilla Firefox"
     
  5. アップデートの適用結果を確認する。
     
@@ -1511,6 +1169,7 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
 
 
 以上で、差分アップデートの適用は完了です。
+
 
 
 ## アドオンの自動アップデートの提供タイミングを組織内で制御したい
@@ -1521,66 +1180,50 @@ Firefoxの差分更新用ファイルを用いて際の手順は以下の通り�
 
 ### 設定方法
 
- 1. 以下のような内容で、自動アップデート情報提供用のXMLファイル `update.rdf` を用意します。
+ 1. 以下のような内容で、自動アップデート情報提供用のJSONファイル `update.json` を用意します。
     
-        <?xml version="1.0" encoding="UTF-8"?>
-        <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-                 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-          <RDF:Description about="urn:mozilla:extension:アドオンのID">
-            <em:updates>
-              <RDF:Seq>
-                <RDF:li>
-                  <RDF:Description>
-                    <em:version>アドオンのバージョン</em:version>
-                    <em:targetApplication>
-                      <RDF:Description>
-                        <em:id>対象アプリケーションのID</em:id>
-                        <em:minVersion>最小バージョン</em:minVersion>
-                        <em:maxVersion>最大バージョン</em:maxVersion>
-                        <em:updateLink>XPIファイルのダウンロード用URL</em:updateLink>
-                        <em:updateHash>ハッシュ関数名:XPIファイルのハッシュ値</em:updateHash>
-                      </RDF:Description>
-                    </em:targetApplication>
-                  </RDF:Description>
-                </RDF:li>
-              </RDF:Seq>
-            </em:updates>
-          </RDF:Description>
-        </RDF:RDF>
+        {
+          "addons": {
+            "アドオンのID": {
+              "updates": [
+                {
+                  "version": "アドオンのバージョン",
+                  "update_link": "XPIファイルのダウンロード用URL",
+                  "update_hash": "ハッシュ関数名:XPIファイルのハッシュ値"
+                  "browser_specific_settings": {
+                    "gecko": { "strict_min_version": "対応するFirefoxの最小バージョン" }
+                  }
+                }
+              ]
+            }
+          }
+        }
     
-    例えばFirefox 24.2ESR向けのアドオンとして[DOM Inspector][]の更新情報を提供するのであれば以下のようになります。
+    例えば[Duplicate Tabs Closer][]の更新情報を提供するのであれば以下のようになります。
     
-        <?xml version="1.0" encoding="UTF-8"?>
-        <RDF:RDF xmlns:RDF="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-                 xmlns:em="http://www.mozilla.org/2004/em-rdf#">
-          <RDF:Description about="urn:mozilla:extension:inspector@mozilla.org">
-            <em:updates>
-              <RDF:Seq>
-                <RDF:li>
-                  <RDF:Description>
-                    <em:version>2.0.14</em:version>
-                    <em:targetApplication>
-                      <RDF:Description>
-                        <em:id>{3550f703-e582-4d05-9a08-453d09bdfdc6}</em:id>
-                        <em:minVersion>24.0</em:minVersion>
-                        <em:maxVersion>24.*</em:maxVersion>
-                        <em:updateLink>http://..../dominspector.xpi</em:updateLink>
-                        <em:updateHash>sha1:ファイルのSHA1ハッシュ</em:updateHash>
-                      </RDF:Description>
-                    </em:targetApplication>
-                  </RDF:Description>
-                </RDF:li>
-              </RDF:Seq>
-            </em:updates>
-          </RDF:Description>
-        </RDF:RDF>
+        {
+          "addons": {
+            "jid0-RvYT2rGWfM8q5yWxIxAHYAeo5Qg@jetpack": {
+              "updates": [
+                {
+                  "version": "3.4.1",
+                  "update_link": "http://192.168.0.10/duplicate_tabs_closer-3.4.1-fx.xpi",
+                  "update_hash": "sha256:a952bbcef93fbd0d5e2278265824fc270c356bbabe91c79ef3245f7419d9f02c"
+                  "browser_specific_settings": {
+                    "gecko": { "strict_min_version": "55.0" }
+                  }
+                }
+              ]
+            }
+          }
+        }
     
  2. 1で用意したファイルをクライアント上のローカルファイル、ファイル共有サーバ上のファイル、HTTPサーバ上のファイルのいずれかの形で設置し、クライアントから取得できるようにします。
- 3. [MCD（AutoConfig）](#mcd)などを使って、文字列型の設定 `extensions.update.url` の値に、2で設置したファイルのURL文字列を指定します。
+ 3. [MCD（AutoConfig）](#mcd)を使って、文字列型の設定 `extensions.update.url` の値に、2で設置したファイルのURL文字列を指定します。
 
-以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置した `update.rdf` ならびに各アドオンのXPIファイルを適宜更新するようにして下さい。
+以上で更新情報の提供準備ならびにクライアントの設定は完了です。以後は、サーバ上に設置した `update.json` ならびに各アドオンのXPIファイルを適宜更新するようにして下さい。
 
-詳細な情報は[Extension Versioning, Update and Compatibility | MDN](https://developer.mozilla.org/ja/docs/Extension_Versioning,_Update_and_Compatibility#.E3.82.A2.E3.83.83.E3.83.97.E3.83.87.E3.83.BC.E3.83.88_RDF_.E3.81.AE.E5.BD.A2.E5.BC.8F)を参照して下さい。
+詳細な情報は[Updating your extension | Extension Workshop](https://extensionworkshop.com/documentation/manage/updating-your-extension/)を参照して下さい。
 
 ### 確認方法
 
@@ -1612,10 +1255,10 @@ FirefoxやThundebirdの初回起動時に表示される `設定移行ウィザ�
 
 ### 設定方法
 
-`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files (x86)\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files (x86)\Mozilla Thunderbird\override.ini` など）に置きます。
+`override.ini` という名前で以下の内容のテキストファイルを作成し、Firefoxであればインストール先ディレクトリ内の `browser` ディレクトリ内（Windowsであれば、`C:\Program Files\Mozilla Firefox\browser\override.ini` など）、Thunderbirdであればインストール先ディレクトリ直下（Windowsであれば、`C:\Program Files\Mozilla Thunderbird\override.ini` など）に置きます。
 
     [XRE]
-    EnableProfileMigrator=false
+    EnableProfileMigrator=0
 
 
 
@@ -1628,9 +1271,13 @@ Firefoxを更新した後の初回起動時に表示される「お使いのFire
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`OverridePostUpdatePage`](https://github.com/mozilla/policy-templates/blob/master/README.md#overridepostupdatepage) を空文字に設定して下さい。例えば以下の要領です。
 
-    lockPref("browser.startup.homepage_override.mstone", "ignore");
+    {
+      "policies": {
+        "OverridePostUpdatePage": ""
+      }
+    }
 
 
 
@@ -1644,31 +1291,11 @@ Thunderbirdを更新した後の初回起動時に表示される「Thunderbird�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
     clearPref("app.update.postupdate");
 
 上記の設定は、設定値の内容に関わらず、ユーザ設定値が保存されていると「Thunderbirdへようこそ」タブが開かれるという仕様になっています。そのため、明示的に `false` を指定する代わりにユーザ設定値を消去する必要があります。
-
-
-
-
-## 「あなたの権利について」を表示させたくない
-
-キーワード：導入時初期設定
-
-FirefoxやThunderbirdの初回起動時などに表示される「あなたの権利について」のメッセージは、設定で無効化することができます。
-
-### 設定方法
-
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。FirefoxとThunderbirdで設定名が異なることに注意して下さい。
-
-    // Firefoxの場合
-    lockPref("browser.rights.override", true);
-    
-    // Thunderbirdの場合
-    lockPref("mail.rights.override", true);
-
 
 
 
@@ -1680,7 +1307,7 @@ FirefoxやThunderbirdの初回起動時などに表示される「Mozilla Firefo
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。設定名はFirefoxとThunderbirdで共通です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。設定名はFirefoxとThunderbirdで共通です。
 
     if (typeof getPref("toolkit.telemetry.prompted") == "boolean")
       clearPref("toolkit.telemetry.prompted");
@@ -1702,26 +1329,6 @@ FirefoxやThunderbirdの初回起動時などに表示される「Mozilla Firefo
 
 
 
-## プラグインのインストールを促すメッセージを表示させたくない
-
-キーワード：導入時初期設定
-
-FirefoxでFlashやJavaなどのプラグインを使用したページを閲覧する際に表示される、プラグインのインストールを促すメッセージは、設定で無効化することができます。
-
-### 設定方法
-
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
-
-    lockPref("plugins.hide_infobar_for_missing_plugin", true);
-
-
-<!--
-lockPref("plugins.hide_infobar_for_outdated_plugin", true);
-plugins.hide_infobar_for_outdated_plugin は、現在のFirefoxでは対応する実装が存在していない模様。
--->
-
-
-
 
 
 ## タブを閉じようとしたときの警告を表示させたくない
@@ -1732,7 +1339,7 @@ Firefoxでウィンドウや複数のタブを一度に閉じようとした時�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
     // 複数のタブを開いた状態でウィンドウを閉じようとした時の確認を表示しない
     lockPref("browser.tabs.warnOnClose", false);
@@ -1758,30 +1365,43 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
 
 ### 設定方法
 
-設定ファイルを使用して任意のブックマーク項目を初期状態に追加する手順は以下の通りです。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Homepage.URL`](https://github.com/mozilla/policy-templates/blob/master/README.md#homepage) を設定して下さい。例えば以下の要領です。
 
- 1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
- 2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
- 3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
-    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
+    {
+      "policies": {
+        "Homepage": {
+          "URL": "http://example.com",
+          "Locked": false
+        }
+      }
+    }
 
-`distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
+ユーザーによる設定の変更を禁止する場合は以下のようにして下さい。
 
-    [Global]
-    ; カスタマイズ済みFirefoxを識別する一意な名前。
-    id=our-customized-firefox
-    ; カスタマイズのバージョン。
-    version=1.0
-    ; 「Mozilla Firefoxについて」に表示される説明文。
-    about=Customized Version
-    
-    [LocalizablePreferences]
-    ; 必ず以下の2項目をセットで指定する。
-    browser.startup.homepage="http://mozilla.jp/"
-    browser.startup.homepage_reset="http://mozilla.jp/"
+    {
+      "policies": {
+        "Homepage": {
+          "URL": "http://example.com",
+          "Locked": true
+        }
+      }
+    }
 
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
+また、単一のタブではなく複数のタブをホームページとして開く場合は以下のようにして下さい。
+
+    {
+      "policies": {
+        "Homepage": {
+          "URL": "http://example.com",
+          "Locked": true,
+          "Additional": [
+            "https://example.org:8080",
+            "https://example.jp:8080"
+          ]
+        }
+      }
+    }
+
 
 
 
@@ -1791,86 +1411,63 @@ Firefoxを起動した時に表示される最初のページはユーザが自�
 
 Firefoxの初期状態のブックマークの内容は、変更することができます。
 
-### ウィザードでの実現
+### 設定方法
 
-[CCK2 Wizard](#cck)を使用すると、初期状態のブックマークを変更する機能を含むアドオンを作成することができます。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Bookmarks`](https://github.com/mozilla/policy-templates/blob/master/README.md#bookmarks) を設定して下さい。例えば以下の要領です。
 
-### 設定ファイルで任意のブックマーク項目を初期状態に追加する
+    {
+      "policies": {
+        "Bookmarks": [
+          {
+            "Title": "ブックマークツールバー上に作成する項目",
+            "URL": "https://example.com/toolbar",
+            "Favicon": "https://example.com/favicon.ico",
+            "Placement": "toolbar",
+            "Folder": "フォルダー名"
+          },
+          {
+            "Title": "ブックマークメニューに作成する項目",
+            "URL": "https://example.com/menu",
+            "Favicon": "https://example.com/favicon.ico",
+            "Placement": "menu",
+            "Folder": "フォルダー名"
+          }
+        ]
+      }
+    }
 
-設定ファイルを使用して任意のブックマーク項目を初期状態に追加する手順は以下の通りです。
+## ブックマークを初期状態で空にしたい
 
- 1. 後述する内容で、テキストファイル `distribution.ini` を作成します。
- 2. Firefoxの実行ファイルと同じ位置に `distribution` という名前でフォルダを作成します。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、作成するフォルダのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution` となります。
- 3. 1.で作成したフォルダの中に `distribution.ini` を設置します。
-    最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\distribution\distribution.ini` となります。
+キーワード：導入時初期設定、ブックマーク
 
-`distribution.ini` の内容は以下の要領で記述します。なお、日本語を記述する場合は文字エンコーディングをUTF-8にしてファイルを保存して下さい。
+Firefoxの初期状態で含まれているブックマーク項目は、空にすることができます。
 
-    [Global]
-    ; カスタマイズ済みFirefoxを識別する一意な名前。
-    id=our-customized-firefox
-    ; カスタマイズのバージョン。
-    version=1.0
-    ; 「Mozilla Firefoxについて」に表示される説明文。
-    about=Customized Version
-    ; 初期化が完了したことを保持する設定の名前。
-    bookmarks.initialized.pref=distribution.ini.boomkarks.initialized
-    
-    ; ブックマークツールバーへの追加項目
-    [BookmarksToolbar]
-    item.1.title=ブックマーク1のタイトル
-    item.1.link=ブックマーク1のURL
-    item.1.description=ブックマーク1の説明文（省略可）
-    ; 添字を変えて複数の項目を登録できる
-    item.2.title=ブックマーク2のタイトル
-    item.2.link=ブックマーク2のURL
-    item.2.description=ブックマーク2の説明文（省略可）
-    ; セパレータも挿入できる
-    item.3.type=separator
-    ; フォルダも挿入できる
-    item.4.type=folder
-    item.4.title=フォルダ名
-    ; この「id」を、後の「BookmarksFolder-X」の部分に指定する
-    item.4.folderId=1
-    
-    ; ブックマークメニューへの追加項目
-    [BookmarksMenu]
-    item.1.type=folder
-    item.1.title=フォルダ名その2
-    item.1.folderId=2
-    
-    [BookmarksFolder-1]
-    item.1.title=ブックマークツールバーに追加したフォルダ中の項目1のタイトル
-    item.1.link=ブックマークツールバーに追加したフォルダ中の項目1のURL
-    
-    [BookmarksFolder-2]
-    item.1.title=ブックマークメニューに追加したフォルダ中の項目1のタイトル
-    item.1.link=ブックマークメニューに追加したフォルダ中の項目1のURL
+### 設定方法
 
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`NoDefaultBookmarks`](https://github.com/mozilla/policy-templates/blob/master/README.md#nodefaultbookmarks) を `true` に設定して下さい。例えば以下の要領です。
 
-### 注意事項
-
-`distribution.ini` を使った設定手順では項目を追加することはできますが、削除する事はできません。ブックマークの初期状態を完全に空にしたり、ブックマークの任意の初期項目を削除したりするには、そのためのアドオンを開発するか、userChrome.jsスクリプトなどを使う必要があります。
-
-<!--
-%AppDir%\browser\defaults\profile\bookmarks.html を設置すると、アドオンを使わなくてもできる。
--->
-
-<!--
-## ブックマークを初期状態で空にしたい（未稿）
-  bookmarks.html
-%AppDir%\browser\defaults\profile\bookmarks.html を設置するとできる。
--->
+    {
+      "policies": {
+        "NoDefaultBookmarks": true
+      }
+    }
 
 
-<!--
-## ブックマークツールバーを初期状態で非表示にしたい（未稿）
-  localstore.rdf
-%AppDir%\browser\defaults\profile\localstore.rdf を設置するとできる。
--->
+## ブックマークツールバーを初期状態で表示したい
 
+キーワード：導入時初期設定、ブックマーク
+
+Firefoxの初期状態ではブックマークツールバーは非表示ですが、表示状態にしておくことができます。
+
+### 設定方法
+
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`DisplayBookmarksToolbar`](https://github.com/mozilla/policy-templates/blob/master/README.md#displaybookmarkstoolbar) を `true` に設定して下さい。例えば以下の要領です。
+
+    {
+      "policies": {
+        "DisplayBookmarksToolbar": true
+      }
+    }
 
 
 
@@ -1880,26 +1477,34 @@ Firefoxの初期状態のブックマークの内容は、変更することが�
 
 Firefoxのネットワーク設定において、プロキシの使用を強制することができます。
 
-### ウィザードでの実現
+### 設定方法
 
-[CCK2 Wizard](#cck)を使用すると、プロキシ設定を自動的に行うアドオンを作成することができます。
-
-### 設定ファイルでプロキシの設定を指定する
-
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Proxy`](https://github.com/mozilla/policy-templates/blob/master/README.md#proxy) 配下の設定を適切に設定して下さい。
 
 特定のHTTPプロキシの使用を強制する場合は以下のように設定します。
 
-    lockPref("network.proxy.type", 1);
-    lockPref("network.proxy.http", "proxy.hostname");
-    lockPref("network.proxy.http_port", 8080);
+    {
+      "policies": {
+        "Proxy": {
+          "Mode": "manual",
+          "Locked": true,
+          "HTTPProxy": "proxy.hostname:8080",
+          "UseHTTPProxyForAllProtocols": true
+        }
+      }
+    }
 
-自動設定スクリプトの使用を強制する場合は以下のように設定します。
+自動設定スクリプト（PACファイル）の使用を強制する場合は以下のように設定します。
 
-    lockPref("network.proxy.type", 2);
-    lockPref("network.proxy.autoconfig_url", "http://internal-server/proxy.pac");
-
-また、[CCK2 Wizard](#cck)でも同様のカスタマイズが可能です。
+    {
+      "policies": {
+        "Proxy": {
+          "Mode": "autoConfig",
+          "Locked": true,
+          "AutoConfigURL": "http://internal-server/proxy.pac"
+        }
+      }
+    }
 
 
 
@@ -1907,26 +1512,13 @@ Firefoxのネットワーク設定において、プロキシの使用を強制�
 
 キーワード：導入時初期設定
 
-Firefoxは、プロキシを使用しない例外サイトを管理する設定UIを持っていません。
-その代わり、自動プロキシ設定スクリプト（PACファイル）を使うことで、アクセス先のURLに応じてプロキシを使用するかどうか、どのプロキシを使用するかを細かく制御する事ができます。
+Firefoxは、プロキシを使用しない例外サイトを設定する機能を持っています。
 
 ### 設定方法
 
- 1. 自動プロキシ設定スクリプト（PACファイル）を作成します。
-    記述方法は、[Microsoftの技術資料](http://technet.microsoft.com/ja-jp/library/cc985335.aspx "付録 B : 自動プロキシ構成スクリプトの例")などを参考にして下さい。
- 2. 作成した自動プロキシ設定スクリプトをクライアントからアクセス可能な位置に設置し、そのURLを控えます。
-    例えば以下の要領です。
-    * Webサーバ上に設置する。`http://internal-server/proxy.pac` など。
-    * ネットワークドライブ上のファイルやローカルファイルとして設置する。`file:///Z:/firefox/proxy.pac` など。
-    * Sambaサーバ、NASなどの上に設置する。`file://///file-server/shared/firefox/proxy.pac` など。
- 3. 作成した自動プロキシ設定スクリプトをFirefoxで使用するように設定します。
-    * ユーザ固有の設定とする場合は、Firefoxのオプション画面で `詳細`→`ネットワーク`→`接続設定`と辿り、`自動プロキシ設定スクリプトURL`を選択して、2で控えたURLを指定します。
-    * 設定を管理者が集中管理する場合は、`network.proxy.type` の値を `2` にした上で、`network.proxy.autoconfig_url` の値に2で控えたURLを指定します。
-      例えば[MCD（AutoConfig）](#mcd)では以下の要領です。
-      
-          lockPref("network.proxy.type", 2);
-          lockPref("network.proxy.autoconfig_url", "http://internal-server/proxy.pac");
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。対象ホスト名はカンマ区切りで複数指定できます。
 
+    lockPref("network.proxy.no_proxies_on", "localhost, .example.org");
 
 
 
@@ -1938,14 +1530,30 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`SanitizeOnShutdown`](https://github.com/mozilla/policy-templates/blob/master/README.md#sanitizeonshutdown-selective) を `true` に設定して下さい。例えば以下の要領です。
 
-    lockPref("places.history.enabled", false);
+    {
+      "policies": {
+        "SanitizeOnShutdown": true
+      }
+    }
 
-### 注意事項
+この設定を行うと、Cookieやフォームの入力、サイトごとの設定なども全て消去されます。各項目を消去するかどうかを個別に変更したい場合、以下のように消去した物のみ `true` と設定して下さい。
 
-過去のバージョンのFirefoxでは日数単位で閲覧履歴の保持期限を設定することができましたが、現在のバージョンのFirefoxでは、閲覧履歴を保存するかしないかの2択となっています。よって、短い期間だけ履歴を保存するということはできません。
-
+    {
+      "policies": {
+        "SanitizeOnShutdown": {
+          "Cache": true,
+          "Cookies": false,
+          "Downloads": true,
+          "FormData": false,
+          "History": true,
+          "Sessions": true,
+          "SiteSettings": false,
+          "OfflineApps": true
+        }
+      }
+    }
 
 
 
@@ -1959,15 +1567,37 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 ### 設定方法
 
 日数ベースでの履歴の管理機能をFirefoxに導入する方法としては、アドオン [Expire history by days](https://addons.mozilla.org/firefox/addon/expire-history-by-days/)の利用が挙げられます。
-例えば、Expire history by daysを使って履歴の有効期限を30日に設定する場合の手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Expire history by daysを導入します。
- 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
+ただし、このアドオンは管理者が設定を変更する機能を持ちません。履歴の削除日数を管理者側で制御するためには、ポリシー設定に対応した派生版である[Flexible Expire History by Days](https://github.com/clear-code/flexible-expire-history-by-days/releases)を使用する必要があります。例えば、履歴を30日まで保持する設定であれば以下の要領です。
+
+ 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従い、Flexible Expire History by Daysを導入します。
+ 2. [グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)の[`3rdparty.Extensions`](https://github.com/mozilla/policy-templates/blob/master/README.md#sanitizeonshutdown-selective)、または[managed storage manifest](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/Native_manifests#Managed_storage_manifests)を用いて設定を固定します。
+    以下はポリシー定義ファイルでの設定例です。
     
-        lockPref("extensions.bonardonet.expire-history-by-days.days", 30);
-
-
-
+    {
+      "policies": {
+        "3rdparty": {
+          "Extensions": {
+            "flexible-expire-history-by-days@clear-code.com": {
+              "frequency": 0,
+              "days":      30
+            }
+          }
+        }
+      }
+    }
+    
+    以下はmanaged storage manifestでの設定例です。
+    
+    {
+      "name": "flexible-expire-history-by-days@clear-code.com",
+      "description": "Configs for Flexible Expire History by Days",
+      "type": "storage",
+      "data": {
+        "frequency": 0,
+        "days":      30
+      }
+    }
 
 
 
@@ -1975,45 +1605,69 @@ FirefoxでのWebページの閲覧履歴について、一切の履歴を保存�
 
 キーワード：導入時初期設定
 
-Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、`about:permissions`（サイト別設定マネージャ）で設定の変更や消去が可能です。
+Firefoxには、Cookieや位置情報などのWebページから利用できる様々な機能について、機能の許可をWebサイトごとに管理する仕組みが備わっています。既に保存されている設定については、設定画面の「プライバシーとセキュリティ」配下の「許可設定」で設定の変更や消去が可能です。
 
-アドオンを使うことによって、これらのサイト別設定を管理者が任意の状態に設定することができます。
+### 設定方法
 
-### ウィザードでの実現
+[グループポリシー](#group-policy)または[ポリシー定義ファイル](#policies-json)を用いて、[`Permissions`](https://github.com/mozilla/policy-templates/blob/master/README.md#permissions) 配下に設定を記述して下さい。
 
-[CCK2 Wizard](#cck)を使用すると、サイトごとの機能の利用許可を行うアドオンを作成することができます。
+例えば、カメラ、マイク、位置情報、デスクトップ通知のそれぞれについて、既定ではアクセスを拒否しつつ `https://example.org` に対してのみ許可する場合は以下のようになります。
 
-### より詳細な設定を伴う実現方法
+    {
+      "policies": {
+        "Permissions": {
+          "Camera": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Microphone": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Location": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          },
+          "Notifications": {
+            "Allow": ["https://example.org"],
+            "BlockNewRequests": true,
+            "Locked": true
+          }
+        }
+      }
+    }
 
-サイト別設定を管理者が詳細に管理する方法として、アドオン [Permissions Auto Registerer](https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/)の利用が挙げられます。
-例えば、Permissions Auto Registererを使って `www.example.com` に対しサイト別設定の全項目を「禁止」と設定する場合の手順は以下の通りです。
+逆に、既定ではアクセスを許可しつつ `https://example.org` に対してのみ禁止する場合は以下のようになります。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
- 2. [MCD（AutoConfig）](#mcd)を使い、以下の通り設定します。
-    
-        lockPref("extensions.autopermission.sites.www.example.com", "password=2, geo=2, cookie=2, popup=2, indexedDB=2, fullscreen=2, image=2, install=2, offline-app=2");
-
-設定名はサイト別設定を指定するサイトのドメイン名を含めて `extensions.autopermission.sites.<ドメイン名>` とします。設定値は、1つ以上の設定項目についてキーと値を `=` で繋げたリストをカンマ区切りで列挙した文字列で指定します。指定可能な設定項目は以下の通りです。
-
- * `password`：パスワードを保存する。
- * `geo`：位置情報を取得する。
- * `cookie`：Cookieを保存する。
- * `popup`：ポップアップウィンドウを開く。
- * `indexedDB`：オフラインストレージを利用する。
- * `fullscreen`：DOMフルスクリーンAPIを利用する。
- * `image`：画像を読み込む。
- * `install`：アドオンのインストールを許可する。
- * `offline-app`：オフラインアプリケーション用のキャッシュの利用を許可する。
-
-また、個々の項目の値は以下のいずれかを取ります。
-
- * `0`：不明。どうするかはユーザに尋ねる。
- * `1`：許可する。
- * `2`：禁止する。
-
-また、[CCK2 Wizard](#cck)でも機能の利用を許可するドメインの指定が可能です。
-
-
+    {
+      "policies": {
+        "Permissions": {
+          "Camera": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Microphone": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Location": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          },
+          "Notifications": {
+            "Block": ["https://example.org"],
+            "BlockNewRequests": false,
+            "Locked": true
+          }
+        }
+      }
+    }
 
 
 
@@ -2026,7 +1680,7 @@ Firefoxのロケーションバーでは通常、URL文字列の先頭の「http
 
 ### 設定方法
 
-以下は、[MCD（AutoConfig）](#mcd)での設定例です。
+[MCD（AutoConfig）](#mcd)を用いて以下の通り設定して下さい。
 
     lockPref("browser.urlbar.trimURLs", false);
 
@@ -2034,45 +1688,39 @@ Firefoxのロケーションバーでは通常、URL文字列の先頭の「http
 
 
 
-## 独自SSL証明書やルート証明書をあらかじめ登録済みの状態にしたい
+## 独自ルート証明書をあらかじめ登録済みの状態にしたい
 
 キーワード：導入時初期設定
 
-Firefoxにあらかじめ登録されている物以外の証明局によって署名された証明書（いわゆる自己署名証明書など）を使ったWebサイトにSSLで接続すると、Firefoxは不明な証明書として警告を表示します。それらの証明書を別途安全な手段で提供できるのであれば、証明書をFirefoxにあらかじめ登録しておくことで、警告画面を見ずにWebサイトを利用することができます。
+Firefoxにあらかじめ登録されている物以外の証明局によって署名された証明書を使ったWebサイトにSSLで接続すると、Firefoxは不明な証明書として警告を表示します。それらの証明書の発行元である独自認証局の証明書を別途安全な手段で提供できるのであれば、証明書をFirefoxにあらかじめ登録しておくことで、警告画面を見ずにWebサイトを利用することができます。
 
-### ウィザードでの実現
+### エンタープライズの証明書の自動インポート
 
-[CCK2 Wizard](#cck)を使用すると、任意の証明書を自動登録するアドオンを作成することができます。
+FirefoxはActive DirectoryのグループポリシーによってWindowsに配布されたエンタープライズの証明書を自動的にインポートして認識します。
+Active Directoryを運用している場合、この方法での配布が最も手軽です。
 
-### より詳細な設定を伴う実現方法
+### PEM形式の証明書の自動インポート
 
-証明書を管理者があらかじめ登録しておく別の方法としては、アドオン [Cert Importer][]の利用が挙げられます。
-例えば、Cert Importerを使ってルート証明書 `myCA.crt` を登録する場合の手順は以下の通りです。
+Active Directoryを運用していない環境では、[ポリシー定義ファイル](#policies-json)を用いて証明書を自動インポートできます。
+手順は以下の通りです。
 
- 1. [管理者によるアドオンのインストール手順](#install-addons-by-administrator)に従ってPermissions Auto Registererを導入します。
- 2. Firefoxの実行ファイルと同じ位置にある `defaults` フォルダに `myCA.crt` を置きます。
-    Firefoxが `C:\Program Files (x86)\Mozilla Firefox` にインストールされている場合、最終的なファイルのパスは `C:\Program Files (x86)\Mozilla Firefox\defaults\myCA.crt` となります。
-
-以上で設定は完了です。Firefoxの次回起動時にアドオンがファイルを自動認識し、証明書に設定されたフラグに従って証明書の登録を行います。Firefoxのオプション画面で `詳細`→`証明書`→`証明書を表示`と辿り、証明書が正しく登録されているかどうかを確認して下さい。
-
-また、[CCK2 Wizard](#cck)でも機能の利用を許可するドメインの指定が可能です。
-
-#### 証明書の種類を正しく認識しない場合
-
-Cert Importerが証明書自身に設定されたフラグを正しく認識できなかった場合、ルート証明書がSSLのサイト証明書として登録されるといった結果になることがあります。このような場合は、設定を用いて強制的に証明書の種類を上書き指定することができます。以下は、[MCD（AutoConfig）](#mcd)での設定例です。
-
-    defaultPref("extensions.certimporter.certs.myCA.crt", 1);
-
-証明書の種類を指定する設定の名前は `extensions.certimporter.certs.<ファイル名>` とし、値は以下の整数値の1つ以上の和を指定します。
-
- * `1`：ルート証明書。
- * `2`：ユーザー証明書。
- * `4`：E-mail証明書。
- * `8`：SSLサイト証明書。
+1. PEM形式の証明書ファイルをローカルディスク上またはUNCパスで表されるファイルサーバー上に設置します。
+2. ポリシー定義ファイルの [`Certificates.Install`](https://github.com/mozilla/policy-templates/blob/master/README.md#certificates--install) に、インポート対象の証明書ファイルのパスを指定します。例えば以下の要領です。
+   
+   {
+     "policies": {
+       "Certificates": {
+         "Install": [
+           "C:\\Users\\All Users\\cert1.pem",
+           "\\\\192.168.0.10\\shared\\cert2.pem"
+         ]
+       }
+     }
+   }
 
 #### SSLのセキュリティ例外の自動登録
 
-Cert Importerは、SSLのセキュリティ例外について、特定のホストを対象に設定する事もできます。詳細は[Cert Importer][]の説明文を参照して下さい。
+Firefoxは、SSLのセキュリティ例外について、特定のホストを対象に設定する機能を持ちません。
 
 
 
@@ -2244,38 +1892,12 @@ Thunderbirdのスレッドペインでは、初期状態でどのカラムを表
 # カスタマイズ済みのFirefox・Thunderbirdの展開
 
 
-
-## アドオンを1つインストールするだけでカスタマイズが完了する、という形で複雑なカスタマイズ内容を展開したい
-
-キーワード：導入時初期設定
-
-アドオン [CCK2 Wizard](#cck)を使うと、当該アドオンのインストール1度だけで以下のようなカスタマイズを済ませることのできる「カスタマイズ用アドオン」を作成することができます。
-
- * ホームページの変更
- * Firefox Syncの無効化
- * アドオンマネージャからのアドオンのインストールの禁止
- * その他、[MCD（AutoConfig）](#mcd)相当の設定変更
- * Firefoxを既定のブラウザに自動設定する
- * ヘルプメニューの変更
- * ドメインごとの機能の利用許可の初期設定
- * 検索エンジンの変更・追加
- * 初期状態のブックマークの内容の変更
- * Windowsレジストリの変更
- * 証明書の自動インポート
- * about:configの利用禁止
- * プライベートブラウジング機能の利用禁止
- * アドオンの同梱
- * プラグインの同梱
-
-
 ## Firefox・ThunderbirdにMCD（AutoConfig）の設定ファイルをバンドルして展開したい
 
 キーワード：導入時初期設定
 
 実行ファイルを1つ実行するだけでFirefoxのインストールと設定ファイルの設置をすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
-
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
 
 
 ## Firefox・Thunderbirdにアドオンをバンドルして展開したい
@@ -2285,8 +1907,6 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとアドオンのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
-
 
 ## FirefoxにJavaやFlashなどのプラグインをバンドルして展開したい
 
@@ -2295,32 +1915,22 @@ Firefoxのインストール後に別途アドオンをインストールする�
 実行ファイルを1つ実行するだけでFirefoxのインストールとプラグインのインストールをすべて完了するソフトウェアの例としては、[Fx Meta Installer][]があります。
 Fx Meta Instlalerの使用方法については、開発元による[Fx Meta Installerのチュートリアル][]などを参照して下さい。
 
-Firefoxのインストール後に別途アドオンをインストールすることによってカスタマイズを完了する形態であれば、[CCK2 Wizard](#cck)によってそのようなアドオンを作成することができます。
-
 
 
   [Addressbooks Synchronizer]: https://addons.mozilla.org/thunderbird/addon/addressbooks-synchronizer/
   [Always Default Client]: https://addons.mozilla.org/firefox/addon/always-default-client/
   [AutoConfiguration Hook]: https://addons.mozilla.org/thunderbird/addon/autoconfiguration-hook/
-  [CCK2 Wizard]: https://mike.kaply.com/cck2/
-  [Cert Importer]: https://github.com/clear-code/certimporter/releases
   [Disable about:config]: https://addons.mozilla.org/firefox/addon/disable-aboutconfig/
   [Disable Addons]: https://github.com/clear-code/disableaddons/releases
   [Disable Auto Update]: https://github.com/clear-code/disableupdate/releases
   [Disable Sync]: https://github.com/clear-code/disablesync/releases
   [Do Not Save Password]: https://addons.mozilla.org/firefox/addon/do-not-save-password/
-  [DOM Inspector]: https://addons.mozilla.org/firefox/addon/dom-inspector-6622/
+  [Duplicate Tabs Closer]: https://addons.mozilla.org/firefox/addon/duplicate-tabs-closer/
   [Flex Confirm Mail]: https://addons.mozilla.org/thunderbird/addon/flex-confirm-mail/
-  [Force Addon Status]: https://addons.mozilla.org/firefox/addon/force-addon-status/
   [Fx Meta Installer]: https://github.com/clear-code/fx-meta-installer
   [Fx Meta Installerのチュートリアル]: http://www.clear-code.com/blog/2012/11/7.html
-  [globalChrome.css]: https://addons.mozilla.org/firefox/addon/globalchromecss/
-  [GPO For Firefox]: https://addons.mozilla.org/firefox/addon/gpo-for-firefox/
-  [Hide Option Pane]: https://addons.mozilla.org/firefox/addon/hide-option-pane/
-  [History Prefs Modifier]: https://addons.mozilla.org/firefox/addon/history-prefs-modifier/
+  [globalChrome.css読み込み用スクリプト]: https://github.com/clear-code/globalchromecss/blob/master/autoconfig-globalchromecss.js
   [IMAPキャッシュの自動消去（Clear IMAP Cache）]: https://addons.mozilla.org/thunderbird/addon/clear-imap-local-cache/
-  [Only Minor Update]: https://addons.mozilla.org/firefox/addon/only-minor-update/
-  [Permissions Auto Registerer]: https://addons.mozilla.org/firefox/addon/permissions-auto-registerer/
   [Set Default Columns]: https://addons.mozilla.org/thunderbird/addon/set-default-columns/
   [UI Text Overrider]: https://addons.mozilla.org/firefox/addon/ui-text-overrider/
   [Windowsショートカットの直接実行（Open Windows Shortcuts Directly）]: https://github.com/clear-code/openshortcuts/releases
