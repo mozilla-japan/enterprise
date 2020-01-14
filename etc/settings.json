@@ -1,7 +1,5 @@
 {
-  "title": "技術的なよくある質問",
-  "source": "https://raw.githubusercontent.com/mozilla-japan/enterprise/master/FAQ.md",
-  "download": "src",
+  "title": "技術的な質問",
   "dest": "dist",
   "ids": [
     "setting-management",

@@ -9,11 +9,8 @@ var config = require("./lib/config").create(configFile);
 
 (function(){
   var del = require("del");
-  gulp.task("clean", (callback) => {
-    console.log("start task: clean");
-    del([config.allFilesInDest, config.allFilesInDownload]);
-    console.log("task finished: clean");
-    callback();
+  gulp.task("clean", () => {
+    return del([config.allFilesInDest]);
   });
 })();
 
@@ -32,18 +29,6 @@ gulp.task("lint", function() {
     .pipe($.jsonlint())
     .pipe($.jsonlint.reporter());
 });
-
-(function(){
-  var download = require("gulp-download-stream");
-  gulp.task("fetch", (callback) => {
-    console.log("download from " +
-                config.source +
-                " to " +
-                config.download);
-    return download(config.source)
-      .pipe(gulp.dest(config.download));
-  });
-})();
 
 (function(){
   var transform = require("./lib/transformer").transform;
@@ -85,7 +70,7 @@ gulp.task("lint", function() {
 (function(){
   var runner = require("run-sequence");
   gulp.task("build", () => {
-    runner("clean", "fetch", "transform");
+    runner("clean", "transform");
   });
 })();
 

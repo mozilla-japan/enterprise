@@ -1,12 +1,12 @@
 <?php
 
 $page_type          = 'QAPage'; // https://schema.org/QAPage
-$page_title         = '{{ currentCategory.title }} | {{ title }} | 法人向け情報 | Mozilla Japan';
-$page_description   = 'Mozilla 製品の法人内での導入などに関して、よく寄せられる質問について回答をまとめました。ライセンス、サポート、リリース状況などについて不明な点があるときは、まずこちらをご覧ください。';
+$page_title         = '{{ currentCategory.title }} | {{ title }} | 法人向け情報 | Mozilla Japan コミュニティポータル';
+$page_description   = 'Mozilla 製品の法人内での導入などに関して、特に技術的な点に関してよく寄せられる質問について回答をまとめました。';
 $body_id            = 'tech-faq';
 $body_class         = 'users business faq tech';
-$css                = array('/business/static/styles/main', 'lib/highlightjs/github.min.css');
-$js                 = array('/business/static/scripts/main.js', 'lib/highlightjs/highlight.pack.js');
+$css                = array('business/main', 'lib/highlightjs/github.min.css');
+$js                 = array('business/main', 'lib/highlightjs/highlight.pack.js');
 
 $breadcrumbs        = array(
   '/business/' => '法人向け情報',
@@ -15,19 +15,13 @@ $breadcrumbs        = array(
   '/business/faq/tech/{{ currentCategory.id }}/' => '{{ currentCategory.title }}'
 );
 
-$header_nav = array(
-    "法人向け情報" => "/business/",
-    "導入事例" => "/business/profiles/",
-    "サポート" => "/business/support/",
-    "よくある質問" => "/business/faq/"
-);
-
 @include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/templates/sandstone/default-header.inc.php';
 
 ?>
           <nav class="outer">
             <ul class="inner">
-              <li><a href="/business/faq/">一般的な質問</a></li>
+              <li><a href="/business/">法人向け情報 ホーム</a></li>
+              <li><a href="/business/faq/">よくある質問</a></li>
               <li><a href="/business/faq/tech/">技術的な質問</a></li>
             </ul>
           </nav>
@@ -58,6 +52,7 @@ $header_nav = array(
                         {%- endfor %}
                       </ul>
                     </nav>
+                    <p>このページに記載している技術情報は <a href="https://github.com/mozilla-japan/enterprise/blob/master/src/FAQ.md">GitHub レポジトリ上のファイル</a> を元に生成しています。よくある質問と回答の更新、追加にご協力いただける方は、<a href="https://github.com/mozilla-japan/enterprise/issues">同レポジトリの Issues</a> に報告されるか、直接プルリクエストをお送りください。</p>
                   </aside><!-- end #sidebar -->
                 </div>
               </div>
@@ -65,7 +60,6 @@ $header_nav = array(
           </main>
 <?php 
 
-@include_once $_SERVER['DOCUMENT_ROOT'] . '/business/includes/events.inc.php';
 @include_once $_SERVER['DOCUMENT_ROOT'] . '/includes/templates/sandstone/default-footer.inc.php';
 
 ?>
