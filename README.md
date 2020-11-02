@@ -1,3 +1,7 @@
+[www.mozilla.jp](https://www.mozilla.jp) の静的サイト化に伴い、このツールは不要となりました。今後は [business/faq/tech](https://github.com/mozilla-japan/www.mozilla.jp/tree/main/content/business/faq/tech) 以下の Markdown ファイルを更新すれば自動的に Netlify 上でビルド・デプロイされます。
+
+* * *
+
 # 法人向け技術情報 FAQ
 
 このツールは、FAQ.md を元に、https://www.mozilla.jp/business/faq/tech/ 以下のファイルを生成するツールです。
